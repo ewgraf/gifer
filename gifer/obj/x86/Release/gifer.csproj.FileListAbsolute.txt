@@ -1,0 +1,17 @@
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\bin\Release\gifer.exe
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\bin\Release\gifer.pdb
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\obj\x86\Release\gifer.Form1.resources
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\obj\x86\Release\gifer.Properties.Resources.resources
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\obj\x86\Release\gifer.exe
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\obj\x86\Release\gifer.pdb
+C:\Users\Станислав\Documents\Visual Studio 2010\Projects\gifer\gifer\obj\x86\Release\gifer.csproj.GenerateResource.Cache
+C:\Users\Станислав\Documents\Visual Studio 2010\Projects\gifer\gifer\bin\Release\gifer.exe.manifest
+C:\Users\Станислав\Documents\Visual Studio 2010\Projects\gifer\gifer\bin\Release\gifer.application
+C:\Users\Станислав\Documents\Visual Studio 2010\Projects\gifer\gifer\obj\x86\Release\gifer.exe.manifest
+C:\Users\Станислав\Documents\Visual Studio 2010\Projects\gifer\gifer\obj\x86\Release\gifer.application
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Release\gifer.exe
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Release\gifer.pdb
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Release\gifer.csprojResolveAssemblyReference.cache
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Release\gifer.Form1.resources
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Release\gifer.Properties.Resources.resources
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Release\gifer.csproj.GenerateResource.Cache

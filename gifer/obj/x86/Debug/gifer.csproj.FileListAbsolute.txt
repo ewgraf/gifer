@@ -1,0 +1,25 @@
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\bin\Debug\gifer.exe
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\bin\Debug\gifer.pdb
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\obj\x86\Debug\gifer.Form1.resources
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\obj\x86\Debug\gifer.Properties.Resources.resources
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\obj\x86\Debug\gifer.exe
+C:\Users\Станислав\AppData\Local\Temporary Projects\gifer\obj\x86\Debug\gifer.pdb
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\obj\x86\Debug\gifer.exe
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\obj\x86\Debug\gifer.pdb
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\bin\Debug\gifer.exe
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\bin\Debug\gifer.pdb
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\obj\x86\Debug\gifer.Form1.resources
+c:\users\станислав\documents\visual studio 2010\Projects\gifer\gifer\obj\x86\Debug\gifer.Properties.Resources.resources
+C:\Users\Станислав\Documents\Visual Studio 2010\Projects\gifer\gifer\obj\x86\Debug\gifer.csprojResolveAssemblyReference.cache
+C:\Users\Станислав\Documents\Visual Studio 2010\Projects\gifer\gifer\obj\x86\Debug\gifer.csproj.GenerateResource.Cache
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Debug\gifer.exe
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Debug\gifer.pdb
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Debug\gifer.csprojResolveAssemblyReference.cache
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Debug\gifer.Form1.resources
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Debug\gifer.Properties.Resources.resources
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\obj\x86\Debug\gifer.csproj.GenerateResource.Cache
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\bin\Debug\gifer.exe
+C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\bin\Debug\gifer.pdb
