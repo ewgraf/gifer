@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace gifer
@@ -15,8 +13,10 @@ namespace gifer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //Application.Run(new Form1());
-            Application.Run(args.Length == 0 ? new Form1(string.Empty) : new Form1(args[0]));
+
+			args = new[] { @"C:\Users\Lenovo\Downloads\i\a\14836056995240.jpg" };
+
+			Application.Run(args.Length == 0 ? new GiferForm(string.Empty) : new GiferForm(args[0]));
         }
     }
 }
