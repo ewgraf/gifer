@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -12,6 +11,19 @@ namespace gifer
     {
 		private static List<string> ImagePathesInFolder;
 		private static string CurrentImagePath;
+		// https://en.wikipedia.org/wiki/Image_file_formats
+		private static readonly string[] KnownImageExtensions = {
+			"jpg", "jpeg", "jfif", "jp2",
+			"tif", "tiff",
+			"gif",
+			"bmp", "dib",
+			"png",
+			"pbm", "pgm", "ppm", "pnm",
+			"webp",
+			"heif", "heic",
+			"bpg",
+			// ".svg", "svgz" 
+		};
 
 		public GiferForm(string imagePath)
         {
@@ -25,13 +37,15 @@ namespace gifer
 			this.TopMost = true;
 
 			// moving picturebox insible invisible form
-			this.Size = Screen.PrimaryScreen.Bounds.Size;
 			// making transparent form fullscreen
+			this.Size = Screen.PrimaryScreen.Bounds.Size;
 			this.TransparencyKey = this.BackColor;
 
 			if (!string.IsNullOrEmpty(imagePath)) {
 				CurrentImagePath = imagePath;
-				ImagePathesInFolder = Directory.GetFiles(Path.GetDirectoryName(CurrentImagePath)).ToList();				
+				ImagePathesInFolder = Directory.GetFiles(Path.GetDirectoryName(CurrentImagePath))
+					.Where(filePath => KnownImageExtensions.Any(Path.GetExtension(filePath).EndsWith))
+					.ToList();				
 				Image image = Image.FromFile(CurrentImagePath);
 				SetImage(image);
 			}
@@ -47,7 +61,7 @@ namespace gifer
 			}
 
 			// center image
-			int x = (this.Width / 2) - (pictureBox1.Width / 2);
+			int x = (this.Width  / 2) - (pictureBox1.Width  / 2);
 			int y = (this.Height / 2) - (pictureBox1.Height / 2);
 			pictureBox1.Location = new Point(x, y);
 		}
