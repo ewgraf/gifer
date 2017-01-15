@@ -26,13 +26,6 @@ namespace gifer
 			// ".svg", "svgz" 
 		};
 
-		// http://stackoverflow.com/questions/25382400/gif-animated-files-in-c-sharp-have-lower-framerates-than-they-should
-		private const int timerAccuracy = 1;
-		[System.Runtime.InteropServices.DllImport("winmm.dll")]
-		private static extern int timeBeginPeriod(int msec);
-		[System.Runtime.InteropServices.DllImport("winmm.dll")]
-		public static extern int timeEndPeriod(int msec);
-
 		public GiferForm(string imagePath)
 		{
 			InitializeComponent();
@@ -63,6 +56,9 @@ namespace gifer
 
 		private void LoadImages(string imagePath)
 		{
+			if (!KnownImageExtensions.Any(ext => imagePath.EndsWith(ext))) {
+				return;
+			}
 			CurrentImagePath = imagePath;
 			ImagePathesInFolder = Directory.GetFiles(Path.GetDirectoryName(CurrentImagePath))
 				.Where(filePath => KnownImageExtensions.Any(Path.GetExtension(filePath).EndsWith))
@@ -75,7 +71,8 @@ namespace gifer
 
 		private void SetImage(Image image)
 		{
-			//pictureBox1.Image = CurrentFrame;
+			timer1.Stop();
+
 			if (image.Width > this.Size.Width || image.Height > this.Size.Height) {
 				pictureBox1.Size = ResizeProportionaly(image.Size, this.Size);
 			} else {
@@ -121,20 +118,8 @@ namespace gifer
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
-			ImagePathesInFolder = ((string[])e.Data.GetData(DataFormats.FileDrop)).ToList();
-			if(ImagePathesInFolder.Count == 1) {
-				LoadImages(ImagePathesInFolder.First());
-			} else {
-				CurrentImagePath = ImagePathesInFolder.First();
-				ImagePathesInFolder = ImagePathesInFolder.Where(filePath => KnownImageExtensions.Any(Path.GetExtension(filePath).EndsWith))
-					.ToList();
-				Image image = Image.FromFile(CurrentImagePath);
-				SetImage(image);
-			}			
+			LoadImages(((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
 		}
-
-        private bool move = false;
-        private int X = 0, Y = 0;
 
 		// Global Variables
 		private int _xPos;
@@ -178,126 +163,6 @@ namespace gifer
 			}			
 			_dragging = false;
 		}
-
-		private int Delta = 0;
-        private int x1 = 0;
-
-        public void resize()
-        {
-            try
-            {
-                resizing = true;
-                /* Work. */
-                x1 = Delta;
-
-                /* Plan Be */
-                //x1 = Delta;
-                /*if (x1 > 0)
-                {
-                    while (x1 > 0)
-                    {
-                        x1 -= x1 / 2 > 0 ? x1 / 2 : 1;
-
-                        pictureBox1.Invoke((MethodInvoker)delegate
-                        {
-                            pictureBox1.Size = new Size(pictureBox1.Size.Height + x1/2, pictureBox1.Size.Width + x1/2);
-                        });
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            this.Size = pictureBox1.Size;
-                        });
-                    }
-                }
-                else //x1 < 0
-                {
-                    while (x1 < 0)
-                    {
-                        x1 += x1 / 2 > 0 ? x1 / 2 : 1;
-
-                        pictureBox1.Invoke((MethodInvoker)delegate
-                        {
-                            pictureBox1.Size = new Size(pictureBox1.Size.Height - x1/2, pictureBox1.Size.Width - x1/2);
-                        });
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            this.Size = pictureBox1.Size;
-                        });
-                    }
-                }*/
-
-                /* Plan Tse */
-                /*if (x1>0)
-                {
-                    for (int i = x1; i > 0; i--)
-                    {
-                        pictureBox1.Invoke((MethodInvoker)delegate
-                        {
-                            pictureBox1.Size = new Size(pictureBox1.Size.Height + 1, pictureBox1.Size.Width + 1);
-                        });
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            this.Size = pictureBox1.Size;
-                        });
-
-                    }
-                }
-                else
-                {
-                    for (int i = x1; i < 0; i++)
-                    {
-                        pictureBox1.Invoke((MethodInvoker)delegate
-                        {
-                            pictureBox1.Size = new Size(pictureBox1.Size.Height - 1, pictureBox1.Size.Width - 1);
-                        });
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            this.Size = pictureBox1.Size;
-                        });
-                    }
-                }*/
-
-                //x1 = 1;
-                int sdvig_left = 0, sdvif_up = 0;
-
-                /* Plan De*/
-                /*sdvig_left = Convert.ToInt32(pictureBox1.Size.Height * x1 / 1000);
-                sdvif_up = Convert.ToInt32(pictureBox1.Size.Width * x1 / 1000);
-                pictureBox1.Invoke((MethodInvoker)delegate
-                {
-                    pictureBox1.Size = new Size(pictureBox1.Size.Width + sdvif_up, pictureBox1.Size.Height + sdvig_left);
-                    this.Size = pictureBox1.Size;
-                    this.Location = new Point(this.Location.X - sdvig_left / 2, this.Location.Y - sdvif_up / 2);
-                });*/
-                while (x1 != 0) {
-					sdvif_up   = Convert.ToInt32(pictureBox1.Size.Width  * x1 / 1000);
-					sdvig_left = Convert.ToInt32(pictureBox1.Size.Height * x1 / 1000);
-
-                    pictureBox1.Invoke((MethodInvoker) delegate {
-                        pictureBox1.Size = new Size(pictureBox1.Size.Width + sdvif_up, pictureBox1.Size.Height + sdvig_left);
-                    });
-
-                    this.Invoke((MethodInvoker) delegate {
-                        this.Size = pictureBox1.Size;
-                        this.Location = new Point(this.Location.X - sdvig_left / 2, this.Location.Y - sdvif_up / 2);
-                    });
-
-                    x1 = x1 > 0 ? x1 - 1 : x1 + 1;
-
-                    x1 /= 2;
-
-                    //System.Threading.Thread.Sleep(15);
-                }
-                resizing = false;
-                return;
-            }
-            catch (System.Threading.ThreadInterruptedException ex)
-            {
-                /* Clean up. */
-                x1 = 0;
-                resizing = false;
-                return;
-            }
-        }
 		
         public void pictureBox1_MouseWheel(object sender, MouseEventArgs e)
         {
@@ -338,9 +203,8 @@ namespace gifer
 			}
 			resizing = false;
 		}
-
-		//private double ZOOMFACTOR = 1.25;   // = 25% smaller or larger
-        private int MINMAX = 5;             // 5 times bigger or smaller than the ctrl
+		
+        private int MINMAX = 5;
 		private bool resizing = false;
 
 		/// <summary>

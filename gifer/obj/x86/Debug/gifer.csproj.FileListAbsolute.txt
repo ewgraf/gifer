@@ -25,7 +25,6 @@ C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\bin\Debug\gife
 C:\Users\Lenovo\Documents\Visual Studio 2013\Projects\gifer\gifer\bin\Debug\gifer.pdb
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\x86\Debug\gifer.exe
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\x86\Debug\gifer.pdb
-C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\x86\Debug\gifer.csprojResolveAssemblyReference.cache
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\x86\Debug\gifer.GiferForm.resources
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\x86\Debug\gifer.csproj.GenerateResource.Cache
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\gifer.exe
