@@ -87,7 +87,7 @@ namespace gifer
 			if (image.RawFormat.Equals(ImageFormat.Gif) && ImageAnimator.CanAnimate(image)) {
 				GifImage = new GifImage(image);
 				pictureBox1.Image = GifImage.Next();
-				timer1.Interval = GifImage.AverageDelay;
+				timer1.Interval = GifImage.Delay;
 				timer1.Start();
 			} else {
 				pictureBox1.Image = image;
@@ -247,19 +247,10 @@ namespace gifer
 			}
 			SetImage(Image.FromFile(CurrentImagePath));
 		}
-
-		private void pictureBox1_Paint(object sender, PaintEventArgs e)
-		{
-
-		}
-
+		
 		private void timer1_Tick(object sender, EventArgs e)
 		{
 			pictureBox1.Image = GifImage.Next();
-		}
-
-		private void pictureBox1_DragDrop(object sender, DragEventArgs e)
-		{
 		}
 
 		private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
