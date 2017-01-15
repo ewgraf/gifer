@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace gifer
 {
-    public partial class GiferForm : Form
-    {
+	public partial class GiferForm : Form
+	{
 		private static List<string> ImagePathesInFolder;
 		private static string CurrentImagePath;
 		// https://en.wikipedia.org/wiki/Image_file_formats
@@ -25,14 +26,21 @@ namespace gifer
 			// ".svg", "svgz" 
 		};
 
-		public GiferForm(string imagePath)
-        {
-            InitializeComponent();
+		// http://stackoverflow.com/questions/25382400/gif-animated-files-in-c-sharp-have-lower-framerates-than-they-should
+		private const int timerAccuracy = 1;
+		[System.Runtime.InteropServices.DllImport("winmm.dll")]
+		private static extern int timeBeginPeriod(int msec);
+		[System.Runtime.InteropServices.DllImport("winmm.dll")]
+		public static extern int timeEndPeriod(int msec);
 
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.AllowDrop = true;
-            this.pictureBox1.MouseWheel += new MouseEventHandler(this.pictureBox1_MouseWheel);
-            this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+		public GiferForm(string imagePath)
+		{
+			InitializeComponent();
+
+			this.FormBorderStyle = FormBorderStyle.None;
+			this.AllowDrop = true;
+			this.pictureBox1.MouseWheel += new MouseEventHandler(this.pictureBox1_MouseWheel);
+			this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 			this.StartPosition = FormStartPosition.CenterScreen;
 			this.TopMost = true;
 
@@ -42,18 +50,32 @@ namespace gifer
 			this.TransparencyKey = this.BackColor;
 
 			if (!string.IsNullOrEmpty(imagePath)) {
-				CurrentImagePath = imagePath;
-				ImagePathesInFolder = Directory.GetFiles(Path.GetDirectoryName(CurrentImagePath))
-					.Where(filePath => KnownImageExtensions.Any(Path.GetExtension(filePath).EndsWith))
-					.ToList();				
-				Image image = Image.FromFile(CurrentImagePath);
+				LoadImages(imagePath);
+			} else {
+				Bitmap image = new Bitmap(256, 256);
+				using (Graphics g = Graphics.FromImage(image))
+				{
+					g.FillRectangle(Brushes.White, 0, 0, image.Width, image.Height);
+				}
 				SetImage(image);
 			}
-        }
+		}
+
+		private void LoadImages(string imagePath)
+		{
+			CurrentImagePath = imagePath;
+			ImagePathesInFolder = Directory.GetFiles(Path.GetDirectoryName(CurrentImagePath))
+				.Where(filePath => KnownImageExtensions.Any(Path.GetExtension(filePath).EndsWith))
+				.ToList();
+			Image image = Image.FromFile(CurrentImagePath);
+			SetImage(image);
+		}
+
+		private GifImage GifImage { get; set; }
 
 		private void SetImage(Image image)
 		{
-			pictureBox1.Image = image;
+			//pictureBox1.Image = CurrentFrame;
 			if (image.Width > this.Size.Width || image.Height > this.Size.Height) {
 				pictureBox1.Size = ResizeProportionaly(image.Size, this.Size);
 			} else {
@@ -64,6 +86,15 @@ namespace gifer
 			int x = (this.Width  / 2) - (pictureBox1.Width  / 2);
 			int y = (this.Height / 2) - (pictureBox1.Height / 2);
 			pictureBox1.Location = new Point(x, y);
+
+			if (image.RawFormat.Equals(ImageFormat.Gif) && ImageAnimator.CanAnimate(image)) {
+				GifImage = new GifImage(image);
+				pictureBox1.Image = GifImage.Next();
+				timer1.Interval = GifImage.AverageDelay;
+				timer1.Start();
+			} else {
+				pictureBox1.Image = image;
+			}
 		}
 
 		public static Size ResizeProportionaly(Size size, Size fitSize)
@@ -90,9 +121,16 @@ namespace gifer
 
         private void Form1_DragDrop(object sender, DragEventArgs e)
         {
-			ImagePathesInFolder = (List<string>)e.Data.GetData(DataFormats.FileDrop);
-			var image = Image.FromFile(ImagePathesInFolder.First());
-			SetImage(image);
+			ImagePathesInFolder = ((string[])e.Data.GetData(DataFormats.FileDrop)).ToList();
+			if(ImagePathesInFolder.Count == 1) {
+				LoadImages(ImagePathesInFolder.First());
+			} else {
+				CurrentImagePath = ImagePathesInFolder.First();
+				ImagePathesInFolder = ImagePathesInFolder.Where(filePath => KnownImageExtensions.Any(Path.GetExtension(filePath).EndsWith))
+					.ToList();
+				Image image = Image.FromFile(CurrentImagePath);
+				SetImage(image);
+			}			
 		}
 
         private bool move = false;
@@ -311,7 +349,7 @@ namespace gifer
 		/// <remarks>Maximum 5 times bigger</remarks>
 		private void ZoomIn(double ratio)
 		{
-			if ((pictureBox1.Width < (MINMAX * pictureBox1.Image.Width)) && (pictureBox1.Height < (MINMAX * pictureBox1.Image.Height))) {
+			if ((pictureBox1.Width < (MINMAX * pictureBox1.Image?.Width)) && (pictureBox1.Height < (MINMAX * pictureBox1.Image?.Height))) {
 				Size prevSize = pictureBox1.Size;
 				Point prevLocation = pictureBox1.Location;
 				pictureBox1.Width = Convert.ToInt32(pictureBox1.Width * ratio);
@@ -326,7 +364,7 @@ namespace gifer
 		/// <remarks>Minimum 5 times smaller</remarks>
 		private void ZoomOut(double ratio)
 		{
-			if ((pictureBox1.Width > (pictureBox1.Image.Width / MINMAX)) && (pictureBox1.Height > (pictureBox1.Image.Height / MINMAX))) {
+			if ((pictureBox1.Width > (pictureBox1.Image?.Width / MINMAX)) && (pictureBox1.Height > (pictureBox1.Image?.Height / MINMAX))) {
 				Size prevSize = pictureBox1.Size;
 				Point prevLocation = pictureBox1.Location;
 				pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -344,6 +382,20 @@ namespace gifer
 				CurrentImagePath = ImagePathesInFolder.Previous(CurrentImagePath);
 			}
 			SetImage(Image.FromFile(CurrentImagePath));
+		}
+
+		private void pictureBox1_Paint(object sender, PaintEventArgs e)
+		{
+
+		}
+
+		private void timer1_Tick(object sender, EventArgs e)
+		{
+			pictureBox1.Image = GifImage.Next();
+		}
+
+		private void pictureBox1_DragDrop(object sender, DragEventArgs e)
+		{
 		}
 
 		private void pictureBox1_MouseClick(object sender, MouseEventArgs e)

@@ -13,9 +13,6 @@ namespace gifer
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-			args = new[] { @"C:\Users\Lenovo\Downloads\i\a\14836056995240.jpg" };
-
 			Application.Run(args.Length == 0 ? new GiferForm(string.Empty) : new GiferForm(args[0]));
         }
     }

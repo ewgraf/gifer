@@ -88,6 +88,7 @@
     <Compile Include="GiferForm.Designer.cs">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GifImage.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="Program.cs" />
     <EmbeddedResource Include="GiferForm.resx">
