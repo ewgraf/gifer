@@ -230,9 +230,24 @@ namespace gifer
 			if (ratio > 0) {
 				if ((pictureBox1.Width  < (pictureBox1.Image.Width  * MINMAX)) && 
 					(pictureBox1.Height < (pictureBox1.Image.Height * MINMAX))) {
-					pictureBox1.Width  = Convert.ToInt32(pictureBox1.Width  * Math.Abs(ratio));
-					pictureBox1.Height = Convert.ToInt32(pictureBox1.Height * Math.Abs(ratio));
-				}
+					var width  = Convert.ToInt32(pictureBox1.Width  * Math.Abs(ratio));
+					var heigth = Convert.ToInt32(pictureBox1.Height * Math.Abs(ratio));
+                    var size = new Point(prevLocation.X + (prevSize.Width  - pictureBox1.Width ) / 2,
+                                         prevLocation.Y + (prevSize.Height - pictureBox1.Height) / 2);
+                    int step = ((width - pictureBox1.Width) + (heigth - pictureBox1.Height)) / 2;
+                    step /= 30;
+                    var sizeStep = new Size(-1, -1);
+                    while (pictureBox1.Width < width || pictureBox1.Height < heigth/* || pictureBox1.Location.X < size.X || pictureBox1.Location.Y < size.Y*/) {
+                        pictureBox1.Location = Point.Add(pictureBox1.Location, sizeStep);
+                        pictureBox1.Width+=2;
+                        pictureBox1.Height+=2;
+                        Application.DoEvents();
+                    }
+
+                    pictureBox1.Width = width;
+                    pictureBox1.Height = heigth;
+                    //pictureBox1.Location = size;
+                }
 			} else {
 				if ((pictureBox1.Width  > (pictureBox1.Image.Width  / MINMAX)) && 
 					(pictureBox1.Height > (pictureBox1.Image.Height / MINMAX))) {
@@ -240,7 +255,7 @@ namespace gifer
 					pictureBox1.Height = Convert.ToInt32(pictureBox1.Height / Math.Abs(ratio));
 				}
 			}
-			pictureBox1.Location = new Point(prevLocation.X + (prevSize.Width - pictureBox1.Width) / 2, prevLocation.Y + (prevSize.Height - pictureBox1.Height) / 2);
+			//pictureBox1.Location = new Point(prevLocation.X + (prevSize.Width - pictureBox1.Width) / 2, prevLocation.Y + (prevSize.Height - pictureBox1.Height) / 2);
 		}
 
 		#endregion
