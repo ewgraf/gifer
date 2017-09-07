@@ -223,30 +223,41 @@ namespace gifer
 			resizing = false;
 		}
 
-		private void Zoom(double ratio)
-		{
-			Size prevSize = pictureBox1.Size;
+        // Gaussiana [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05, 0.01] / 3 => Sum = ~1
+        //private static double[] Gaussiana = new[] { 0.003, 0.016, 0.03, 0.05, 0.06, 0.083, 0.1, 0.116,  0.13,  0.116, 0.1, 0.083, 0.06, 0.05, 0.03, 0.016, 0.003 };
+        private static int[] Gaussiana = new[] { 64, 32, 16, 8, 4, 2, 4, 8, 16, 32, 64 };
+
+        private void Zoom(double ratio)
+        {
+            Size prevSize = pictureBox1.Size;
 			Point prevLocation = pictureBox1.Location;
 			if (ratio > 0) {
 				if ((pictureBox1.Width  < (pictureBox1.Image.Width  * MINMAX)) && 
 					(pictureBox1.Height < (pictureBox1.Image.Height * MINMAX))) {
 					var width  = Convert.ToInt32(pictureBox1.Width  * Math.Abs(ratio));
 					var heigth = Convert.ToInt32(pictureBox1.Height * Math.Abs(ratio));
-                    var size = new Point(prevLocation.X + (prevSize.Width  - pictureBox1.Width ) / 2,
-                                         prevLocation.Y + (prevSize.Height - pictureBox1.Height) / 2);
-                    int step = ((width - pictureBox1.Width) + (heigth - pictureBox1.Height)) / 2;
-                    step /= 30;
-                    var sizeStep = new Size(-1, -1);
+                    var size = new Point(prevLocation.X + (prevSize.Width  - width ) / 2,
+                                         prevLocation.Y + (prevSize.Height - heigth) / 2);
+                    var diff = ((width - pictureBox1.Width) + (heigth - pictureBox1.Height)) / 2;
+                    int step = diff / 16;
+                    if (step < 2) {
+                        step = 2;
+                    }
+                    if(step % 2 != 0) {
+                        step++;
+                    }
+                    var sizeDiff = new Size(-step / 2, -step / 2);
+                    //var sizeStep = new Size(-1, -1);
                     while (pictureBox1.Width < width || pictureBox1.Height < heigth/* || pictureBox1.Location.X < size.X || pictureBox1.Location.Y < size.Y*/) {
-                        pictureBox1.Location = Point.Add(pictureBox1.Location, sizeStep);
-                        pictureBox1.Width+=2;
-                        pictureBox1.Height+=2;
+                        pictureBox1.Width += step;
+                        pictureBox1.Height+= step;
+                        pictureBox1.Location = Point.Add(pictureBox1.Location, sizeDiff);
                         Application.DoEvents();
                     }
 
                     pictureBox1.Width = width;
                     pictureBox1.Height = heigth;
-                    //pictureBox1.Location = size;
+                    pictureBox1.Location = size;
                 }
 			} else {
 				if ((pictureBox1.Width  > (pictureBox1.Image.Width  / MINMAX)) && 
