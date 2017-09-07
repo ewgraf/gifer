@@ -30,4 +30,7 @@ C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\x86\Debug\gifer.csproj.Generate
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\gifer.exe
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\gifer.pdb
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\gifer.exe.config
+C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\x86\Debug\gifer.Properties.Resources.resources
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\x86\Debug\gifer.csprojResolveAssemblyReference.cache
+C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\ImageProcessor.dll
+C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\ImageProcessor.Plugins.WebP.dll

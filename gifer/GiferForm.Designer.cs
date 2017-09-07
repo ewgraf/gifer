@@ -43,7 +43,6 @@
 			this.pictureBox1.TabStop = false;
 			this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
 			this.pictureBox1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDown);
-			this.pictureBox1.MouseLeave += new System.EventHandler(this.pictureBox1_MouseLeave);
 			this.pictureBox1.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseMove);
 			this.pictureBox1.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseUp);
 			this.pictureBox1.Resize += new System.EventHandler(this.pictureBox1_Resize);
@@ -59,7 +58,6 @@
 			this.ClientSize = new System.Drawing.Size(256, 256);
 			this.Controls.Add(this.pictureBox1);
 			this.Name = "GiferForm";
-			this.Load += new System.EventHandler(this.Form1_Load);
 			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
 			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GiferForm_KeyDown);
