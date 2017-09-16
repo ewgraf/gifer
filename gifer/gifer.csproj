@@ -79,9 +79,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GiferForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Animation.cs" />
+    <Compile Include="GiferForm.cs" />
     <Compile Include="GiferForm.Designer.cs">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </Compile>

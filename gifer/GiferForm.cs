@@ -8,6 +8,19 @@ using System.Windows.Forms;
 
 namespace gifer
 {
+    public static class StaticClass
+    {
+        public static Size Divide(this Size size, int by)
+        {
+            return new Size(size.Width / by, size.Height / by);
+        }
+
+        public static bool AbsMore(this Size size1, Size size2)
+        {
+            return Math.Abs(size1.Width) > Math.Abs(size2.Width) && Math.Abs(size1.Height) > Math.Abs(size2.Height);
+        }
+    }
+
 	public partial class GiferForm : Form
 	{
 		private static List<string> imagesInFolder;
@@ -229,49 +242,34 @@ namespace gifer
 
         private void Zoom(double ratio)
         {
-            Size prevSize = pictureBox1.Size;
-			Point prevLocation = pictureBox1.Location;
-			if (ratio > 0) {
-				if ((pictureBox1.Width  < (pictureBox1.Image.Width  * MINMAX)) && 
-					(pictureBox1.Height < (pictureBox1.Image.Height * MINMAX))) {
-					var width  = Convert.ToInt32(pictureBox1.Width  * Math.Abs(ratio));
-					var heigth = Convert.ToInt32(pictureBox1.Height * Math.Abs(ratio));
-                    var size = new Point(prevLocation.X + (prevSize.Width  - width ) / 2,
-                                         prevLocation.Y + (prevSize.Height - heigth) / 2);
-                    var diff = ((width - pictureBox1.Width) + (heigth - pictureBox1.Height)) / 2;
-                    int step = diff / 16;
-                    if (step < 2) {
-                        step = 2;
-                    }
-                    if(step % 2 != 0) {
-                        step++;
-                    }
-                    var sizeDiff = new Size(-step / 2, -step / 2);
-                    //var sizeStep = new Size(-1, -1);
-                    while (pictureBox1.Width < width || pictureBox1.Height < heigth/* || pictureBox1.Location.X < size.X || pictureBox1.Location.Y < size.Y*/) {
-                        pictureBox1.Width += step;
-                        pictureBox1.Height+= step;
-                        pictureBox1.Location = Point.Add(pictureBox1.Location, sizeDiff);
-                        Application.DoEvents();
-                    }
+            Size size = pictureBox1.Size;
+			Point location = pictureBox1.Location;
+            double enlargement = Animation.GetEnlargementValue(ratio);
+            var newSize = new Size {
+                Width  = Convert.ToInt32(pictureBox1.Width  * enlargement),
+                Height = Convert.ToInt32(pictureBox1.Height * enlargement)
+            };
+            
+            var newLocation = new Point(location.X + (size.Width - newSize.Width) / 2, location.Y + (size.Height - newSize.Height) / 2);
+            Size diff = newSize - pictureBox1.Size;
+            int resizeSteps = 10;
+            diff = diff.Divide(resizeSteps);
 
-                    pictureBox1.Width = width;
-                    pictureBox1.Height = heigth;
-                    pictureBox1.Location = size;
-                }
-			} else {
-				if ((pictureBox1.Width  > (pictureBox1.Image.Width  / MINMAX)) && 
-					(pictureBox1.Height > (pictureBox1.Image.Height / MINMAX))) {
-					pictureBox1.Width  = Convert.ToInt32(pictureBox1.Width  / Math.Abs(ratio));
-					pictureBox1.Height = Convert.ToInt32(pictureBox1.Height / Math.Abs(ratio));
-				}
-			}
-			//pictureBox1.Location = new Point(prevLocation.X + (prevSize.Width - pictureBox1.Width) / 2, prevLocation.Y + (prevSize.Height - pictureBox1.Height) / 2);
-		}
+            var locationDiff = diff.Divide(2);
 
-		#endregion
+            while ((pictureBox1.Size - newSize).AbsMore(diff)) {
+                pictureBox1.Size += diff;
+                pictureBox1.Location = Point.Subtract(pictureBox1.Location, locationDiff);
+                Application.DoEvents();
+            }
 
-		private void GiferForm_KeyDown(object sender, KeyEventArgs e)
+            pictureBox1.Size = newSize;
+            pictureBox1.Location = newLocation;
+        }
+
+        #endregion
+
+        private void GiferForm_KeyDown(object sender, KeyEventArgs e)
 		{
 			if (e.KeyCode == Keys.Right) {
 				CurrentImagePath = imagesInFolder.Next(CurrentImagePath);
