@@ -6,26 +6,26 @@ namespace gifer
 {
 	public class GifImage
 	{
-		private Image gif;
-		private int framesCount;
-		private int currentFrame = 0;
+		private Image _gif;
+		private int _currentFrame = 0;
 
 		public int Delay { get; set; }
+        public int Frames { get; set; }
 
-		public GifImage(Image image)
+        public GifImage(Image image)
 		{
-			gif = image;
-			framesCount = gif.GetFrameCount(FrameDimension.Time);
+			_gif = image;
+            Frames = _gif.GetFrameCount(FrameDimension.Time);
 			Delay = BitConverter.ToInt32(image.GetPropertyItem(20736).Value, 0) * 10;
 		}
 
 		public Bitmap Next()
 		{
-			if (currentFrame >= framesCount || currentFrame < 1) {
-				currentFrame = 0;
+			if (_currentFrame >= Frames || _currentFrame < 1) {
+				_currentFrame = 0;
 			}
-			gif.SelectActiveFrame(FrameDimension.Time, currentFrame++);
-			return Image.FromHbitmap(new Bitmap(gif).GetHbitmap());
+			_gif.SelectActiveFrame(FrameDimension.Time, _currentFrame++);
+			return Image.FromHbitmap(new Bitmap(_gif).GetHbitmap());
 		}
 	}
 }

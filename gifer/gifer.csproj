@@ -80,12 +80,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Animation.cs" />
-    <Compile Include="GiferForm.cs" />
+    <Compile Include="GiferForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="GiferForm.Designer.cs">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GifImage.cs" />
-    <Compile Include="ListExtensions.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Program.cs" />
     <EmbeddedResource Include="GiferForm.resx">
       <DependentUpon>GiferForm.cs</DependentUpon>
@@ -114,14 +116,22 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <None Include="Resources\default1.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="back.png" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\default.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\default2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

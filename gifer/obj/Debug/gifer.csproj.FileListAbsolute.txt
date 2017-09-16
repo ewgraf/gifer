@@ -14,4 +14,4 @@ C:\Users\Ewgraf\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.csproj.GenerateReso
 C:\Users\Ewgraf\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.csproj.CoreCompileInputs.cache
 C:\Users\Ewgraf\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.exe
 C:\Users\Ewgraf\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.pdb
-C:\Users\Ewgraf\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.StaticClass.resources
+C:\Users\Ewgraf\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.GiferForm.resources

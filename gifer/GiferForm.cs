@@ -8,19 +8,6 @@ using System.Windows.Forms;
 
 namespace gifer
 {
-    public static class StaticClass
-    {
-        public static Size Divide(this Size size, int by)
-        {
-            return new Size(size.Width / by, size.Height / by);
-        }
-
-        public static bool AbsMore(this Size size1, Size size2)
-        {
-            return Math.Abs(size1.Width) > Math.Abs(size2.Width) && Math.Abs(size1.Height) > Math.Abs(size2.Height);
-        }
-    }
-
 	public partial class GiferForm : Form
 	{
 		private static List<string> imagesInFolder;
@@ -62,6 +49,7 @@ namespace gifer
 			Image image = new Bitmap(256, 256);
 			using (Graphics g = Graphics.FromImage(image)) {
 				g.FillRectangle(Brushes.LightGray, 0, 0, image.Width, image.Height);
+                g.DrawString("[Drag GIF Here]", new Font("Courier New", 9), Brushes.Black, 73, 120);
 			}
 			SetImage(image);
 
@@ -122,22 +110,31 @@ namespace gifer
 			int y = (this.Height / 2) - (pictureBox1.Height / 2);
 			pictureBox1.Location = new Point(x, y);
 
-			if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image))
+			if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e"))
 			{
 				GifImage = new GifImage(image);
 				pictureBox1.Image = GifImage.Next();
-				timer1.Interval = GifImage.Delay;
-				timer1.Start();
-			}
-			else
-			{
+                if (GifImage.Delay == 0) {
+                    timer1.Interval = 100;
+                } else {
+                    timer1.Interval = GifImage.Delay;
+                }                
+                timer1.Start();
+			} else if (image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
+                // http://web.archive.org/web/20130820015012/http://madskristensen.net/post/Examine-animated-Gife28099s-in-C.aspx
+                PropertyItem item = image.GetPropertyItem(0x5100); // FrameDelay in libgdiplus
+                int delay = delay = (item.Value[0] + item.Value[1] * 256) * 10;
+            } else {
 				pictureBox1.Image = image;
 			}
 		}
 
 		public static string GetFilenameExtension(ImageFormat format)
 		{
-			return ImageCodecInfo.GetImageEncoders().FirstOrDefault(x => x.FormatID == format.Guid)?.FilenameExtension ?? string.Empty; // ImageFormat.Jpeg -> "*.JPG;*.JPEG;*.JPE;*.JFIF"
+			return ImageCodecInfo.GetImageEncoders()
+                .FirstOrDefault(x => x.FormatID == format.Guid)
+                ?.FilenameExtension
+                ?? string.Empty; // ImageFormat.Jpeg -> "*.JPG;*.JPEG;*.JPE;*.JFIF"
 		}
 
 		public static Size ResizeProportionaly(Size size, Size fitSize)
@@ -227,9 +224,11 @@ namespace gifer
 			}
 
 			double ratio = 1.25;
-			if(ModifierKeys == Keys.Control) {
+			if (ModifierKeys == Keys.Control) {
 				ratio = 1.05;
-			}
+			} else if (ModifierKeys == Keys.Shift) {
+                ratio = 2.0;
+            }
 
 			resizing = true;
 			Zoom(Math.Sign(delta)*ratio);
@@ -271,13 +270,15 @@ namespace gifer
 
         private void GiferForm_KeyDown(object sender, KeyEventArgs e)
 		{
-			if (e.KeyCode == Keys.Right) {
-				CurrentImagePath = imagesInFolder.Next(CurrentImagePath);
-			} else if (e.KeyCode == Keys.Left) {
-				CurrentImagePath = imagesInFolder.Previous(CurrentImagePath);
-			}
-			SetImage(Image.FromFile(CurrentImagePath));
-		}
+            if (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left) {
+                if (e.KeyCode == Keys.Right) {
+				    CurrentImagePath = imagesInFolder.Next(CurrentImagePath);
+			    } else if (e.KeyCode == Keys.Left) {
+				    CurrentImagePath = imagesInFolder.Previous(CurrentImagePath);
+                }
+                SetImage(Image.FromFile(CurrentImagePath));
+            }
+        }
 		
 		private void timer1_Tick(object sender, EventArgs e)
 		{
