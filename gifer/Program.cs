@@ -13,7 +13,7 @@ namespace gifer
         {
 			Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(args.Length == 0 ? new GiferForm(string.Empty) : new GiferForm(args[0]));
+			Application.Run(args.Length == 0 ? new GiferForm() : new GiferForm(args[0]));
         }
     }
 }

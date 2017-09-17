@@ -58,6 +58,7 @@
             this.ClientSize = new System.Drawing.Size(256, 256);
             this.Controls.Add(this.pictureBox1);
             this.Name = "GiferForm";
+            this.Load += new System.EventHandler(this.GiferForm_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GiferForm_KeyDown);

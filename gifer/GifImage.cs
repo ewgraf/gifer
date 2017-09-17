@@ -17,6 +17,9 @@ namespace gifer
 			_gif = image;
             Frames = _gif.GetFrameCount(FrameDimension.Time);
 			Delay = BitConverter.ToInt32(image.GetPropertyItem(20736).Value, 0) * 10;
+            if (Delay == 0) {
+                Delay = 100;
+            }
 		}
 
 		public Bitmap Next()
