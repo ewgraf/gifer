@@ -98,8 +98,9 @@ namespace gifer
 		}
 
 		private void SetImage(Image image)
-		{
-			if (image.Width > this.Size.Width || image.Height > this.Size.Height) {
+        {
+            timer1.Stop();
+            if (image.Width > this.Size.Width || image.Height > this.Size.Height) {
 				pictureBox1.Size = ResizeProportionaly(image.Size, this.Size);
 			} else {
 				pictureBox1.Size = image.Size;
@@ -118,7 +119,7 @@ namespace gifer
                 timer1.Interval = _gifImage.Delay;
                 timer1.Start();
 			} else { // if plain image
-				pictureBox1.Image = image;
+                pictureBox1.Image = image;
 			}
 		}
 
