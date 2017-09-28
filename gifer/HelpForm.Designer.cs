@@ -32,6 +32,8 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label14 = new System.Windows.Forms.Label();
+            this.label15 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
@@ -46,8 +48,6 @@
             this.buttonContinue = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.checkBoxOpenInStandalone = new System.Windows.Forms.CheckBox();
-            this.label14 = new System.Windows.Forms.Label();
-            this.label15 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -100,10 +100,28 @@
             this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Location = new System.Drawing.Point(12, 27);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(362, 135);
+            this.groupBox1.Size = new System.Drawing.Size(362, 129);
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Shortcuts";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(189, 107);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(35, 15);
+            this.label14.TabIndex = 16;
+            this.label14.Text = "Exit";
+            // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(10, 107);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(111, 15);
+            this.label15.TabIndex = 15;
+            this.label15.Text = "R🖱Click, [Esc]";
             // 
             // label4
             // 
@@ -180,7 +198,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 32);
+            this.label7.Location = new System.Drawing.Point(6, 32);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(140, 15);
             this.label7.TabIndex = 6;
@@ -200,7 +218,7 @@
             this.checkBoxShowHelpAtStartup.AutoSize = true;
             this.checkBoxShowHelpAtStartup.Checked = true;
             this.checkBoxShowHelpAtStartup.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxShowHelpAtStartup.Location = new System.Drawing.Point(10, 20);
+            this.checkBoxShowHelpAtStartup.Location = new System.Drawing.Point(10, 45);
             this.checkBoxShowHelpAtStartup.Name = "checkBoxShowHelpAtStartup";
             this.checkBoxShowHelpAtStartup.Size = new System.Drawing.Size(166, 19);
             this.checkBoxShowHelpAtStartup.TabIndex = 5;
@@ -234,30 +252,12 @@
             // checkBoxOpenInStandalone
             // 
             this.checkBoxOpenInStandalone.AutoSize = true;
-            this.checkBoxOpenInStandalone.Location = new System.Drawing.Point(10, 45);
+            this.checkBoxOpenInStandalone.Location = new System.Drawing.Point(10, 20);
             this.checkBoxOpenInStandalone.Name = "checkBoxOpenInStandalone";
             this.checkBoxOpenInStandalone.Size = new System.Drawing.Size(278, 19);
             this.checkBoxOpenInStandalone.TabIndex = 7;
             this.checkBoxOpenInStandalone.Text = "Open each image in standalone window";
             this.checkBoxOpenInStandalone.UseVisualStyleBackColor = true;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(189, 107);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(35, 15);
-            this.label14.TabIndex = 16;
-            this.label14.Text = "Exit";
-            // 
-            // label15
-            // 
-            this.label15.AutoSize = true;
-            this.label15.Location = new System.Drawing.Point(10, 107);
-            this.label15.Name = "label15";
-            this.label15.Size = new System.Drawing.Size(111, 15);
-            this.label15.TabIndex = 15;
-            this.label15.Text = "R🖱Click, [Esc]";
             // 
             // HelpForm
             // 
