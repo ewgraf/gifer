@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 
 namespace gifer
 {
-	public class GifImage
+	public class GifImage : IDisposable
 	{
 		private Image _gif;
 		private int _currentFrame = 0;
@@ -30,5 +30,10 @@ namespace gifer
 			_gif.SelectActiveFrame(FrameDimension.Time, _currentFrame++);
 			return Image.FromHbitmap(new Bitmap(_gif).GetHbitmap());
 		}
+
+        public void Dispose()
+        {
+            _gif.Dispose();
+        }
 	}
 }
