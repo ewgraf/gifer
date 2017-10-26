@@ -26,8 +26,7 @@ namespace gifer
         private List<string> _imagesInFolder;
         private readonly OpenWithListener _openWithListener;
 
-        public GiferForm(Configuration config)
-        {
+        public GiferForm(Configuration config) {
             _config = config;
             _openWithListener = new OpenWithListener();
 
@@ -53,20 +52,17 @@ namespace gifer
             SetupStandalone(bool.Parse(_config.AppSettings.Settings["openInStandalone"].Value));
         }
 
-        private void SetDefaultImage()
-        {
+        private void SetDefaultImage() {
             // Empty field
             var image = new Bitmap(256, 256);
-            using (Graphics g = Graphics.FromImage(image))
-            {
+            using (Graphics g = Graphics.FromImage(image)) {
                 g.FillRectangle(Brushes.LightGray, 0, 0, image.Width, image.Height);
-                g.DrawString("[Drag GIF Here]", new Font("Courier New", 9), Brushes.Black, 73, 120);
+                g.DrawString("[Drag GIF/Image Here]", new Font("Courier New", 9), Brushes.Black, 47, 125);
             }
             SetImage(image);
         }
 
-        private void SetupStandalone(bool start)
-        {
+        private void SetupStandalone(bool start) {
             if (start && !_openWithListener.Running) {
                 Task.Run(() => _openWithListener.Start(filePath => {
                     try {
@@ -81,13 +77,9 @@ namespace gifer
             }
         }
 
-        public GiferForm(Configuration config, string imagePath) : this(config)
-		{
-            LoadImageAndFolder(imagePath);
-		}
+        public GiferForm(Configuration config, string imagePath) : this(config) => LoadImageAndFolder(imagePath);
 
-        private void LoadImageAndFolder(string imagePath)
-		{
+        private void LoadImageAndFolder(string imagePath) {
 			if (string.IsNullOrEmpty(imagePath)) {
                 return;
             }
@@ -309,18 +301,26 @@ namespace gifer
             } else if (e.KeyCode == Keys.H) {
                 ShowHelp(_config);
             } else if (e.KeyCode == Keys.Delete) {
-                if(_currentImagePath == null) {
+                if (_currentImagePath == null) {
                     return;
                 }
                 string imageToDeletePath = _currentImagePath;
                 _currentImagePath = _imagesInFolder.Next(_currentImagePath);
                 LoadImageAndFolder(_currentImagePath);
                 _imagesInFolder.Remove(imageToDeletePath);
-                if(imageToDeletePath == _currentImagePath) {
+                if (imageToDeletePath == _currentImagePath) {
                     _currentImagePath = null;
                     SetDefaultImage();
                 }
                 FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+            } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P ) {
+                if (_currentImagePath == null) {
+                    return;
+                }
+                var p = new Process();
+                p.StartInfo.FileName = _currentImagePath;
+                p.StartInfo.Verb = "Print";
+                p.Start();
             } else if (e.KeyCode == Keys.Escape) {
                 Application.Exit();
             }
