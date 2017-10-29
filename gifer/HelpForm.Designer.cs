@@ -219,7 +219,7 @@
             this.checkBoxShowHelpAtStartup.AutoSize = true;
             this.checkBoxShowHelpAtStartup.Checked = true;
             this.checkBoxShowHelpAtStartup.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxShowHelpAtStartup.Location = new System.Drawing.Point(10, 45);
+            this.checkBoxShowHelpAtStartup.Location = new System.Drawing.Point(13, 217);
             this.checkBoxShowHelpAtStartup.Name = "checkBoxShowHelpAtStartup";
             this.checkBoxShowHelpAtStartup.Size = new System.Drawing.Size(166, 19);
             this.checkBoxShowHelpAtStartup.TabIndex = 5;
@@ -228,9 +228,9 @@
             // 
             // buttonContinue
             // 
-            this.buttonContinue.Location = new System.Drawing.Point(9, 70);
+            this.buttonContinue.Location = new System.Drawing.Point(12, 242);
             this.buttonContinue.Name = "buttonContinue";
-            this.buttonContinue.Size = new System.Drawing.Size(344, 29);
+            this.buttonContinue.Size = new System.Drawing.Size(362, 29);
             this.buttonContinue.TabIndex = 6;
             this.buttonContinue.Text = "Save and Continue";
             this.buttonContinue.UseVisualStyleBackColor = true;
@@ -238,14 +238,10 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.buttonContinue);
             this.groupBox2.Controls.Add(this.checkBoxOpenInStandalone);
-            this.groupBox2.Controls.Add(this.checkBoxShowHelpAtStartup);
-            this.groupBox2.Location = new System.Drawing.Point(12, 172);
+            this.groupBox2.Location = new System.Drawing.Point(12, 162);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(361, 108);
+            this.groupBox2.Size = new System.Drawing.Size(361, 49);
             this.groupBox2.TabIndex = 7;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Settings";
@@ -264,7 +260,9 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(385, 292);
+            this.ClientSize = new System.Drawing.Size(385, 281);
+            this.Controls.Add(this.checkBoxShowHelpAtStartup);
+            this.Controls.Add(this.buttonContinue);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.label1);

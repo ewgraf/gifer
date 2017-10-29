@@ -104,8 +104,7 @@ namespace gifer
 			}
 		}
 
-		private Image LoadImage(string imagePath)
-		{
+		private Image LoadImage(string imagePath) {
 			try {
 				switch (Path.GetExtension(imagePath)) {
 					default:
@@ -117,9 +116,9 @@ namespace gifer
 			}
 		}
 
-		private void SetImage(Image image)
-        {
-            timer1.Stop();  
+		private void SetImage(Image image) {
+            timer1.Stop();
+            timerUpdateTaskbarIcon.Stop();
             Point center = Point.Add(pictureBox1.Location, pictureBox1.Size.Divide(2));
             if (image.Width > this.Size.Width || image.Height > this.Size.Height) {
 				pictureBox1.Size = ResizeProportionaly(image.Size, this.Size);
@@ -133,40 +132,37 @@ namespace gifer
             _gifImage?.Dispose();
             GC.Collect();
             if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) 
-                || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e"))
-			{
+                || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
 				_gifImage = new GifImage(image);
 				pictureBox1.Image = _gifImage.Next();
                 timer1.Interval = _gifImage.Delay;
                 timer1.Start();
-			} else { // if plain image
+                timerUpdateTaskbarIcon.Start();
+            } else { // if plain image
                 pictureBox1.Image = image;
-			}
+                this.Icon = Icon.FromHandle(((Bitmap)image).GetHicon());                
+            }
 		}
 
-		public static string GetFilenameExtension(ImageFormat format)
-		{
+		public static string GetFilenameExtension(ImageFormat format) {
 			return ImageCodecInfo.GetImageEncoders()
                 .FirstOrDefault(x => x.FormatID == format.Guid)
                 ?.FilenameExtension
                 ?? string.Empty; // ImageFormat.Jpeg -> "*.JPG;*.JPEG;*.JPE;*.JFIF"
 		}
 
-		public static Size ResizeProportionaly(Size size, Size fitSize)
-		{
+		public static Size ResizeProportionaly(Size size, Size fitSize) {
             double ratioX = (double)fitSize.Width  / (double)size.Width;
             double ratioY = (double)fitSize.Height / (double)size.Height;
             double ratio  = Math.Min(ratioX, ratioY);
             return size.Multiply(ratio);
 		}
 		
-        private void Form1_DragEnter(object sender, DragEventArgs e)
-        {
+        private void Form1_DragEnter(object sender, DragEventArgs e) {
             e.Effect = DragDropEffects.All;
         }
 
-        private void Form1_DragDrop(object sender, DragEventArgs e)
-        {
+        private void Form1_DragDrop(object sender, DragEventArgs e) {
             string imagePath = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
             LoadImageAndFolder(imagePath);
 			this.Activate();
@@ -289,8 +285,7 @@ namespace gifer
 
         #endregion
 
-        private void GiferForm_KeyDown(object sender, KeyEventArgs e)
-		{
+        private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
             if (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left) {
                 if (e.KeyCode == Keys.Right) {
                     _currentImagePath = _imagesInFolder.Next(_currentImagePath);
@@ -326,8 +321,7 @@ namespace gifer
             }
         }
 
-        private void ShowHelp(Configuration config)
-        {
+        private void ShowHelp(Configuration config) {
             bool showHelp;
             bool standalone;
             bool.TryParse(config.AppSettings.Settings["showHelpAtStartup"].Value, out showHelp);
@@ -347,13 +341,30 @@ namespace gifer
                 SetupStandalone(helpForm.OpenInStandalone);
             }
         }
-		
-		private void timer1_Tick(object sender, EventArgs e)
-		{
-			pictureBox1.Image = _gifImage.Next();
-		}
 
-		private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
+		private void timer1_Tick(object sender, EventArgs e) {
+			pictureBox1.Image = _gifImage.Next();
+        }
+
+        private void timerUpdateTaskbarIcon_Tick(object sender, EventArgs e) {
+            this.Icon = Icon.FromHandle((PadImage(pictureBox1.Image)).GetHicon());
+        }
+
+        public static Bitmap PadImage(Image image) {
+            int largestDimension = Math.Max(image.Height, image.Width);
+            var squareSize = new Size(largestDimension, largestDimension);
+            Bitmap squareImage = new Bitmap(squareSize.Width, squareSize.Height);
+            using (Graphics graphics = Graphics.FromImage(squareImage)) {
+                //graphics.FillRectangle(Brushes.White, 0, 0, squareSize.Width, squareSize.Height);
+                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
+                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                graphics.DrawImage(image, (squareSize.Width / 2) - (image.Width / 2), (squareSize.Height / 2) - (image.Height / 2), image.Width, image.Height);
+            }
+            return squareImage;
+        }
+
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right) {
                 Application.Exit();
