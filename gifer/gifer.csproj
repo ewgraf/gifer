@@ -67,7 +67,7 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>gifer logo 42x42 exe icon.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\gifer logo 42x42 exe icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
@@ -84,8 +84,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Animation.cs" />
-    <Compile Include="FileAssotiationHelper.cs" />
     <Compile Include="Gifer.cs" />
     <Compile Include="GiferForm.cs">
       <SubType>Form</SubType>
@@ -93,15 +91,12 @@
     <Compile Include="GiferForm.Designer.cs">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GifImage.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="HelpForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="HelpForm.Designer.cs">
       <DependentUpon>HelpForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="OpenWithListener.cs" />
     <Compile Include="Program.cs" />
     <EmbeddedResource Include="GiferForm.resx">
       <DependentUpon>GiferForm.cs</DependentUpon>
@@ -142,8 +137,18 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="gifer logo 42x42 exe icon.ico" />
-    <Content Include="gifer-logo-44x44.ico" />
+    <Content Include="Resources\gifer logo 42x42 exe icon.ico" />
+    <Content Include="Resources\gifer-logo-44x44.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\gifer.Domain\gifer.Domain.csproj">
+      <Project>{9cc12b2d-0038-4876-865e-36688ca7f248}</Project>
+      <Name>gifer.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\gifer.Utils\gifer.Utils.csproj">
+      <Project>{e559fab8-608a-41d7-a814-4dedf6deeeae}</Project>
+      <Name>gifer.Utils</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

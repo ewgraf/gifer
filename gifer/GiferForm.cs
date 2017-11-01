@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using gifer.Domain;
+using gifer.Utils;
+using Microsoft.VisualBasic.FileIO;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -10,17 +12,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace gifer
-{
-	public partial class GiferForm : Form
-	{
-        private static readonly string[] KnownImageFormats = 
-            new [] { ImageFormat.Bmp, ImageFormat.Gif, ImageFormat.Jpeg, ImageFormat.Png, ImageFormat.Tiff }
-            .Select(GetFilenameExtension)
-            .SelectMany(e => e.Replace("*.", string.Empty).Split(';'))
-            .ToArray();
+namespace gifer {
+	public partial class GiferForm : Form {
         private readonly Configuration _config;
-
         private GifImage _gifImage;
         private string _currentImagePath;
         private List<string> _imagesInFolder;
@@ -28,21 +22,24 @@ namespace gifer
 
         public GiferForm(Configuration config) {
             _config = config;
-            _openWithListener = new OpenWithListener();
+            _openWithListener = new OpenWithListener(Gifer.EndPoint);
 
             InitializeComponent();
 
             this.FormBorderStyle = FormBorderStyle.None;
             this.AllowDrop = true;
+            // Form.BackgroungImage flickers when updated, therefore can not be used as a thind to draw a gif on 
+            // we have to use PictureBox
             this.pictureBox1.MouseWheel += new MouseEventHandler(this.pictureBox1_MouseWheel);
             this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             this.StartPosition = FormStartPosition.CenterScreen;
 
             // moving picturebox insible invisible form
             // making transparent form fullscreen
-            this.Size = Screen.PrimaryScreen.Bounds.Size;
-            this.TransparencyKey = this.BackColor;
-            this.pictureBox1.BackColor = Color.Transparent;
+            //this.Size = Screen.PrimaryScreen.Bounds.Size;
+            //this.TransparencyKey = this.BackColor;
+            //this.pictureBox1.BackColor = Color.Red;
+            
 
             SetDefaultImage();
 
@@ -50,7 +47,16 @@ namespace gifer
             int y = (this.Height / 2) - (pictureBox1.Height / 2);
             pictureBox1.Location = new Point(x, y);
             SetupStandalone(bool.Parse(_config.AppSettings.Settings["openInStandalone"].Value));
+            //this.OnPaintBackground
         }
+
+
+
+        //protected override void OnPaintBackground(PaintEventArgs e) {
+        //    var backgroundBrush = new SolidBrush(Color.Transparent);
+        //    Graphics g = e.Graphics;
+        //    g.FillRectangle(backgroundBrush, 0, 0, this.Width, this.Height);
+        //}
 
         private void SetDefaultImage() {
             // Empty field
@@ -83,7 +89,7 @@ namespace gifer
 			if (string.IsNullOrEmpty(imagePath)) {
                 return;
             }
-            if (KnownImageFormats.Any(imagePath.ToUpper().EndsWith)) {
+            if (Gifer.KnownImageFormats.Any(imagePath.ToUpper().EndsWith)) {
 				Image image = LoadImage(imagePath);
 				if (image == null) {
 					MessageBox.Show($"Can not load image: '{imagePath}'");
@@ -97,7 +103,7 @@ namespace gifer
                 }
 				_currentImagePath = imagePath;
 				_imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
-					.Where(path => KnownImageFormats.Any(path.ToUpper().EndsWith))
+					.Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
 					.ToList();
 			} else {
 				MessageBox.Show($"Unknown image extension at: '{imagePath}' '{Path.GetExtension(imagePath)}'");
@@ -119,13 +125,14 @@ namespace gifer
 		private void SetImage(Image image) {
             timer1.Stop();
             timerUpdateTaskbarIcon.Stop();
-            Point center = Point.Add(pictureBox1.Location, pictureBox1.Size.Divide(2));
-            if (image.Width > this.Size.Width || image.Height > this.Size.Height) {
+            if (image.Width > Screen.PrimaryScreen.Bounds.Size.Width || image.Height > Screen.PrimaryScreen.Bounds.Size.Height) {
 				pictureBox1.Size = ResizeProportionaly(image.Size, this.Size);
-			} else {
+            } else {
 				pictureBox1.Size = image.Size;
-			}
-            pictureBox1.Location = Point.Subtract(center, pictureBox1.Size.Divide(2));
+            }
+            this.Size = pictureBox1.Size;
+            Point center = (Point)Screen.PrimaryScreen.Bounds.Size.Divide(2);
+            this.Location = Point.Subtract(center, this.Size.Divide(2));
 
             pictureBox1.Image?.Dispose();
             pictureBox1.Image = null;
@@ -142,13 +149,6 @@ namespace gifer
                 pictureBox1.Image = image;
                 this.Icon = Icon.FromHandle(((Bitmap)image).GetHicon());                
             }
-		}
-
-		public static string GetFilenameExtension(ImageFormat format) {
-			return ImageCodecInfo.GetImageEncoders()
-                .FirstOrDefault(x => x.FormatID == format.Guid)
-                ?.FilenameExtension
-                ?? string.Empty; // ImageFormat.Jpeg -> "*.JPG;*.JPEG;*.JPE;*.JFIF"
 		}
 
 		public static Size ResizeProportionaly(Size size, Size fitSize) {
@@ -174,8 +174,7 @@ namespace gifer
 		private int _y;
 		private bool _moving;
 
-		private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
-        {
+		private void pictureBox1_MouseDown(object sender, MouseEventArgs e) {
 			if (e.Button != MouseButtons.Left) {
 				return;
 			}
@@ -184,18 +183,19 @@ namespace gifer
 			_y = e.Y;
 		}
 
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
-        {
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
 			var c = sender as PictureBox;
 			if (!_moving || c == null) {
 				return;
 			}
-			c.Top = e.Y + c.Top - _y;
-			c.Left = e.X + c.Left - _x;
-		}
 
-		private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
-		{
+            //c.Top = e.Y + c.Top - _y;
+            //c.Left = e.X + c.Left - _x;
+            this.Top  = e.Y + this.Top  - _y;
+            this.Left = e.X + this.Left - _x;
+        }
+
+		private void pictureBox1_MouseUp(object sender, MouseEventArgs e) {
 			var c = sender as PictureBox;
 			if (c == null) {
 				return;
@@ -209,13 +209,11 @@ namespace gifer
 
 		private bool _resizing = false;
 
-        public void pictureBox1_MouseWheel(object sender, MouseEventArgs e)
-        {
+        public void pictureBox1_MouseWheel(object sender, MouseEventArgs e) {
 			pictureBox1_Resize(sender, e);
 		}
 		
-		private void pictureBox1_Resize(object sender, EventArgs e)
-		{
+		private void pictureBox1_Resize(object sender, EventArgs e) {
 			var args = e as MouseEventArgs;
 			if(args == null) { // if resize is caused not by mouse wheel, but by 'pictureBox1.Size = ' or '+='.
 				return;
@@ -239,7 +237,7 @@ namespace gifer
             }
 
 			_resizing = true;
-			Zoom(Math.Sign(delta)*ratio);
+			Zoom(Math.Sign(delta)*ratio, this, this.pictureBox1);
 			_resizing = false;
 		}
 
@@ -250,14 +248,29 @@ namespace gifer
         //    return exp(-(x - mu) ^ 2 / (2 * sigma ^ 2)) / sqrt(2 * pi * sigma ^ 2)
         //}
 
-        private void Zoom(double ratio)
-        {
-            Size size = pictureBox1.Size;
-			Point location = pictureBox1.Location;
+        bool uber = false;
+
+        private void Zoom(double ratio, Form form, PictureBox pictureBox) {
+            Size size;
+            if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
+                pictureBox.Height >= Screen.PrimaryScreen.Bounds.Height) {
+                size = pictureBox.Size;
+            } else {
+                size = form.Size;
+            }
+
+            Point location;
+            if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
+                pictureBox.Height >= Screen.PrimaryScreen.Bounds.Height) {
+                location = pictureBox.Location;
+            } else {
+                location = form.Location;
+            }
+            
             double enlargementRatio = Animation.GetEnlargementValue(ratio);
             var newSize = new Size {
-                Width  = Convert.ToInt32(pictureBox1.Width  * enlargementRatio),
-                Height = Convert.ToInt32(pictureBox1.Height * enlargementRatio)
+                Width  = Convert.ToInt32(size.Width  * enlargementRatio),
+                Height = Convert.ToInt32(size.Height * enlargementRatio)
             };
             Size widening = newSize - size;
             var newLocation = Point.Add(location, widening.Divide(-2));
@@ -274,13 +287,34 @@ namespace gifer
             Debug.WriteLine($"Steps: {steps}");
             widening = widening.Divide(steps).RoundToPowerOf2();
             Size shift = widening.Divide(2);
-            while (_resizing && !ModifierKeys.HasFlag(Keys.Alt) && (pictureBox1.Size - newSize).AbsMore(widening)) {
-                pictureBox1.Size += widening;
-                pictureBox1.Location -= shift;
+            //parent.Size = newSize;
+            //parent.Location = newLocation;
+            while (_resizing && !ModifierKeys.HasFlag(Keys.Alt) && (pictureBox.Size - newSize).AbsMore(widening)) {
+                pictureBox.Size += widening;
+                //Application.DoEvents();
+                //Application.DoEvents();
+                //Application.DoEvents();
+                if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
+                    this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
+                    form.Size += widening;
+                    form.Location -= shift;
+                } else {
+                    pictureBox.Location -= shift;
+                }
+                //parent.Size += widening;
+                //Application.DoEvents();
+                //Application.DoEvents();
+                //parent.Location -= shift;
                 Application.DoEvents();
-            }            
-            pictureBox1.Size = newSize;
-            pictureBox1.Location = newLocation;
+            }
+            if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
+                this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
+                form.Size += widening;
+                form.Location -= shift;
+            } else {
+                pictureBox.Size = newSize;
+                pictureBox.Location = newLocation;
+            }
         }
 
         #endregion
@@ -308,7 +342,7 @@ namespace gifer
                     SetDefaultImage();
                 }
                 FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-            } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P ) {
+            } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P) {
                 if (_currentImagePath == null) {
                     return;
                 }
@@ -343,7 +377,7 @@ namespace gifer
         }
 
 		private void timer1_Tick(object sender, EventArgs e) {
-			pictureBox1.Image = _gifImage.Next();
+            pictureBox1.Image = _gifImage.Next();
         }
 
         private void timerUpdateTaskbarIcon_Tick(object sender, EventArgs e) {
@@ -364,15 +398,21 @@ namespace gifer
             return squareImage;
         }
 
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e)
-        {
+        private void pictureBox1_MouseClick(object sender, MouseEventArgs e) {
             if (e.Button == MouseButtons.Right) {
                 Application.Exit();
             }
         }
 
-        private void GiferForm_Load(object sender, EventArgs e)
-        {
+        private void GiferForm_Load(object sender, EventArgs e) {
+            //this.SetStyle(
+            //    ControlStyles.AllPaintingInWmPaint |
+            //    ControlStyles.OptimizedDoubleBuffer |
+            //    ControlStyles.ResizeRedraw |
+            //    ControlStyles.DoubleBuffer |
+            //    ControlStyles.UserPaint,
+            //    true);
+            //this.MaximumSize = new Size(10000, 10000);
             bool showHelp;
             bool.TryParse(_config.AppSettings.Settings["showHelpAtStartup"].Value, out showHelp);
             if (showHelp) {

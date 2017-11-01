@@ -1,13 +1,10 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
+using Microsoft.Win32;
 
-namespace gifer
-{
-    public class FileAssotiationHelper
-    {
-        public static void CheckGiferIsRegistered()
-        {
+namespace gifer.Utils {
+    public class FileAssotiationHelper {
+        public static void CheckGiferIsRegistered() {
             string k = @"Applications\gifer.exe";
             var q = Registry.ClassesRoot.OpenSubKey(k);
             if(q == null) {
@@ -15,11 +12,9 @@ namespace gifer
                 d.SetValue("(default)", @"""C:\Program Files(x86)\Gifer\gifer.exe"" ""%1""");
                 d.Close();
             }
-            ;
         }
 
-        public static void SetAssociation(string extension)
-        {
+        public static void SetAssociation(string extension) {
             // The stuff that was above here is basically the same
 
             // Delete the key instead of trying to change it

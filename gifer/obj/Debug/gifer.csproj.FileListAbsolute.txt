@@ -16,3 +16,7 @@ C:\Users\Ewgraf\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.GiferForm.resources
 C:\Users\Ewgraf\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.HelpForm.resources
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.HelpForm.resources
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\obj\Debug\gifer.csprojResolveAssemblyReference.cache
+C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\gifer.Domain.dll
+C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\gifer.Utils.dll
+C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\gifer.Domain.pdb
+C:\Users\Lenovo\Documents\GitHub\Gifer\gifer\bin\Debug\gifer.Utils.pdb

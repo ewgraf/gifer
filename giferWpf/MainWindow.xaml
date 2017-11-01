@@ -1,0 +1,21 @@
+﻿<Window x:Class="giferWpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:giferWpf"
+        mc:Ignorable="d"
+        AllowsTransparency="True"
+        WindowStyle="None"
+        Background="Transparent"
+        Title="MainWindow" Height="300" Width="300" KeyDown="Window_KeyDown">
+    <Grid>
+        <Canvas  x:Name="canv" >
+            <Image x:Name="pictureBox1" 
+                Width="256" Height="256"
+                HorizontalAlignment="Left" AllowDrop="True" Drop="pictureBox1_Drop" Margin="0" 
+                Stretch="Fill" MouseDown="pictureBox1_MouseDown" MouseMove="pictureBox1_MouseMove" MouseUp="pictureBox1_MouseUp" MouseLeave="pictureBox1_MouseLeave" MouseWheel="pictureBox1_MouseWheel" SizeChanged="pictureBox1_SizeChanged"
+                />
+        </Canvas>
+    </Grid>
+</Window>

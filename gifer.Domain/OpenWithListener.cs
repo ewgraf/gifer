@@ -1,24 +1,25 @@
 ﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace gifer
-{
-    public class OpenWithListener
-    {
+namespace gifer.Domain {
+    public class OpenWithListener {
         private TcpListener _tcpListener;
         private CancellationTokenSource _cts;
+        private readonly IPEndPoint _endPoint;
         public bool Running { get; private set; } = false;
+        
+        public OpenWithListener(IPEndPoint endPoint) {
+            _endPoint = endPoint;
+        }
 
-        public OpenWithListener() { }
-
-        public async void Start(Action<string> continueWith)
-        {
+        public async void Start(Action<string> continueWith) {
             _cts = new CancellationTokenSource();
-            _tcpListener = new TcpListener(Gifer.EndPoint); // to do: dynamikly select port and store in repository
+            _tcpListener = new TcpListener(_endPoint); // to do: dynamikly select port and store in repository
             try {
                 _tcpListener.Start();
                 Running = true;
@@ -34,8 +35,7 @@ namespace gifer
             }
         }
 
-        public void Stop()
-        {
+        public void Stop() {
             try {
                 _cts.Cancel();
                 _tcpListener.Stop();
@@ -46,8 +46,7 @@ namespace gifer
             }
         }
 
-        public async Task AcceptClientsAsync(TcpListener listener, CancellationToken token, Action<string> continueWith)
-        {
+        public async Task AcceptClientsAsync(TcpListener listener, CancellationToken token, Action<string> continueWith) {
             //once again, just fire and forget, and use the CancellationToken
             //to signal to the "forgotten" async invocation.
             while (!token.IsCancellationRequested) {
