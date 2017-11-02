@@ -83,7 +83,8 @@ namespace gifer {
             }
         }
 
-        public GiferForm(Configuration config, string imagePath) : this(config) => LoadImageAndFolder(imagePath);
+        public GiferForm(Configuration config, string imagePath) : this(config) 
+            => LoadImageAndFolder(imagePath);
 
         private void LoadImageAndFolder(string imagePath) {
 			if (string.IsNullOrEmpty(imagePath)) {
