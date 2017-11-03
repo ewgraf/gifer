@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using gifer.Domain;
 using gifer.Utils;
 using Microsoft.VisualBasic.FileIO;
+using System.Windows.Media.Imaging;
 
 namespace giferWpf {
     /// <summary>
@@ -27,6 +28,7 @@ namespace giferWpf {
         private GifImage _gifImage;
         private List<string> _imagesInFolder;
         private string _currentImagePath;
+        private WriteableBitmap _writableBitmap;
 
         public MainWindow() {
             _config = ConfigurationManager.OpenExeConfiguration($@"{AppDomain.CurrentDomain.BaseDirectory}\gifer.exe").Setup();
@@ -59,11 +61,12 @@ namespace giferWpf {
         }
 
         private void timer_Tick(object sender, EventArgs e) {
-            this.pictureBox1.Source = _gifImage.Next().ToBitmapSource();
+            _gifImage.DrawNext(ref _writableBitmap);
+            pictureBox1.Source = _writableBitmap;
         }
 
         private void iconTimer_Tick(object sender, EventArgs e) {
-            this.Icon = pictureBox1.Source;
+            this.Icon = _writableBitmap;
         }
 
         private void SetImage(Bitmap image, bool updateTaskbarIcon = true) {
@@ -88,10 +91,13 @@ namespace giferWpf {
             GC.Collect();
             if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
                 _gifImage = new GifImage(image);
-                pictureBox1.Source = _gifImage.Next().ToBitmapSource();
+                _writableBitmap = _gifImage.Frame.ToWritableBitmap();
+                this.pictureBox1.Source = _writableBitmap;
                 _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.Delay);
                 _gifTimer.Start();
-                _iconTimer.Start();
+                if (updateTaskbarIcon) {
+                    _iconTimer.Start();
+                }
             } else { // if plain image
                 if (updateTaskbarIcon) {
                     this.Icon = image.ToBitmapSource();
@@ -182,10 +188,12 @@ namespace giferWpf {
             if (!_moving || s == null) {
                 return;
             }
-            var position = e.GetPosition(this);
+            System.Windows.Point position = e.GetPosition(this);
             s.SetValue(Canvas.LeftProperty, e.GetPosition(canvas).X - s.Margin.Left - _position.X);
             s.SetValue(Canvas.TopProperty,  e.GetPosition(canvas).Y - s.Margin.Top  - _position.Y);
-            Debug.WriteLine($"{e.GetPosition(canvas).X} {e.GetPosition(canvas).Y} {position.X} {position.Y}");
+            Debug.WriteLine($"pictureBox1.Margin.Left: {pictureBox1.Margin.Left} pictureBox1.Margin.Top: {pictureBox1.Margin.Top}");
+            Debug.WriteLine($"canvas.Margin.Left: {canvas.Margin.Left} canvas.Margin.Top: {canvas.Margin.Top}");
+            Debug.WriteLine($"s.GetValue(Canvas.LeftProperty): {s.GetValue(Canvas.LeftProperty)} s.GetValue(Canvas.TopProperty): {s.GetValue(Canvas.TopProperty)}");
         }
 
         private void pictureBox1_MouseUp(object sender, MouseButtonEventArgs e) {
@@ -196,11 +204,11 @@ namespace giferWpf {
             _moving = false;
         }
 
-        private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e) {
-            var thumb = e.Source as UIElement;
-            Canvas.SetLeft(thumb, Canvas.GetLeft(thumb) + e.HorizontalChange);
-            Canvas.SetTop(thumb, Canvas.GetTop(thumb) + e.VerticalChange);
-        }
+        //private void Thumb_DragDelta(object sender, System.Windows.Controls.Primitives.DragDeltaEventArgs e) {
+        //    var thumb = e.Source as UIElement;
+        //    Canvas.SetLeft(thumb, Canvas.GetLeft(thumb) + e.HorizontalChange);
+        //    Canvas.SetTop(thumb, Canvas.GetTop(thumb) + e.VerticalChange);
+        //}
 
         #endregion
 
@@ -235,6 +243,7 @@ namespace giferWpf {
         private bool _resizing = false;
 
         private void pictureBox1_MouseWheel(object sender, MouseWheelEventArgs e) {
+            this.pictureBox1.CaptureMouse();
             pictureBox1_SizeChanged(sender, e);
         }
 
@@ -262,41 +271,49 @@ namespace giferWpf {
             }
 
             _resizing = true;
-            Zoom(Math.Sign(delta) * ratio);
+            Zoom(Math.Sign(delta) * ratio, args);
             _resizing = false;
         }
 
-        private void Zoom(double ratio) {
+        private void Zoom(double ratio, MouseWheelEventArgs e) {
             Thickness margin = pictureBox1.Margin;
             var size = new System.Windows.Size(
-                SystemParameters.PrimaryScreenWidth  - (pictureBox1.Margin.Left + pictureBox1.Margin.Right ),
-                SystemParameters.PrimaryScreenHeight - (pictureBox1.Margin.Top  + pictureBox1.Margin.Bottom)
+                SystemParameters.PrimaryScreenWidth - (pictureBox1.Margin.Left + pictureBox1.Margin.Right),
+                SystemParameters.PrimaryScreenHeight - (pictureBox1.Margin.Top + pictureBox1.Margin.Bottom)
             );
             double enlargementRatio = Animation.GetEnlargementValue(ratio);
             double delta = enlargementRatio;
             _newSize = new System.Windows.Size(
-                size.Width  * enlargementRatio,
+                size.Width * enlargementRatio,
                 size.Height * enlargementRatio
             );
 
-            _deltaWidth  = ((_newSize.Width  - pictureBox1.Width )) / 60;
+            _deltaWidth = ((_newSize.Width - pictureBox1.Width)) / 60;
             _deltaHeigth = ((_newSize.Height - pictureBox1.Height)) / 60;
 
             float animationAcceleration = 10.0f;
 
-            _deltaWidth  *= animationAcceleration;
+            _deltaWidth *= animationAcceleration;
             _deltaHeigth *= animationAcceleration;
 
             _newMargin = new Thickness(
-                margin.Left   - (pictureBox1.Width  - _newSize.Width ) / 2,
-                margin.Top    - (pictureBox1.Height - _newSize.Height) / 2,
-                margin.Right  - (pictureBox1.Width  - _newSize.Width ) / 2,
+                margin.Left - (pictureBox1.Width - _newSize.Width) / 2,
+                margin.Top - (pictureBox1.Height - _newSize.Height) / 2,
+                margin.Right - (pictureBox1.Width - _newSize.Width) / 2,
                 margin.Bottom - (pictureBox1.Height - _newSize.Height) / 2
             );
+            //System.Windows.Point center = new System.Windows.Point(_newMargin.Left + _newSize.Width / 2, _newMargin.Top + _newSize.Height / 2);
+            //System.Windows.Point position = e.GetPosition(this.pictureBox1);
+            //_newMargin = new Thickness(
+            //    _newMargin.Left   - Math.Sign(ratio) * (pictureBox1.Width / 2 - position.X) / 2,
+            //    _newMargin.Top    - Math.Sign(ratio) * (pictureBox1.Height / 2 - position.Y) / 2,
+            //    _newMargin.Right  + Math.Sign(ratio) * (pictureBox1.Width / 2 - position.X) / 2,
+            //    _newMargin.Bottom + Math.Sign(ratio) * (pictureBox1.Height / 2 - position.Y) / 2
+            //);
             _deltaMargin = new Thickness(
-                ((pictureBox1.Margin.Left   - _newMargin.Left  ) / 60) * animationAcceleration,
-                ((pictureBox1.Margin.Top    - _newMargin.Top   ) / 60) * animationAcceleration,
-                ((pictureBox1.Margin.Right  - _newMargin.Right ) / 60) * animationAcceleration,
+                ((pictureBox1.Margin.Left - _newMargin.Left) / 60) * animationAcceleration,
+                ((pictureBox1.Margin.Top - _newMargin.Top) / 60) * animationAcceleration,
+                ((pictureBox1.Margin.Right - _newMargin.Right) / 60) * animationAcceleration,
                 ((pictureBox1.Margin.Bottom - _newMargin.Bottom) / 60) * animationAcceleration
             );
             _resizeIterations = (uint)((_newSize.Width - pictureBox1.Width) / _deltaWidth);

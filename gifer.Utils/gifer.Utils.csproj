@@ -50,6 +50,7 @@
     <Compile Include="ConfigHelper.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="FileAssotiationHelper.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
