@@ -12,7 +12,11 @@ namespace gifer.Utils {
         }
 
         public static WriteableBitmap ToWritableBitmap(this Bitmap image) {
-            return new WriteableBitmap(image.ToBitmapSource());
+            BitmapSource source = image.ToBitmapSource();
+            source.Freeze();
+            WriteableBitmap bitmap = new WriteableBitmap(source);
+            source = null;
+            return bitmap;
         }
     }
 }

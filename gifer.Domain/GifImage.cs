@@ -2,6 +2,7 @@
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 
@@ -10,6 +11,7 @@ namespace gifer.Domain {
         private readonly Bitmap _gif;
         private readonly Rectangle _rectangle;
         private int _currentFrame = 0;
+        object share = new object();
 
 		public int Delay { get; set; }
         public int Frames { get; set; }
@@ -30,21 +32,18 @@ namespace gifer.Domain {
 			if (_currentFrame >= Frames || _currentFrame < 1) {
 				_currentFrame = 0;
 			}
-			_gif.SelectActiveFrame(FrameDimension.Time, _currentFrame++);
-
-            BitmapData frameData = _gif.LockBits(_rectangle, ImageLockMode.ReadOnly, _gif.PixelFormat);
-            bitmap.Lock();
-            NativeMethods.CopyMemory(bitmap.BackBuffer, frameData.Scan0, Math.Abs(frameData.Stride * _gif.Height));
-            bitmap.AddDirtyRect(new Int32Rect(0, 0, _rectangle.Width, _rectangle.Height));
-            bitmap.Unlock();
-            _gif.UnlockBits(frameData);
-        }
-
-        public Bitmap Frame {
-            get {
-                return (Bitmap)_gif.Clone();
+            lock (share) {
+			    _gif.SelectActiveFrame(FrameDimension.Time, _currentFrame++);
+                BitmapData frameData = _gif.LockBits(_rectangle, ImageLockMode.ReadOnly, _gif.PixelFormat);
+                bitmap.Lock();
+                NativeMethods.CopyMemory(bitmap.BackBuffer, frameData.Scan0, Math.Abs(frameData.Stride * _gif.Height));
+                bitmap.AddDirtyRect(new Int32Rect(0, 0, _rectangle.Width, _rectangle.Height));
+                bitmap.Unlock();
+                _gif.UnlockBits(frameData);
             }
         }
+
+        public Bitmap Copy() => (Bitmap)_gif.Clone();
 
         public void Dispose() {
             _gif.Dispose();

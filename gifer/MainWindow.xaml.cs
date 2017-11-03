@@ -15,6 +15,8 @@ using gifer.Domain;
 using gifer.Utils;
 using Microsoft.VisualBasic.FileIO;
 using System.Windows.Media.Imaging;
+using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace giferWpf {
     /// <summary>
@@ -62,36 +64,140 @@ namespace giferWpf {
 
         private void timer_Tick(object sender, EventArgs e) {
             _gifImage.DrawNext(ref _writableBitmap);
-            pictureBox1.Source = _writableBitmap;
+            //pictureBox1.Source = _writableBitmap;
         }
 
         private void iconTimer_Tick(object sender, EventArgs e) {
             this.Icon = _writableBitmap;
         }
 
-        private void SetImage(Bitmap image, bool updateTaskbarIcon = true) {
+        private WriteableBitmap CreateImageSource(Stream stream) {
+            BitmapImage bi = new BitmapImage();
+            bi.BeginInit();
+            bi.CacheOption = BitmapCacheOption.OnLoad;
+            bi.StreamSource = stream;
+            bi.EndInit();
+            bi.Freeze();
+
+            BitmapSource prgbaSource = new FormatConvertedBitmap(bi, PixelFormats.Pbgra32, null, 0);
+            WriteableBitmap bmp = new WriteableBitmap(prgbaSource);
+            int w = bmp.PixelWidth;
+            int h = bmp.PixelHeight;
+            int[] pixelData = new int[w * h];
+            //int widthInBytes = 4 * w;
+            int widthInBytes = bmp.PixelWidth * (bmp.Format.BitsPerPixel / 8); //equals 4*w
+            bmp.CopyPixels(pixelData, widthInBytes, 0);
+
+            bmp.WritePixels(new Int32Rect(0, 0, w, h), pixelData, widthInBytes, 0);
+            bi = null;
+
+            return bmp;
+        }
+
+        //private void SetImage(Bitmap image, bool updateTaskbarIcon = true) {
+        //    //pictureBox1.Source = null;
+        //    //UpdateLayout();
+        //    //GC.Collect();
+            
+        //    BitmapSource source = Imaging.CreateBitmapSourceFromHBitmap(
+        //        image.GetHbitmap(), 
+        //        IntPtr.Zero, 
+        //        Int32Rect.Empty, 
+        //        BitmapSizeOptions.FromEmptyOptions());
+        //    source.Freeze();
+        //    pictureBox1.Source = null;
+        //    GC.Collect();
+        //    pictureBox1.Source = source;
+        //    //UpdateLayout();
+        //    //GC.Collect();
+        //    return;
+        //    _gifTimer?.Stop();
+        //    _iconTimer?.Stop();
+        //    var center = new System.Windows.Point(
+        //        this.pictureBox1.Margin.Left + this.pictureBox1.Width  / 2,
+        //        this.pictureBox1.Margin.Top  + this.pictureBox1.Height / 2
+        //    );
+        //    if (image.Width > SystemParameters.PrimaryScreenWidth || image.Height > SystemParameters.PrimaryScreenHeight) {
+        //        var size = ResizeProportionaly(image.Size, new System.Drawing.Size((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight));
+        //        this.pictureBox1.Width  = size.Width;
+        //        this.pictureBox1.Height = size.Height;
+        //    } else {
+        //        this.pictureBox1.Width  = image.Width;
+        //        this.pictureBox1.Height = image.Height;
+        //    }
+        //    double horizontalMargin = center.X - this.pictureBox1.Width  / 2;
+        //    double verticalMargin   = center.Y - this.pictureBox1.Height / 2;
+        //    this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
+        //    _gifImage?.Dispose();
+        //    _gifImage = null;
+        //    this.pictureBox1.Source?.Freeze();
+        //    this.pictureBox1.Source = null;
+        //    UpdateLayout();
+        //    GC.Collect();
+        //    if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
+        //        _gifImage = new GifImage((Bitmap)image.Clone());
+
+        //        _writableBitmap = null;
+        //        Bitmap frame = _gifImage.Copy();
+        //        _writableBitmap = frame.ToWritableBitmap();
+        //        frame.Dispose();
+        //        frame = null;
+
+        //        this.pictureBox1.Source = _writableBitmap;
+        //        _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.Delay);
+        //        _gifTimer.Start();
+        //        if (updateTaskbarIcon) {
+        //            _iconTimer.Start();
+        //        }
+        //    } else { // if plain image
+        //        pictureBox1.Source = image.ToBitmapSource();
+        //        pictureBox1.Source.Freeze();
+        //        if (updateTaskbarIcon) {
+        //            this.Icon = null;
+        //            this.Icon = pictureBox1.Source;
+        //            this.Icon.Freeze();
+        //        }
+        //    }
+        //    GC.Collect();
+        //}
+
+        private static readonly byte[] GifHeader = new byte[] { 71, 73, 70, 56, 57, 97 };
+
+        private void SetImage(Stream stream, bool updateTaskbarIcon = true) {
             _gifTimer?.Stop();
             _iconTimer?.Stop();
+            var bytes = new byte[6];
+            stream.Read(bytes, 0, 6);
+            stream.Seek(0, SeekOrigin.Begin);
+            _writableBitmap = CreateImageSource(stream);
+            //stream.Seek(0, SeekOrigin.Begin);
+            stream.Close();
             var center = new System.Windows.Point(
-                this.pictureBox1.Margin.Left + this.pictureBox1.Width  / 2,
-                this.pictureBox1.Margin.Top  + this.pictureBox1.Height / 2
+                this.pictureBox1.Margin.Left + this.pictureBox1.Width / 2,
+                this.pictureBox1.Margin.Top + this.pictureBox1.Height / 2
             );
-            if (image.Width > SystemParameters.PrimaryScreenWidth || image.Height > SystemParameters.PrimaryScreenHeight) {
-                var size = ResizeProportionaly(image.Size, new System.Drawing.Size((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight));
-                this.pictureBox1.Width  = size.Width;
+            if (_writableBitmap.Width > SystemParameters.PrimaryScreenWidth || _writableBitmap.Height > SystemParameters.PrimaryScreenHeight) {
+                var size = ResizeProportionaly(new System.Drawing.Size((int)_writableBitmap.Width, (int)_writableBitmap.Height), new System.Drawing.Size((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight));
+                this.pictureBox1.Width = size.Width;
                 this.pictureBox1.Height = size.Height;
             } else {
-                this.pictureBox1.Width  = image.Width;
-                this.pictureBox1.Height = image.Height;
+                this.pictureBox1.Width = _writableBitmap.Width;
+                this.pictureBox1.Height = _writableBitmap.Height;
             }
-            double horizontalMargin = center.X - this.pictureBox1.Width  / 2;
-            double verticalMargin   = center.Y - this.pictureBox1.Height / 2;
+            double horizontalMargin = center.X - this.pictureBox1.Width / 2;
+            double verticalMargin = center.Y - this.pictureBox1.Height / 2;
             this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
-            _gifImage?.Dispose();
-            GC.Collect();
-            if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
-                _gifImage = new GifImage(image);
-                _writableBitmap = _gifImage.Frame.ToWritableBitmap();
+            //_gifImage?.Dispose();
+            //_gifImage = null;
+            this.pictureBox1.Source?.Freeze();
+            this.pictureBox1.Source = null;
+            //UpdateLayout();
+            //GC.Collect();
+            if (bytes.SequenceEqual(GifHeader)) {
+                _gifImage = new GifImage((Bitmap)Bitmap.FromFile(_currentImagePath));
+
+                //_writableBitmap = null;
+                //_writableBitmap = image;
                 this.pictureBox1.Source = _writableBitmap;
                 _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.Delay);
                 _gifTimer.Start();
@@ -99,20 +205,51 @@ namespace giferWpf {
                     _iconTimer.Start();
                 }
             } else { // if plain image
-                if (updateTaskbarIcon) {
-                    this.Icon = image.ToBitmapSource();
-                }
-                pictureBox1.Source = image.ToBitmapSource();
+                this.pictureBox1.Source = _writableBitmap;
+                //GC.Collect();
+                //pictureBox1.Source = image.ToBitmapSource();
+                //pictureBox1.Source.Freeze();
+                //if (updateTaskbarIcon) {
+                //    this.Icon = null;
+                //    this.Icon = pictureBox1.Source;
+                //    this.Icon.Freeze();
+                //}
             }
+            GC.Collect();
         }
 
         private void SetDefaultImage() {
             var image = new Bitmap(256, 256);
             using (Graphics g = Graphics.FromImage(image)) {
-                g.FillRectangle(Brushes.LightGray, 0, 0, image.Width, image.Height);
-                g.DrawString("[Drag GIF/Image Here]", new Font("Courier New", 9), Brushes.Black, 47, 125);
+                g.FillRectangle(System.Drawing.Brushes.LightGray, 0, 0, image.Width, image.Height);
+                g.DrawString("[Drag GIF/Image Here]", new Font("Courier New", 9), System.Drawing.Brushes.Black, 47, 125);
             }
-            SetImage(image, updateTaskbarIcon: false);
+            this.pictureBox1.Source = image.ToBitmapSource();
+            //SetImage(image, updateTaskbarIcon: false);
+        }
+
+        private void LoadImageAndFolder(string imagePath) {
+            if (string.IsNullOrEmpty(imagePath)) {
+                return;
+            }
+
+            if (Gifer.KnownImageFormats.Any(imagePath.ToUpper().EndsWith)) {
+                //Bitmap image = LoadImage(imagePath);
+                //if (image == null) {
+                //    MessageBox.Show($"Can not load image: '{imagePath}'");
+                //}
+                _currentImagePath = imagePath;
+                var stream = new FileStream(imagePath, FileMode.Open);
+                SetImage(stream);
+                stream.Close();
+                //image.Dispose();
+                this.Title = _currentImagePath;
+                _imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
+                    .Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
+                    .ToList();
+            } else {
+                MessageBox.Show($"Unknown image extension at: '{imagePath}' '{Path.GetExtension(imagePath)}'");
+            }
         }
 
         private Bitmap LoadImage(string imagePath) {
@@ -124,26 +261,6 @@ namespace giferWpf {
             } catch (Exception ex) {
                 MessageBox.Show(ex.ToString());
                 return null;
-            }
-        }
-
-        private void LoadImageAndFolder(string imagePath) {
-            if (string.IsNullOrEmpty(imagePath)) {
-                return;
-            }
-            if (Gifer.KnownImageFormats.Any(imagePath.ToUpper().EndsWith)) {
-                Bitmap image = LoadImage(imagePath);
-                if (image == null) {
-                    MessageBox.Show($"Can not load image: '{imagePath}'");
-                }
-                SetImage(image);
-                _currentImagePath = imagePath;
-                this.Title = _currentImagePath;
-                _imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
-                    .Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
-                    .ToList();
-            } else {
-                MessageBox.Show($"Unknown image extension at: '{imagePath}' '{Path.GetExtension(imagePath)}'");
             }
         }
 
@@ -335,6 +452,8 @@ namespace giferWpf {
                         _currentImagePath = _imagesInFolder.Next(_currentImagePath);
                     }
                     LoadImageAndFolder(_currentImagePath);
+                    //Process.Start(Application.ResourceAssembly.Location, _currentImagePath);
+                    //Application.Current.Shutdown();
                     break;
                 case Key.H:
                     ShowHelp(_config);

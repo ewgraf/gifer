@@ -142,7 +142,7 @@ namespace gifer {
             if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) 
                 || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
 				_gifImage = new GifImage(image);
-				pictureBox1.Image = _gifImage.Next();
+				//pictureBox1.Image = _gifImage.Next();
                 timer1.Interval = _gifImage.Delay;
                 timer1.Start();
                 timerUpdateTaskbarIcon.Start();
@@ -378,7 +378,7 @@ namespace gifer {
         }
 
 		private void timer1_Tick(object sender, EventArgs e) {
-            pictureBox1.Image = _gifImage.Next();
+            //pictureBox1.Image = _gifImage.Next();
         }
 
         private void timerUpdateTaskbarIcon_Tick(object sender, EventArgs e) {
