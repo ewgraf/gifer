@@ -22,6 +22,7 @@ namespace gifer.Domain {
         public int Frames { get; set; }
         public bool IsGif { get; private set; }
 
+        [Obsolete("Лучше используйте GifImage(byte[] bytes)")]
         public GifImage(Bitmap image) {
             _gif = image;
             _rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
@@ -39,8 +40,6 @@ namespace gifer.Domain {
             _gif = new Bitmap(_stream);
             _rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
             IsGif = bytes.Take(6).SequenceEqual(GifHeader);
-            //PropertyItem item = current_image.GetPropertyItem(0x5100); // FrameDelay in libgdiplus
-            //delay = (item.Value[0] + item.Value[1] * 256) * 10; // Time is in 1/100th of a second
             if (IsGif) {
                 Frames = _gif.GetFrameCount(FrameDimension.Time);
                 Delay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
