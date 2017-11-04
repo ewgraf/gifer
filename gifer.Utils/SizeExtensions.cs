@@ -1,22 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
 
 namespace gifer.Utils {
-
-    public static class ImageExtensions {
-        public static string GetFilenameExtension(ImageFormat format) {
-            return ImageCodecInfo.GetImageEncoders()
-                .FirstOrDefault(x => x.FormatID == format.Guid)
-                ?.FilenameExtension
-                ?? string.Empty; // ImageFormat.Jpeg -> "*.JPG;*.JPEG;*.JPE;*.JFIF"
-        }
-    }
-
     public static class SizeExtensions {
-        public static Size Multiply(this Size size, double by) => new Size((int)(size.Width * by), (int)(size.Height * by));
+        public static System.Drawing.Size Multiply(this System.Drawing.Size size, double by) => new System.Drawing.Size((int)(size.Width * by), (int)(size.Height * by));
+        public static System.Windows.Size Multiply(this System.Windows.Size size, double by) => new System.Windows.Size(size.Width * by, size.Height * by);
 
         public static Size Divide(this Size size, float by) {
             var sizef = new SizeF(size.Width / by, size.Height / by);
@@ -46,24 +34,4 @@ namespace gifer.Utils {
             return size;
         }
     }
-
-    public static class ListExtensions {
-		public static T Next<T>(this List<T> list, T current) {
-			int index = list.IndexOf(current);
-			if (index < list.Count - 1) {
-				return list.ElementAt(index + 1);
-			} else {
-				return list.ElementAt(0);
-			}
-		}
-
-		public static T Previous<T>(this List<T> list, T current) {
-			int index = list.IndexOf(current);
-			if (index >= 1) {
-				return list.ElementAt(index - 1);
-			} else {
-				return list.ElementAt(list.Count - 1);
-			}
-		}
-	}
 }

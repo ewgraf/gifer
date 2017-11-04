@@ -1,7 +1,4 @@
-﻿using gifer.Domain;
-using gifer.Utils;
-using Microsoft.VisualBasic.FileIO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
@@ -11,6 +8,9 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using gifer.Domain;
+using gifer.Utils;
+using Microsoft.VisualBasic.FileIO;
 
 namespace gifer {
 	public partial class GiferForm : Form {
@@ -268,7 +268,7 @@ namespace gifer {
                 location = form.Location;
             }
             
-            double enlargementRatio = Animation.GetEnlargementValue(ratio);
+            double enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
             var newSize = new Size {
                 Width  = Convert.ToInt32(size.Width  * enlargementRatio),
                 Height = Convert.ToInt32(size.Height * enlargementRatio)
