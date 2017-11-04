@@ -71,29 +71,6 @@ namespace giferWpf {
             this.Icon = _writableBitmap;
         }
 
-        private WriteableBitmap CreateImageSource(Stream stream) {
-            BitmapImage bi = new BitmapImage();
-            bi.BeginInit();
-            bi.CacheOption = BitmapCacheOption.OnLoad;
-            bi.StreamSource = stream;
-            bi.EndInit();
-            bi.Freeze();
-
-            BitmapSource prgbaSource = new FormatConvertedBitmap(bi, PixelFormats.Pbgra32, null, 0);
-            WriteableBitmap bmp = new WriteableBitmap(prgbaSource);
-            int w = bmp.PixelWidth;
-            int h = bmp.PixelHeight;
-            int[] pixelData = new int[w * h];
-            //int widthInBytes = 4 * w;
-            int widthInBytes = bmp.PixelWidth * (bmp.Format.BitsPerPixel / 8); //equals 4*w
-            bmp.CopyPixels(pixelData, widthInBytes, 0);
-
-            bmp.WritePixels(new Int32Rect(0, 0, w, h), pixelData, widthInBytes, 0);
-            bi = null;
-
-            return bmp;
-        }
-
         //private void SetImage(Bitmap image, bool updateTaskbarIcon = true) {
         //    //pictureBox1.Source = null;
         //    //UpdateLayout();
@@ -161,62 +138,60 @@ namespace giferWpf {
         //    GC.Collect();
         //}
 
-        private static readonly byte[] GifHeader = new byte[] { 71, 73, 70, 56, 57, 97 };
+        //private void SetImage(Stream stream, bool updateTaskbarIcon = true) {
+        //    _gifTimer?.Stop();
+        //    _iconTimer?.Stop();
+        //    var bytes = new byte[6];
+        //    stream.Read(bytes, 0, 6);
+        //    stream.Seek(0, SeekOrigin.Begin);
+        //    _writableBitmap = CreateImageSource(stream);
+        //    //stream.Seek(0, SeekOrigin.Begin);
+        //    stream.Close();
+        //    var center = new System.Windows.Point(
+        //        this.pictureBox1.Margin.Left + this.pictureBox1.Width / 2,
+        //        this.pictureBox1.Margin.Top + this.pictureBox1.Height / 2
+        //    );
+        //    if (_writableBitmap.Width > SystemParameters.PrimaryScreenWidth || _writableBitmap.Height > SystemParameters.PrimaryScreenHeight) {
+        //        var size = ResizeProportionaly(new System.Drawing.Size((int)_writableBitmap.Width, (int)_writableBitmap.Height), new System.Drawing.Size((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight));
+        //        this.pictureBox1.Width = size.Width;
+        //        this.pictureBox1.Height = size.Height;
+        //    } else {
+        //        this.pictureBox1.Width = _writableBitmap.Width;
+        //        this.pictureBox1.Height = _writableBitmap.Height;
+        //    }
+        //    double horizontalMargin = center.X - this.pictureBox1.Width / 2;
+        //    double verticalMargin = center.Y - this.pictureBox1.Height / 2;
+        //    this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
+        //    //_gifImage?.Dispose();
+        //    //_gifImage = null;
+        //    this.pictureBox1.Source?.Freeze();
+        //    this.pictureBox1.Source = null;
+        //    //UpdateLayout();
+        //    //GC.Collect();
+        //    if (bytes.SequenceEqual(GifHeader)) {
+        //        _gifImage = new GifImage((Bitmap)Bitmap.FromFile(_currentImagePath));
 
-        private void SetImage(Stream stream, bool updateTaskbarIcon = true) {
-            _gifTimer?.Stop();
-            _iconTimer?.Stop();
-            var bytes = new byte[6];
-            stream.Read(bytes, 0, 6);
-            stream.Seek(0, SeekOrigin.Begin);
-            _writableBitmap = CreateImageSource(stream);
-            //stream.Seek(0, SeekOrigin.Begin);
-            stream.Close();
-            var center = new System.Windows.Point(
-                this.pictureBox1.Margin.Left + this.pictureBox1.Width / 2,
-                this.pictureBox1.Margin.Top + this.pictureBox1.Height / 2
-            );
-            if (_writableBitmap.Width > SystemParameters.PrimaryScreenWidth || _writableBitmap.Height > SystemParameters.PrimaryScreenHeight) {
-                var size = ResizeProportionaly(new System.Drawing.Size((int)_writableBitmap.Width, (int)_writableBitmap.Height), new System.Drawing.Size((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight));
-                this.pictureBox1.Width = size.Width;
-                this.pictureBox1.Height = size.Height;
-            } else {
-                this.pictureBox1.Width = _writableBitmap.Width;
-                this.pictureBox1.Height = _writableBitmap.Height;
-            }
-            double horizontalMargin = center.X - this.pictureBox1.Width / 2;
-            double verticalMargin = center.Y - this.pictureBox1.Height / 2;
-            this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
-            //_gifImage?.Dispose();
-            //_gifImage = null;
-            this.pictureBox1.Source?.Freeze();
-            this.pictureBox1.Source = null;
-            //UpdateLayout();
-            //GC.Collect();
-            if (bytes.SequenceEqual(GifHeader)) {
-                _gifImage = new GifImage((Bitmap)Bitmap.FromFile(_currentImagePath));
-
-                //_writableBitmap = null;
-                //_writableBitmap = image;
-                this.pictureBox1.Source = _writableBitmap;
-                _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.Delay);
-                _gifTimer.Start();
-                if (updateTaskbarIcon) {
-                    _iconTimer.Start();
-                }
-            } else { // if plain image
-                this.pictureBox1.Source = _writableBitmap;
-                //GC.Collect();
-                //pictureBox1.Source = image.ToBitmapSource();
-                //pictureBox1.Source.Freeze();
-                //if (updateTaskbarIcon) {
-                //    this.Icon = null;
-                //    this.Icon = pictureBox1.Source;
-                //    this.Icon.Freeze();
-                //}
-            }
-            GC.Collect();
-        }
+        //        //_writableBitmap = null;
+        //        //_writableBitmap = image;
+        //        this.pictureBox1.Source = _writableBitmap;
+        //        _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.Delay);
+        //        _gifTimer.Start();
+        //        if (updateTaskbarIcon) {
+        //            _iconTimer.Start();
+        //        }
+        //    } else { // if plain image
+        //        this.pictureBox1.Source = _writableBitmap;
+        //        //GC.Collect();
+        //        //pictureBox1.Source = image.ToBitmapSource();
+        //        //pictureBox1.Source.Freeze();
+        //        //if (updateTaskbarIcon) {
+        //        //    this.Icon = null;
+        //        //    this.Icon = pictureBox1.Source;
+        //        //    this.Icon.Freeze();
+        //        //}
+        //    }
+        //    GC.Collect();
+        //}
 
         private void SetDefaultImage() {
             var image = new Bitmap(256, 256);
@@ -239,10 +214,54 @@ namespace giferWpf {
                 //    MessageBox.Show($"Can not load image: '{imagePath}'");
                 //}
                 _currentImagePath = imagePath;
-                var stream = new FileStream(imagePath, FileMode.Open);
-                SetImage(stream);
-                stream.Close();
+
+                //var image = (Bitmap)Bitmap.FromFile(imagePath);
+                //var imageClone = (Bitmap)image.Clone();
                 //image.Dispose();
+                //image = null;
+                //GC.Collect();
+                //new GifImage(imageClone);
+
+                var stream = new FileStream(imagePath, FileMode.Open);
+                byte[] imageBytes = new byte[stream.Length];
+                stream.Read(imageBytes, 0, (int)stream.Length);
+                stream.Close();
+                stream.Dispose();
+                
+                _gifTimer?.Stop();
+                _iconTimer?.Stop();
+
+                _gifImage?.Dispose();
+                _gifImage = new GifImage(imageBytes);
+
+                _writableBitmap = _gifImage.GetWritableBitmap();
+
+                var center = new System.Windows.Point(
+                    this.pictureBox1.Margin.Left + this.pictureBox1.Width / 2,
+                    this.pictureBox1.Margin.Top  + this.pictureBox1.Height / 2
+                );
+                if (_writableBitmap.Width > SystemParameters.PrimaryScreenWidth || _writableBitmap.Height > SystemParameters.PrimaryScreenHeight) {
+                    var size = ResizeProportionaly(new System.Drawing.Size((int)_writableBitmap.Width, (int)_writableBitmap.Height), new System.Drawing.Size((int)SystemParameters.PrimaryScreenWidth, (int)SystemParameters.PrimaryScreenHeight));
+                    this.pictureBox1.Width = size.Width;
+                    this.pictureBox1.Height = size.Height;
+                } else {
+                    this.pictureBox1.Width = _writableBitmap.Width;
+                    this.pictureBox1.Height = _writableBitmap.Height;
+                }
+                double horizontalMargin = center.X - this.pictureBox1.Width  / 2;
+                double verticalMargin   = center.Y - this.pictureBox1.Height / 2;
+                this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
+                if (_gifImage.IsGif) {
+                    this.pictureBox1.Source = _writableBitmap;
+                    _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.Delay);
+                    _gifTimer.Start();
+                    if (true) {
+                        _iconTimer.Start();
+                    }
+                }
+                this.pictureBox1.Source = null;
+                this.pictureBox1.Source = _writableBitmap;
+                GC.Collect();
                 this.Title = _currentImagePath;
                 _imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
                     .Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
@@ -452,8 +471,6 @@ namespace giferWpf {
                         _currentImagePath = _imagesInFolder.Next(_currentImagePath);
                     }
                     LoadImageAndFolder(_currentImagePath);
-                    //Process.Start(Application.ResourceAssembly.Location, _currentImagePath);
-                    //Application.Current.Shutdown();
                     break;
                 case Key.H:
                     ShowHelp(_config);

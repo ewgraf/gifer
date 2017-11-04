@@ -3,18 +3,24 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 using System.Windows;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace gifer.Domain {
     public class GifImage : IDisposable {
+        private static readonly byte[] GifHeader = new byte[] { 71, 73, 70, 56, 57, 97 };
+
         private readonly Bitmap _gif;
+        private readonly MemoryStream _stream;
         private readonly Rectangle _rectangle;
         private int _currentFrame = 0;
         object share = new object();
 
-		public int Delay { get; set; }
+        public int Delay { get; set; }
         public int Frames { get; set; }
+        public bool IsGif { get; private set; }
 
         public GifImage(Bitmap image) {
             _gif = image;
@@ -28,7 +34,25 @@ namespace gifer.Domain {
             }
 		}
 
-		public void DrawNext(ref WriteableBitmap bitmap) {
+        public GifImage(byte[] bytes) {
+            _stream = new MemoryStream(bytes);
+            _gif = new Bitmap(_stream);
+            _rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
+            IsGif = bytes.Take(6).SequenceEqual(GifHeader);
+            //PropertyItem item = current_image.GetPropertyItem(0x5100); // FrameDelay in libgdiplus
+            //delay = (item.Value[0] + item.Value[1] * 256) * 10; // Time is in 1/100th of a second
+            if (IsGif) {
+                Frames = _gif.GetFrameCount(FrameDimension.Time);
+                Delay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
+                if (Delay == 0) {
+                    Delay = 100;
+                }
+            }
+        }
+
+        public WriteableBitmap GetWritableBitmap() => CreateImageSource(_stream);
+
+        public void DrawNext(ref WriteableBitmap bitmap) {
 			if (_currentFrame >= Frames || _currentFrame < 1) {
 				_currentFrame = 0;
 			}
@@ -45,8 +69,34 @@ namespace gifer.Domain {
 
         public Bitmap Copy() => (Bitmap)_gif.Clone();
 
+        private WriteableBitmap CreateImageSource(MemoryStream stream) {
+            stream.Position = 0;
+            BitmapImage bi = new BitmapImage();
+            bi.BeginInit();
+            bi.CacheOption = BitmapCacheOption.OnLoad;
+            bi.StreamSource = stream;
+            bi.EndInit();
+            bi.Freeze();
+
+            BitmapSource prgbaSource = new FormatConvertedBitmap(bi, PixelFormats.Pbgra32, null, 0);
+            WriteableBitmap bmp = new WriteableBitmap(prgbaSource);
+            int w = bmp.PixelWidth;
+            int h = bmp.PixelHeight;
+            int[] pixelData = new int[w * h];
+            //int widthInBytes = 4 * w;
+            int widthInBytes = bmp.PixelWidth * (bmp.Format.BitsPerPixel / 8); //equals 4*w
+            bmp.CopyPixels(pixelData, widthInBytes, 0);
+
+            bmp.WritePixels(new Int32Rect(0, 0, w, h), pixelData, widthInBytes, 0);
+            bi = null;
+
+            return bmp;
+        }
+
         public void Dispose() {
-            _gif.Dispose();
+            _gif?.Dispose();
+            _stream?.Dispose();
+            _stream?.Close();
         }
 	}
 }
