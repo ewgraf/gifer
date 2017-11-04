@@ -143,7 +143,7 @@ namespace gifer {
                 || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
 				_gifImage = new GifImage(image);
 				//pictureBox1.Image = _gifImage.Next();
-                timer1.Interval = _gifImage.Delay;
+                timer1.Interval = _gifImage.CurrentFrameDelay;
                 timer1.Start();
                 timerUpdateTaskbarIcon.Start();
             } else { // if plain image

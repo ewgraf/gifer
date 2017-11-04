@@ -39,7 +39,12 @@ namespace giferWpf {
             this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             this.canvas.Margin = new Thickness(0d, 0d, SystemParameters.PrimaryScreenWidth - this.canvas.Width, SystemParameters.PrimaryScreenHeight - this.canvas.Height);
             _gifTimer = new DispatcherTimer();
-            _gifTimer.Tick += (s, e) => _gifImage.DrawNext(ref _writableBitmap);
+            _gifTimer.Tick += (s, e) => {
+                _gifTimer.Stop();
+                _gifImage.DrawNext(ref _writableBitmap);
+                _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.CurrentFrameDelay);
+                _gifTimer.Start();
+            };
             _resizeTimer = new DispatcherTimer();
             _resizeTimer.Tick += new EventHandler(resizeTimer_Tick);
             _resizeTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / 60);
@@ -90,12 +95,12 @@ namespace giferWpf {
                 .ToList();
 
             this.Title = _currentImagePath;
-            this.pictureBox1.Margin = ResizeImageMargin(this.pictureBox1, _writableBitmap.Width, _writableBitmap.Height);
+            this.pictureBox1.Margin = ResizeImageMargin(this.pictureBox1, _writableBitmap.PixelWidth, _writableBitmap.PixelHeight);
             this.pictureBox1.Source = null;
             this.pictureBox1.Source = _writableBitmap;
 
             if (_gifImage.IsGif) {
-                _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.Delay);
+                _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.CurrentFrameDelay);
                 _gifTimer.Start();
                 if (true) {
                     _iconTimer.Start();

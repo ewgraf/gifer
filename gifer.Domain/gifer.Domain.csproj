@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GifImage.cs" />
+    <Compile Include="GifType.cs" />
     <Compile Include="OpenWithListener.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
