@@ -2,3 +2,4 @@ C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Utils\bin\Debug\gifer.Utils.dll
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Utils\bin\Debug\gifer.Utils.pdb
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Utils\obj\Debug\gifer.Utils.dll
 C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Utils\obj\Debug\gifer.Utils.pdb
+C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Utils\obj\Debug\gifer.Utils.csprojResolveAssemblyReference.cache

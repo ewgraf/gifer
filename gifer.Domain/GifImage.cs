@@ -81,7 +81,7 @@ namespace gifer.Domain {
             _gif.SelectActiveFrame(FrameDimension.Time, _currentFrame);
             // int32 is 4bytes -> shift is 4
             CurrentFrameDelay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 4 * _currentFrame) * 10;
-            //Debug.WriteLine(CurrentFrameDelay);
+            //Debug.WriteLine($"CurrentFrameDelay: {CurrentFrameDelay}");
             if (CurrentFrameDelay == 0) {
                 CurrentFrameDelay = 100;
             }
