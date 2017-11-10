@@ -14,6 +14,7 @@ using System.Windows.Threading;
 using gifer.Domain;
 using gifer.Utils;
 using Microsoft.VisualBasic.FileIO;
+using System.Security;
 
 namespace giferWpf {
     /// <summary>
@@ -77,7 +78,18 @@ namespace giferWpf {
 
             _currentImagePath = imagePath;
 
-            var stream = new FileStream(_currentImagePath, FileMode.Open);
+            FileStream stream = null;
+
+            try {
+                stream = new FileStream(_currentImagePath, FileMode.Open);
+            } catch (Exception ex) {
+                HandleFileStreamException(ex);
+                this.Close();
+            }
+            if (stream == null) {
+                MessageBox.Show($@"Something went terribly wrong - despite ""new FileStream({_currentImagePath}, FileMode.Open);"" has thrown no exception, yet stream == null - gifer couldn't have loaded file. May be some inner operations in new FileStream were intercepted/overriden?");
+            }
+
             byte[] imageBytes = new byte[stream.Length];
             stream.Read(imageBytes, 0, (int)stream.Length);
             stream.Close();
@@ -105,6 +117,37 @@ namespace giferWpf {
                 if (true) {
                     _iconTimer.Start();
                 }
+            }
+        }
+
+        private void HandleFileStreamException(Exception exception) {
+            string title = $"Failed opening file";
+            string parameters = $@"{Environment.NewLine}{Environment.NewLine}path: [{_currentImagePath}],{Environment.NewLine}{Environment.NewLine}exception: [{exception}]";
+
+            if (exception is ArgumentNullException) {
+                MessageBox.Show($"Current file's path is null. {parameters}", title);
+            } else if (exception is ArgumentOutOfRangeException) {
+                MessageBox.Show($"Mode, which open file in, contains an invalid value. {parameters}", title);
+            } else if (exception is ArgumentException) {
+                MessageBox.Show(@"Path is an empty string (""), contains only white space, or contains one or more invalid characters. " +
+                               $@"-or- path refers to a non-file device, such as ""con: "", ""com1: "", ""lpt1:"", etc. in an NTFS environment. {parameters}", title);
+            } else if (exception is NotSupportedException) {
+                MessageBox.Show($@"Path refers to a non-file device, such as ""con: "", ""com1: "", ""lpt1: "", etc. in a non-NTFS environment. {parameters}", title);
+            } else if (exception is SecurityException) {
+                MessageBox.Show($"Current user does not have the required permission to open file. {parameters}", title);
+            } else if (exception is FileNotFoundException) {
+                MessageBox.Show("The file, specified by path, cannot be found, such as when mode is FileMode.Truncate or FileMode.Open, and the file does not exist. " +
+                               $"The file must already exist in these modes. {parameters}", title);
+            } else if (exception is DirectoryNotFoundException) {
+                MessageBox.Show($"The specified path is invalid, such as being on an unmapped drive. {parameters}", title);
+            } else if (exception is PathTooLongException) {
+                MessageBox.Show("The specified path, file name, or both exceed the system-defined maximum length. " +
+                               $"For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters. {parameters}", title);
+            } else if (exception is IOException) {
+                MessageBox.Show("An I/O error, such as specifying FileMode.CreateNew when the file specified by path already exists, occurred. " +
+                               $"-or- The stream has been closed. {parameters}", title);
+            } else {
+                MessageBox.Show($"Unpredicted exception occured. {parameters}", title);
             }
         }
 
@@ -282,6 +325,9 @@ namespace giferWpf {
                     if (_currentImagePath == null) {
                         return;
                     }
+                    _gifTimer?.Stop();
+                    _resizeTimer?.Stop();
+                    _iconTimer?.Stop();
                     if (e.Key == Key.Left) {
                         _currentImagePath = _imagesInFolder.Previous(_currentImagePath);
                     } else if (e.Key == Key.Right) {
