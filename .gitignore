@@ -9,4 +9,4 @@
 *.dll
 *.cache
 *.ide
-obj\Debug\*
+obj/
