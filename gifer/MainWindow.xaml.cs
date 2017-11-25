@@ -81,7 +81,8 @@ namespace giferWpf {
             FileStream stream = null;
 
             try {
-                stream = new FileStream(_currentImagePath, FileMode.Open);
+                //FileAttributes attributes = File.GetAttributes(_currentImagePath);
+                stream = new FileStream(_currentImagePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
             } catch (Exception ex) {
                 HandleFileStreamException(ex);
                 this.Close();
