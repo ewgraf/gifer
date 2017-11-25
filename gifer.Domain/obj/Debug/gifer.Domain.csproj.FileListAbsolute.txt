@@ -1,7 +1,0 @@
-C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Domain\bin\Debug\gifer.Domain.dll
-C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Domain\bin\Debug\gifer.Domain.pdb
-C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Domain\bin\Debug\gifer.Utils.dll
-C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Domain\bin\Debug\gifer.Utils.pdb
-C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Domain\obj\Debug\gifer.Domain.csprojResolveAssemblyReference.cache
-C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Domain\obj\Debug\gifer.Domain.dll
-C:\Users\Lenovo\Documents\GitHub\Gifer\gifer.Domain\obj\Debug\gifer.Domain.pdb
