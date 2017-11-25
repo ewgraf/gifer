@@ -5,3 +5,8 @@
 *.tmp
 *.pdb
 *.ide
+*.pdb
+*.dll
+*.cache
+*.ide
+obj\Debug\*
