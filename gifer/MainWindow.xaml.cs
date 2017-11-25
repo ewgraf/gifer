@@ -146,6 +146,8 @@ namespace giferWpf {
             } else if (exception is IOException) {
                 MessageBox.Show("An I/O error, such as specifying FileMode.CreateNew when the file specified by path already exists, occurred. " +
                                $"-or- The stream has been closed. {parameters}", title);
+            } else if (exception is UnauthorizedAccessException) {
+                MessageBox.Show($"Current user does not have the required permission to open file. {parameters}", title);
             } else {
                 MessageBox.Show($"Unpredicted exception occured. {parameters}", title);
             }
