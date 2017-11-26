@@ -10,3 +10,5 @@
 *.cache
 *.ide
 obj/
+.vs/
+.vs/
