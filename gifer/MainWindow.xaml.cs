@@ -104,7 +104,10 @@ namespace giferWpf {
             this.pictureBox1.Margin = ResizeImageMargin(this.pictureBox1, _writableBitmap.PixelWidth, _writableBitmap.PixelHeight);
             this.pictureBox1.Source = _writableBitmap;
 
-            if (_gifImage.IsGif) {
+            if (_gifImage.IsGif && _gifImage.Frames > 1) {
+                if(_gifImage.CurrentFrameDelay == 0) {
+                    MessageBox.Show("Gif has 0 ms frame delay, that is strange");
+                }
                 _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.CurrentFrameDelay);
                 _gifTimer.Start();
                 _iconTimer.Start();

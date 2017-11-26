@@ -97,9 +97,6 @@ namespace gifer.Domain {
                 _rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
                 Frames = _gif.GetFrameCount(FrameDimension.Time);
                 CurrentFrameDelay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
-                if (CurrentFrameDelay == 0) {
-                    CurrentFrameDelay = 100;
-                }
                 IsGif = true;
                 //byte[] logicalScreenDescriptor = new byte[7];
                 //_stream.Read(logicalScreenDescriptor, 0, 7);
@@ -158,6 +155,7 @@ namespace gifer.Domain {
             bitmap.EndInit();
             BitmapSource prgbaSource = new FormatConvertedBitmap(bitmap, PixelFormats.Pbgra32, null, 0);
             var writeableBitmap = new WriteableBitmap(prgbaSource);
+            _currentFrame++;
             return writeableBitmap;
         }
 
