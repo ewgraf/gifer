@@ -29,6 +29,7 @@ namespace giferWpf {
         private List<string> _imagesInFolder;
         private string _currentImagePath;
         private WriteableBitmap _writableBitmap;
+        private Stopwatch _drawindDelayStopwath;
 
         public MainWindow() {
             _config = ConfigurationManager.OpenExeConfiguration($@"{AppDomain.CurrentDomain.BaseDirectory}\gifer.exe").Setup();
@@ -39,18 +40,22 @@ namespace giferWpf {
             var verticalMargin   = SystemParameters.PrimaryScreenHeight / 2 - this.pictureBox1.Height / 2;
             this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
             this.canvas.Margin = new Thickness(0d, 0d, SystemParameters.PrimaryScreenWidth - this.canvas.Width, SystemParameters.PrimaryScreenHeight - this.canvas.Height);
+            _drawindDelayStopwath = new Stopwatch();
             _gifTimer = new DispatcherTimer();
+            _resizeTimer = new DispatcherTimer();
+            _iconTimer = new DispatcherTimer();
             _gifTimer.Tick += (s, e) => {
+                _drawindDelayStopwath.Restart();
                 _gifTimer.Stop();
                 _gifImage.DrawNext(ref _writableBitmap);
-                _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.CurrentFrameDelay);
+                _drawindDelayStopwath.Stop();
+                int delay = _gifImage.CurrentFrameDelay - (int)_drawindDelayStopwath.ElapsedMilliseconds;
+                _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: delay > 0 ? delay : 0);
                 _gifTimer.Start();
             };
-            _resizeTimer = new DispatcherTimer();
             _resizeTimer.Tick += new EventHandler(resizeTimer_Tick);
-            _resizeTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / 60);
-            _iconTimer = new DispatcherTimer();
             _iconTimer.Tick += (s, e) => this.Icon = _writableBitmap;
+            _resizeTimer.Interval = new TimeSpan(0, 0, 0, 0, 1000 / 60);
             _iconTimer.Interval = new TimeSpan(0, 0, 0, 0, 100);
 
             if (Application.Current.Properties["Args"] != null) {
@@ -66,58 +71,45 @@ namespace giferWpf {
         }
 
         private void SetImage(string imagePath) {
-            if (string.IsNullOrEmpty(imagePath)) {
-                return;
-            }
             if (!Gifer.KnownImageFormats.Any(imagePath.ToUpper().EndsWith)) {
                 MessageBox.Show($"Unknown image extension at: '{imagePath}' '{Path.GetExtension(imagePath)}'");
+                this.Close();
             }
 
             _gifTimer?.Stop();
             _iconTimer?.Stop();
-
-            _currentImagePath = imagePath;
-
-            FileStream stream = null;
+            _writableBitmap = null;
+            this.pictureBox1.Source = null;
+            _gifImage?.Dispose();
+            GC.Collect();
 
             try {
-                //FileAttributes attributes = File.GetAttributes(_currentImagePath);
-                stream = new FileStream(_currentImagePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
+                _gifImage = new GifImage(imagePath);
             } catch (Exception ex) {
                 HandleFileStreamException(ex);
                 this.Close();
             }
-            if (stream == null) {
-                MessageBox.Show($@"Something went terribly wrong - despite ""new FileStream({_currentImagePath}, FileMode.Open);"" has thrown no exception, yet stream == null - gifer couldn't have loaded file. May be some inner operations in new FileStream were intercepted/overriden?");
+            if (_gifImage == null) {
+                throw new Exception($@"Something went terribly wrong - despite ""new FileStream({imagePath}, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);"" has thrown no exception, yet stream == null - gifer couldn't have loaded file. May be some inner operations in new FileStream were intercepted/overriden?");
             }
 
-            byte[] imageBytes = new byte[stream.Length];
-            stream.Read(imageBytes, 0, (int)stream.Length);
-            stream.Close();
-            stream.Dispose();
-
-            _gifImage?.Dispose();
-            _gifImage = new GifImage(imageBytes);
-
-            _writableBitmap = _gifImage.GetWritableBitmap();
-            
-            GC.Collect();
-
+            _currentImagePath = imagePath;
             _imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
                 .Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
                 .ToList();
+            
+            _writableBitmap = _gifImage.GetWritableBitmap();
 
             this.Title = _currentImagePath;
             this.pictureBox1.Margin = ResizeImageMargin(this.pictureBox1, _writableBitmap.PixelWidth, _writableBitmap.PixelHeight);
-            this.pictureBox1.Source = null;
             this.pictureBox1.Source = _writableBitmap;
 
             if (_gifImage.IsGif) {
                 _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.CurrentFrameDelay);
                 _gifTimer.Start();
-                if (true) {
-                    _iconTimer.Start();
-                }
+                _iconTimer.Start();
+            } else {
+                this.pictureBox1.Source.Freeze();
             }
         }
 
