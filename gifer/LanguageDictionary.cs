@@ -1,0 +1,4 @@
+﻿namespace gifer {
+    class LanguageDictionary {
+    }
+}

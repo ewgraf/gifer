@@ -15,6 +15,8 @@ using gifer.Domain;
 using gifer.Utils;
 using Microsoft.VisualBasic.FileIO;
 using System.Security;
+using gifer;
+using System.Windows.Media;
 
 namespace giferWpf {
     /// <summary>
@@ -155,12 +157,24 @@ namespace giferWpf {
             helpForm.ShowDialog();
             config.SetShowHelpAtStartup(helpForm.ShowHelpAtStartup);
         }
+
+        private void ShowSettings(Configuration config) {
+            var settings = new SettingsWindow(
+                onRenderingModeChanged: m => RenderOptions.SetBitmapScalingMode(pictureBox1, m),
+                onLanguagehanged: l => this.OnLanguageChanged(l)
+            );
+            settings.ShowDialog();
+        }        
+
+        private void OnLanguageChanged(Language language) {
+            // 
+        }
         
         private void SetDefaultImage() {
             var image = new Bitmap(256, 256);
             using (Graphics g = Graphics.FromImage(image)) {
-                g.FillRectangle(Brushes.LightGray, 0, 0, image.Width, image.Height);
-                g.DrawString("[Drag GIF/Image Here]", new Font("Courier New", 9), Brushes.Black, 47, 125);
+                g.FillRectangle(System.Drawing.Brushes.LightGray, 0, 0, image.Width, image.Height);
+                g.DrawString("[Drag GIF/Image Here]", new Font("Courier New", 9), System.Drawing.Brushes.Black, 47, 125);
             }
             this.pictureBox1.Source = image.ToBitmapSource();
         }
@@ -335,6 +349,9 @@ namespace giferWpf {
                     break;
                 case Key.H:
                     ShowHelp(_config);
+                    break;
+                case Key.S:
+                    ShowSettings(_config);
                     break;
                 case Key.Delete:
                     if (_currentImagePath == null) {
