@@ -32,11 +32,13 @@ namespace giferWpf {
         private string _currentImagePath;
         private WriteableBitmap _writableBitmap;
         private Stopwatch _drawindDelayStopwath;
+        private BitmapScalingMode _scalingMode;
         private Language _language;
 
         public MainWindow() {
             _config = ConfigurationManager.OpenExeConfiguration($@"{AppDomain.CurrentDomain.BaseDirectory}\gifer.exe").Setup();
             _language = _config.FindLanguage() ?? gifer.Utils.Language.RU;
+            _scalingMode = _config.FindScalingMode() ?? BitmapScalingMode.NearestNeighbor;
 
             InitializeComponent();
             
@@ -162,12 +164,19 @@ namespace giferWpf {
 
         private void ShowSettings(Configuration config) {
             var settings = new SettingsWindow(
-                onRenderingModeChanged: m => RenderOptions.SetBitmapScalingMode(pictureBox1, m),
-                onLanguagehanged: l => this.OnLanguageChanged(l),
-                language: _language
+                m => this.OnScalingModeChanged(m),
+                l => this.OnLanguageChanged(l),
+                _scalingMode,
+                _language
             );
             settings.ShowDialog();
-        }        
+        }
+
+        private void OnScalingModeChanged(BitmapScalingMode scalingMode) {
+            _scalingMode = scalingMode;
+            RenderOptions.SetBitmapScalingMode(pictureBox1, scalingMode);
+            _config.SetScalingMode(_scalingMode);
+        }
 
         private void OnLanguageChanged(Language language) {
             _language = language;

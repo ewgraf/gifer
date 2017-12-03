@@ -5,18 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:gifer"
         mc:Ignorable="d"
-        Title="Settings" Height="300" Width="483.686" WindowStartupLocation="CenterScreen">
+        Title="Settings" Height="106" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize">
     <Grid>
-        <ComboBox x:Name="Settings_RenderingModeComboBox" HorizontalAlignment="Left" Margin="185,10,0,0" VerticalAlignment="Top" Width="281" SelectedIndex="2">
+        <ComboBox x:Name="Settings_RenderingModeComboBox" HorizontalAlignment="Left" Margin="110,12,0,0" VerticalAlignment="Top" Width="270" SelectedIndex="2" MouseEnter="Settings_RenderingModeComboBox_MouseEnter">
             <ComboBoxItem x:Name="Settings_RenderingModeLinear" Content="Settings_RenderingModeLinear"/>
             <ComboBoxItem x:Name="Settings_RenderingModeFant" Content="Settings_RenderingModeFant"/>
-            <ComboBoxItem x:Name="Settings_RenderingModeNearestNeighbor" Content="Settings_RenderingModeNearestNeighbor"/>
+            <ComboBoxItem x:Name="Settings_RenderingModeNearestNeighbor" Content="Ближайший сосед (Оригинальные пиксели)"/>
         </ComboBox>
-        <Label x:Name="Settings_RenderingModeLabel" Content="Settings_RenderingModeLabel" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <ComboBox x:Name="Settings_LanguageComboBox" HorizontalAlignment="Left" Margin="338,43,0,0" VerticalAlignment="Top" Width="128" SelectedIndex="0">
-            <ComboBoxItem x:Name="Settings_Language_EN" Content="Settings_Language_EN"/>
-            <ComboBoxItem x:Name="Settings_Language_RU" Content="Settings_Language_RU"/>
+        <Label x:Name="Settings_RenderingModeLabel" Content="Rendering:" HorizontalAlignment="Left" Margin="14,10,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="Settings_LanguageComboBox" HorizontalAlignment="Left" Margin="252,43,0,0" VerticalAlignment="Top" Width="128" SelectedIndex="0" MouseEnter="Settings_LanguageComboBox_MouseEnter">
+            <ComboBoxItem x:Name="Settings_Language_EN" Content="English"/>
+            <ComboBoxItem x:Name="Settings_Language_RU" Content="Русский"/>
         </ComboBox>
-        <Label x:Name="Settings_LanguageLabel" Content="Settings_LanguageLabel" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
+        <Label x:Name="Settings_LanguageLabel" Content="Language:" HorizontalAlignment="Left" Margin="14,41,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>
