@@ -30,7 +30,7 @@ namespace gifer {
             this.Settings_RenderingModeComboBox.Items.Clear();
             this.Settings_RenderingModeComboBox.Items.Add(LanguageDictionary.GetString(language, nameof(Settings_RenderingModeLinear)));
             this.Settings_RenderingModeComboBox.Items.Add(LanguageDictionary.GetString(language, nameof(Settings_RenderingModeNearestNeighbor)));
-            this.Settings_RenderingModeComboBox.SelectedIndex = ((int)_scalingMode) - 1;
+            this.Settings_RenderingModeComboBox.SelectedIndex = _scalingMode == BitmapScalingMode.NearestNeighbor ? 1 : 0;
             this.Settings_LanguageLabel.Content = LanguageDictionary.GetString(language, nameof(Settings_LanguageLabel));
             this.Settings_LanguageComboBox.Items.Clear();
             this.Settings_LanguageComboBox.Items.Add(LanguageDictionary.GetString(nameof(Settings_Language_EN)));

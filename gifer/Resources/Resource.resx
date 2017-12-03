@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="EN_DefaultMessage" xml:space="preserve">
+    <value>[Drag GIF/Image Here]</value>
+  </data>
   <data name="EN_Settings_LanguageLabel" xml:space="preserve">
     <value>Language:</value>
   </data>
@@ -134,6 +137,9 @@
   <data name="EN_Settings_RenderingModeNearestNeighbor" xml:space="preserve">
     <value>Nearest neighbot (Raw pixels)</value>
     <comment>Use nearest-neighbor bitmap scaling, which provides performance benefits over LowQuality mode when the software rasterizer is used. This mode is often used to magnify a bitmap</comment>
+  </data>
+  <data name="RU_DefaultMessage" xml:space="preserve">
+    <value>[Перетащите GIF/Картинку Сюда]</value>
   </data>
   <data name="RU_Settings_LanguageLabel" xml:space="preserve">
     <value>Язык:</value>

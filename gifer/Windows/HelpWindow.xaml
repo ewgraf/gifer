@@ -5,32 +5,66 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:giferWpf"
         mc:Ignorable="d"
-        Title="Help &amp; Settings" Height="345" Width="472" FontFamily="Courier New" KeyUp="Window_KeyUp" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
+        Title="Help &amp; Settings" Height="317" Width="315" FontFamily="Courier New" KeyUp="Window_KeyUp" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition Height="0*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
-            <ColumnDefinition/>
+            <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
-        <GroupBox Header="Shortcuts" HorizontalAlignment="Left" Height="210" VerticalAlignment="Top" Width="436" Margin="10,26,0,0" Grid.ColumnSpan="2"/>
-        <Label Content="Это окно помощи можно вызывать, нажав 'H'" HorizontalAlignment="Left" Margin="10,1,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Height="24" Width="351"/>
-        <Label Content="[Ctrl]   + колесо 🖱±" HorizontalAlignment="Left" Margin="13,89,0,0" VerticalAlignment="Top" Height="24" Width="171"/>
-        <Label Content="[⇧Shift] + колесо 🖱±" HorizontalAlignment="Left" Margin="13,65,0,0" VerticalAlignment="Top" Height="24" Width="171"/>
-        <Label Content="Правый клик 🖱, [Esc]" HorizontalAlignment="Left" Margin="16,209,0,0" VerticalAlignment="Top" Height="24" Width="168"/>
-        <Label Content="[←], [→]" HorizontalAlignment="Left" Margin="13,137,0,0" VerticalAlignment="Top" Height="24" Width="68"/>
-        <Label Content="[Delete]" HorizontalAlignment="Left" Margin="13,161,0,0" VerticalAlignment="Top" Height="24" Width="68"/>
-        <Label Content="[Alt]    + колесо 🖱±" HorizontalAlignment="Left" Margin="13,113,0,0" VerticalAlignment="Top" Height="24" Width="171"/>
-        <Label Content="Вращение колеса мыши🖱" HorizontalAlignment="Left" Margin="16,41,0,0" VerticalAlignment="Top" Height="24" Width="180"/>
-        <Label Content="[Ctrl]   + P" HorizontalAlignment="Left" Margin="13,185,0,0" VerticalAlignment="Top" Height="24" Width="96"/>
-        <Label Content="в 1.05 раза" HorizontalAlignment="Left" Margin="198,89,0,0" VerticalAlignment="Top" Height="24" Width="60" Grid.ColumnSpan="2"/>
-        <Label Content="в 2.0 раза" HorizontalAlignment="Left" Margin="198,65,0,0" VerticalAlignment="Top" Height="24" Width="53" Grid.ColumnSpan="2"/>
-        <Label Content="Закрыть окно" HorizontalAlignment="Left" Margin="197,209,0,0" VerticalAlignment="Top" Height="24" Width="115" Grid.ColumnSpan="2"/>
-        <Label Content="Предыдущее, следующее изображение" HorizontalAlignment="Left" Margin="197,137,0,0" VerticalAlignment="Top" Height="24" Width="248" Grid.ColumnSpan="2"/>
-        <Label Content="Удаляет в Корзину🗑" HorizontalAlignment="Left" Margin="198,161,0,0" VerticalAlignment="Top" Height="24" Width="228" Grid.ColumnSpan="2"/>
-        <Label Content="Без анимации" HorizontalAlignment="Left" Margin="197,113,0,0" VerticalAlignment="Top" Height="24" Width="132" Grid.ColumnSpan="2"/>
-        <Label Content="Увеличивает/Уменьшает в 1.25" HorizontalAlignment="Left" Margin="197,41,0,0" VerticalAlignment="Top" Height="24" Width="214" Grid.ColumnSpan="2"/>
-        <Label Content="Печать изображения" HorizontalAlignment="Left" Margin="197,185,0,0" VerticalAlignment="Top" Height="24" Width="147" Grid.ColumnSpan="2"/>
-        <CheckBox x:Name="checkBox1" Content="Показывать это меню при загрузке" HorizontalAlignment="Left" Margin="11,243,0,0" VerticalAlignment="Top" IsChecked="True" Grid.ColumnSpan="2" Width="259"/>
-        <Button Content="Сохранить и продолжить" HorizontalAlignment="Left" Margin="10,266,0,0" VerticalAlignment="Top" Width="436" Grid.ColumnSpan="2" Height="30" Click="Button_Click"/>
-
+        <GroupBox Header="❔" HorizontalAlignment="Left" Width="279" Margin="10,2,0,0" FontSize="18" Height="237" VerticalAlignment="Top"/>
+        <Label Content="'🖱" HorizontalAlignment="Left" Margin="13,51,0,0" VerticalAlignment="Top" Height="36" Width="109" FontSize="18"/>
+        <Label Content="[⇧Shift],[Ctrl],[Alt]" HorizontalAlignment="Left" Margin="30,32,0,0" VerticalAlignment="Top" Height="26" Width="172"/>
+        <Label Content="🖱', [Esc]" HorizontalAlignment="Left" Margin="16,202,0,0" VerticalAlignment="Top" Height="33" Width="120" FontSize="18"/>
+        <Label Content="[←], [→]" HorizontalAlignment="Left" Margin="12,72,0,0" VerticalAlignment="Top" Height="30" Width="99" FontSize="18"/>
+        <Label Content="[Delete]" HorizontalAlignment="Left" Margin="12,124,0,0" VerticalAlignment="Top" Height="32" Width="99" FontSize="18"/>
+        <Label Content="[Ctrl] + P" HorizontalAlignment="Left" Margin="12,98,0,0" VerticalAlignment="Top" Height="31" Width="127" FontSize="18"/>
+        <Label Content="❌" Foreground="Red" HorizontalAlignment="Left" Margin="185,202,0,0" VerticalAlignment="Top" Height="26" Width="35" FontSize="18"/>
+        <Grid Margin="187,74,-8,181" Grid.ColumnSpan="2">
+            <Label Content="⛰⛅" HorizontalAlignment="Left" Margin="18,0,0,-8" VerticalAlignment="Top" Height="39" Width="73" FontSize="18"/>
+            <Label Content="➔" HorizontalAlignment="Left" Margin="1,3,0,0" VerticalAlignment="Top" Height="25" Width="27" FontSize="18" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="180"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+            <Label Content="➔" HorizontalAlignment="Left" Margin="69,0,-1,0" VerticalAlignment="Top" Height="28" Width="30" FontSize="18" RenderTransformOrigin="0.5,0.5">
+                <Label.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="0"/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Label.RenderTransform>
+            </Label>
+        </Grid>
+        <Label Content="🗑" HorizontalAlignment="Left" Margin="184,124,0,0" VerticalAlignment="Top" Height="32" Width="35" FontSize="18"/>
+        <Label Content="⛰" HorizontalAlignment="Left" Margin="185,25,0,0" VerticalAlignment="Top" Height="32" Width="30" FontSize="16"/>
+        <Label Content="🖨" HorizontalAlignment="Left" Margin="184,98,0,0" VerticalAlignment="Top" Height="31" Width="35" FontSize="18"/>
+        <Label Content="[H], [F1]" HorizontalAlignment="Left" Margin="12,150,0,0" VerticalAlignment="Top" Height="30" Width="168" FontSize="18"/>
+        <Label Content="❔" HorizontalAlignment="Left" Margin="188,150,0,0" VerticalAlignment="Top" Height="35" Width="42" FontSize="18"/>
+        <Label Content="[S]" HorizontalAlignment="Left" Margin="12,176,0,0" VerticalAlignment="Top" Height="31" Width="168" FontSize="18"/>
+        <Label Content="⚙" HorizontalAlignment="Left" Margin="185,177,0,0" VerticalAlignment="Top" Height="31" Width="35" FontSize="18"/>
+        <Grid Margin="189,47,40,195">
+            <Label Content="↕" HorizontalAlignment="Left" VerticalAlignment="Top" Height="49" Width="23" FontSize="28" FontFamily="Courier New" Margin="-2,-6,0,0" />
+            <Label Content="↔" HorizontalAlignment="Left" VerticalAlignment="Top" Height="36" Width="49" FontSize="26" FontFamily="Courier New" Margin="-1,-5,0,0"/>
+        </Grid>
+        <Grid Margin="14,22,163,218">
+            <Label Content="🖱" HorizontalAlignment="Left" Margin="0,2,0,0" VerticalAlignment="Top" Height="33" Width="28" FontSize="18"/>
+            <Label Content="⟳±" HorizontalAlignment="Left" Margin="17,-6,0,0" VerticalAlignment="Top" Height="26" Width="42" FontSize="18"/>
+        </Grid>
+        <CheckBox x:Name="checkBox1" HorizontalAlignment="Left" Margin="12,249,0,0" VerticalAlignment="Top" IsChecked="True" Width="16" Height="15"/>
+        <Image HorizontalAlignment="Left" Height="17" Margin="51,247,0,0" VerticalAlignment="Top" Width="15" Source="/gifer;component/Resources/power.png" RenderTransformOrigin="2.571,-2.929"/>
+        <Label Content="❔" HorizontalAlignment="Left" Margin="28,243,0,0" VerticalAlignment="Top" Width="26" FontSize="16"/>
+        <Label Content="⛰" HorizontalAlignment="Left" Margin="221,20,0,0" VerticalAlignment="Top" Height="52" Width="63" FontSize="24"/>
+        <Label Content="⇆" HorizontalAlignment="Left" Margin="206,25,0,0" VerticalAlignment="Top" Height="32" Width="27" FontSize="18"/>
     </Grid>
 </Window>

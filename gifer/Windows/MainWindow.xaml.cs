@@ -37,8 +37,8 @@ namespace giferWpf {
 
         public MainWindow() {
             _config = ConfigurationManager.OpenExeConfiguration($@"{AppDomain.CurrentDomain.BaseDirectory}\gifer.exe").Setup();
-            _language = _config.FindLanguage() ?? gifer.Utils.Language.RU;
             _scalingMode = _config.FindScalingMode() ?? BitmapScalingMode.NearestNeighbor;
+            _language = _config.FindLanguage() ?? gifer.Utils.Language.RU;
 
             InitializeComponent();
             
@@ -181,13 +181,22 @@ namespace giferWpf {
         private void OnLanguageChanged(Language language) {
             _language = language;
             _config.SetLanguage(_language);
+            if(_currentImagePath == null) { // still default image is set
+                SetDefaultImage();
+            }
         }
         
         private void SetDefaultImage() {
             var image = new Bitmap(256, 256);
             using (Graphics g = Graphics.FromImage(image)) {
-                g.FillRectangle(System.Drawing.Brushes.LightGray, 0, 0, image.Width, image.Height);
-                g.DrawString("[Drag GIF/Image Here]", new Font("Courier New", 9), System.Drawing.Brushes.Black, 47, 125);
+                var rect = new Rectangle(0, 0, image.Width, image.Height);
+                g.FillRectangle(System.Drawing.Brushes.LightGray, rect);
+                var format = new StringFormat {
+                    LineAlignment = StringAlignment.Center,
+                    Alignment = StringAlignment.Center
+                };                
+                string message = LanguageDictionary.GetString(_language, "DefaultMessage");
+                g.DrawString(message, new Font("Courier New", 9), System.Drawing.Brushes.Black, rect, format);
             }
             this.pictureBox1.Source = image.ToBitmapSource();
         }
@@ -407,9 +416,9 @@ namespace giferWpf {
 
         private Thickness ResizeImageMargin(System.Windows.Controls.Image image, double imageWidth, double imageHeight) {
             var center = new System.Windows.Point(
-                    image.Margin.Left + image.Width / 2,
-                    image.Margin.Top + image.Height / 2
-                );
+                image.Margin.Left + image.Width / 2,
+                image.Margin.Top + image.Height / 2
+            );
             if (imageWidth > SystemParameters.PrimaryScreenWidth || imageHeight > SystemParameters.PrimaryScreenHeight) {
                 var size = ResizeProportionaly(
                     new System.Windows.Size(

@@ -12,13 +12,14 @@ namespace giferWpf {
             this.checkBox1.IsChecked = showHelpAtStartUp;
         }
 
-        private void Window_KeyUp  (object s, KeyEventArgs e) {
+        private void Window_KeyUp(object s, KeyEventArgs e) {
             if (e.Key == Key.Escape) {
                 this.Close();
             }
         }
 
-        private void Button_Click(object s, EventArgs e) => this.Close();
-        private void Window_Closing(object s, EventArgs e) => ShowHelpAtStartup = (bool)this.checkBox1.IsChecked;
+        private void Window_Closing(object s, EventArgs e) {
+            ShowHelpAtStartup = (bool)this.checkBox1.IsChecked;
+        }
     }
 }

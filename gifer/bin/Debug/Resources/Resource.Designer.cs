@@ -61,6 +61,15 @@ namespace gifer.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на [Drag GIF/Image Here].
+        /// </summary>
+        internal static string EN_DefaultMessage {
+            get {
+                return ResourceManager.GetString("EN_DefaultMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Language:.
         /// </summary>
         internal static string EN_Settings_LanguageLabel {
@@ -102,6 +111,15 @@ namespace gifer.Resources {
         internal static string EN_Settings_RenderingModeNearestNeighbor {
             get {
                 return ResourceManager.GetString("EN_Settings_RenderingModeNearestNeighbor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на [Перетащите GIF/Картинку Сюда].
+        /// </summary>
+        internal static string RU_DefaultMessage {
+            get {
+                return ResourceManager.GetString("RU_DefaultMessage", resourceCulture);
             }
         }
         
