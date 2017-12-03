@@ -369,6 +369,7 @@ namespace giferWpf {
                     }
                     SetImage(_currentImagePath);
                     break;
+                case Key.F1:
                 case Key.H:
                     ShowHelp(_config);
                     break;

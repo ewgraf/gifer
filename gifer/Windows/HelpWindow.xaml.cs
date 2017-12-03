@@ -21,5 +21,17 @@ namespace giferWpf {
         private void Window_Closing(object s, EventArgs e) {
             ShowHelpAtStartup = (bool)this.checkBox1.IsChecked;
         }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
+            if (e.ChangedButton == MouseButton.Left) {
+                this.DragMove();
+            }
+        }
+
+        private void Window_MouseUp(object sender, MouseButtonEventArgs e) {
+            if (e.ChangedButton == MouseButton.Right) {
+                this.Close();
+            }
+        }
     }
 }

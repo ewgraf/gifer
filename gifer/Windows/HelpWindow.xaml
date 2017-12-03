@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:giferWpf"
         mc:Ignorable="d"
-        Title="Help &amp; Settings" Height="317" Width="315" FontFamily="Courier New" KeyUp="Window_KeyUp" Closing="Window_Closing" WindowStartupLocation="CenterScreen">
+        Title="Help &amp; Settings" Height="317" Width="315" FontFamily="Courier New" KeyUp="Window_KeyUp" Closing="Window_Closing" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -16,14 +16,14 @@
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Header="❔" HorizontalAlignment="Left" Width="279" Margin="10,2,0,0" FontSize="18" Height="237" VerticalAlignment="Top"/>
-        <Label Content="'🖱" HorizontalAlignment="Left" Margin="13,51,0,0" VerticalAlignment="Top" Height="36" Width="109" FontSize="18"/>
+        <Label Content="'🖱" HorizontalAlignment="Left" Margin="13,53,0,0" VerticalAlignment="Top" Height="36" Width="109" FontSize="18"/>
         <Label Content="[⇧Shift],[Ctrl],[Alt]" HorizontalAlignment="Left" Margin="30,32,0,0" VerticalAlignment="Top" Height="26" Width="172"/>
-        <Label Content="🖱', [Esc]" HorizontalAlignment="Left" Margin="16,202,0,0" VerticalAlignment="Top" Height="33" Width="120" FontSize="18"/>
-        <Label Content="[←], [→]" HorizontalAlignment="Left" Margin="12,72,0,0" VerticalAlignment="Top" Height="30" Width="99" FontSize="18"/>
-        <Label Content="[Delete]" HorizontalAlignment="Left" Margin="12,124,0,0" VerticalAlignment="Top" Height="32" Width="99" FontSize="18"/>
-        <Label Content="[Ctrl] + P" HorizontalAlignment="Left" Margin="12,98,0,0" VerticalAlignment="Top" Height="31" Width="127" FontSize="18"/>
-        <Label Content="❌" Foreground="Red" HorizontalAlignment="Left" Margin="185,202,0,0" VerticalAlignment="Top" Height="26" Width="35" FontSize="18"/>
-        <Grid Margin="187,74,-8,181" Grid.ColumnSpan="2">
+        <Label Content="🖱', [Esc]" HorizontalAlignment="Left" Margin="16,205,0,0" VerticalAlignment="Top" Height="33" Width="120" FontSize="18"/>
+        <Label Content="[←], [→]" HorizontalAlignment="Left" Margin="12,74,0,0" VerticalAlignment="Top" Height="30" Width="99" FontSize="18"/>
+        <Label Content="[Delete]" HorizontalAlignment="Left" Margin="12,126,0,0" VerticalAlignment="Top" Height="32" Width="99" FontSize="18"/>
+        <Label Content="[Ctrl] + P" HorizontalAlignment="Left" Margin="12,100,0,0" VerticalAlignment="Top" Height="31" Width="127" FontSize="18"/>
+        <Label Content="❌" Foreground="Red" HorizontalAlignment="Left" Margin="184,206,0,0" VerticalAlignment="Top" Height="26" Width="36" FontSize="18"/>
+        <Grid Margin="187,76,-8,179" Grid.ColumnSpan="2">
             <Label Content="⛰⛅" HorizontalAlignment="Left" Margin="18,0,0,-8" VerticalAlignment="Top" Height="39" Width="73" FontSize="18"/>
             <Label Content="➔" HorizontalAlignment="Left" Margin="1,3,0,0" VerticalAlignment="Top" Height="25" Width="27" FontSize="18" RenderTransformOrigin="0.5,0.5">
                 <Label.RenderTransform>
@@ -46,14 +46,14 @@
                 </Label.RenderTransform>
             </Label>
         </Grid>
-        <Label Content="🗑" HorizontalAlignment="Left" Margin="184,124,0,0" VerticalAlignment="Top" Height="32" Width="35" FontSize="18"/>
+        <Label Content="🗑" HorizontalAlignment="Left" Margin="184,126,0,0" VerticalAlignment="Top" Height="32" Width="35" FontSize="18"/>
         <Label Content="⛰" HorizontalAlignment="Left" Margin="185,25,0,0" VerticalAlignment="Top" Height="32" Width="30" FontSize="16"/>
-        <Label Content="🖨" HorizontalAlignment="Left" Margin="184,98,0,0" VerticalAlignment="Top" Height="31" Width="35" FontSize="18"/>
-        <Label Content="[H], [F1]" HorizontalAlignment="Left" Margin="12,150,0,0" VerticalAlignment="Top" Height="30" Width="168" FontSize="18"/>
-        <Label Content="❔" HorizontalAlignment="Left" Margin="188,150,0,0" VerticalAlignment="Top" Height="35" Width="42" FontSize="18"/>
-        <Label Content="[S]" HorizontalAlignment="Left" Margin="12,176,0,0" VerticalAlignment="Top" Height="31" Width="168" FontSize="18"/>
-        <Label Content="⚙" HorizontalAlignment="Left" Margin="185,177,0,0" VerticalAlignment="Top" Height="31" Width="35" FontSize="18"/>
-        <Grid Margin="189,47,40,195">
+        <Label Content="🖨" HorizontalAlignment="Left" Margin="184,100,0,0" VerticalAlignment="Top" Height="31" Width="35" FontSize="18"/>
+        <Label Content="[H], [F1]" HorizontalAlignment="Left" Margin="12,152,0,0" VerticalAlignment="Top" Height="30" Width="168" FontSize="18"/>
+        <Label Content="❔" HorizontalAlignment="Left" Margin="188,152,0,0" VerticalAlignment="Top" Height="35" Width="49" FontSize="18"/>
+        <Label Content="[S]" HorizontalAlignment="Left" Margin="12,178,0,0" VerticalAlignment="Top" Height="31" Width="168" FontSize="18"/>
+        <Label Content="⚙" HorizontalAlignment="Left" Margin="185,179,0,0" VerticalAlignment="Top" Height="31" Width="35" FontSize="18"/>
+        <Grid Margin="189,50,40,192">
             <Label Content="↕" HorizontalAlignment="Left" VerticalAlignment="Top" Height="49" Width="23" FontSize="28" FontFamily="Courier New" Margin="-2,-6,0,0" />
             <Label Content="↔" HorizontalAlignment="Left" VerticalAlignment="Top" Height="36" Width="49" FontSize="26" FontFamily="Courier New" Margin="-1,-5,0,0"/>
         </Grid>

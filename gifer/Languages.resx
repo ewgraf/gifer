@@ -138,6 +138,9 @@
     <value>Nearest neighbot (Raw pixels)</value>
     <comment>Use nearest-neighbor bitmap scaling, which provides performance benefits over LowQuality mode when the software rasterizer is used. This mode is often used to magnify a bitmap</comment>
   </data>
+  <data name="EN_Settings_Title" xml:space="preserve">
+    <value>[S]ettings</value>
+  </data>
   <data name="RU_DefaultMessage" xml:space="preserve">
     <value>[Перетащите GIF/Картинку Сюда]</value>
   </data>
@@ -155,6 +158,9 @@
   </data>
   <data name="RU_Settings_RenderingModeNearestNeighbor" xml:space="preserve">
     <value>Ближайший сосед (Оригинальные пиксели)</value>
+  </data>
+  <data name="RU_Settings_Title" xml:space="preserve">
+    <value>[S] Настройки</value>
   </data>
   <data name="Settings_Language_EN" xml:space="preserve">
     <value>English</value>

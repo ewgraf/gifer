@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace gifer.Resources {
+namespace gifer {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace gifer.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Resource {
+    internal class Languages {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Resource() {
+        internal Languages() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace gifer.Resources {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("gifer.Resources.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("gifer.Languages", typeof(Languages).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -115,6 +115,15 @@ namespace gifer.Resources {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на [S]ettings.
+        /// </summary>
+        internal static string EN_Settings_Title {
+            get {
+                return ResourceManager.GetString("EN_Settings_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на [Перетащите GIF/Картинку Сюда].
         /// </summary>
         internal static string RU_DefaultMessage {
@@ -165,6 +174,15 @@ namespace gifer.Resources {
         internal static string RU_Settings_RenderingModeNearestNeighbor {
             get {
                 return ResourceManager.GetString("RU_Settings_RenderingModeNearestNeighbor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на [S] Настройки.
+        /// </summary>
+        internal static string RU_Settings_Title {
+            get {
+                return ResourceManager.GetString("RU_Settings_Title", resourceCulture);
             }
         }
         

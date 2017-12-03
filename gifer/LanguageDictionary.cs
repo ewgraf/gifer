@@ -5,7 +5,7 @@ using gifer.Utils;
 
 namespace gifer {
     public class LanguageDictionary {
-        private static readonly ResourceManager _resources = new ResourceManager("gifer.Resources.Resource", Assembly.GetExecutingAssembly());
+        private static readonly ResourceManager _resources = new ResourceManager("gifer.Languages", Assembly.GetExecutingAssembly());
 
         public static string GetString(Language lang, string key) {
             return GetString($"{lang}_{key}");

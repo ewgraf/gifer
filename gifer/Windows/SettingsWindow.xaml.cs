@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using gifer.Utils;
 
@@ -26,6 +27,7 @@ namespace gifer {
         }
 
         public void OnLanguageChanged(Language language) {
+            this.Title = LanguageDictionary.GetString(language, "Settings_Title");
             this.Settings_RenderingModeLabel.Content = LanguageDictionary.GetString(language, nameof(Settings_RenderingModeLabel));
             this.Settings_RenderingModeComboBox.Items.Clear();
             this.Settings_RenderingModeComboBox.Items.Add(LanguageDictionary.GetString(language, nameof(Settings_RenderingModeLinear)));
@@ -55,12 +57,24 @@ namespace gifer {
             this.Settings_LanguageComboBox.SelectionChanged += LanguageComboBox_SelectionChanged;
         }
 
-        private void Settings_RenderingModeComboBox_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e) {
+        private void Settings_RenderingModeComboBox_MouseEnter(object sender, MouseEventArgs e) {
             this.Settings_RenderingModeComboBox.Focus();
         }
 
-        private void Settings_LanguageComboBox_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e) {
+        private void Settings_LanguageComboBox_MouseEnter(object sender, MouseEventArgs e) {
             this.Settings_LanguageComboBox.Focus();
+        }
+
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e) {
+            if (e.ChangedButton == MouseButton.Left) {
+                this.DragMove();
+            }
+        }
+
+        private void Window_MouseUp(object sender, MouseButtonEventArgs e) {
+            if (e.ChangedButton == MouseButton.Right) {
+                this.Close();
+            }
         }
     }
 }
