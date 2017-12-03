@@ -7,15 +7,15 @@
         mc:Ignorable="d"
         Title="Settings" Height="300" Width="483.686" WindowStartupLocation="CenterScreen">
     <Grid>
-        <ComboBox HorizontalAlignment="Left" Margin="185,10,0,0" VerticalAlignment="Top" Width="281" SelectedIndex="2">
-            <ComboBoxItem Content="Settings_RenderingModeLinear"/>
-            <ComboBoxItem Content="Settings_RenderingModeFant"/>
-            <ComboBoxItem Content="Settings_RenderingModeNearestNeighbor"/>
+        <ComboBox x:Name="Settings_RenderingModeComboBox" HorizontalAlignment="Left" Margin="185,10,0,0" VerticalAlignment="Top" Width="281" SelectedIndex="2">
+            <ComboBoxItem x:Name="Settings_RenderingModeLinear" Content="Settings_RenderingModeLinear"/>
+            <ComboBoxItem x:Name="Settings_RenderingModeFant" Content="Settings_RenderingModeFant"/>
+            <ComboBoxItem x:Name="Settings_RenderingModeNearestNeighbor" Content="Settings_RenderingModeNearestNeighbor"/>
         </ComboBox>
         <Label x:Name="Settings_RenderingModeLabel" Content="Settings_RenderingModeLabel" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <ComboBox HorizontalAlignment="Left" Margin="406,43,0,0" VerticalAlignment="Top" Width="60" SelectedIndex="0">
-            <ComboBoxItem Content="EN"/>
-            <ComboBoxItem Content="RU"/>
+        <ComboBox x:Name="Settings_LanguageComboBox" HorizontalAlignment="Left" Margin="338,43,0,0" VerticalAlignment="Top" Width="128" SelectedIndex="0">
+            <ComboBoxItem x:Name="Settings_Language_EN" Content="Settings_Language_EN"/>
+            <ComboBoxItem x:Name="Settings_Language_RU" Content="Settings_Language_RU"/>
         </ComboBox>
         <Label x:Name="Settings_LanguageLabel" Content="Settings_LanguageLabel" HorizontalAlignment="Left" Margin="10,41,0,0" VerticalAlignment="Top"/>
     </Grid>

@@ -48,6 +48,7 @@
     <Compile Include="AnimationHelper.cs" />
     <Compile Include="BitmapExtensions.cs" />
     <Compile Include="ConfigHelper.cs" />
+    <Compile Include="Language.cs" />
     <Compile Include="SizeExtensions.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="NativeMethods.cs" />

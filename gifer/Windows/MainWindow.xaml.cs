@@ -5,18 +5,18 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Windows.Media;
+using Microsoft.VisualBasic.FileIO;
+using gifer;
 using gifer.Domain;
 using gifer.Utils;
-using Microsoft.VisualBasic.FileIO;
-using System.Security;
-using gifer;
-using System.Windows.Media;
 
 namespace giferWpf {
     /// <summary>
@@ -32,9 +32,11 @@ namespace giferWpf {
         private string _currentImagePath;
         private WriteableBitmap _writableBitmap;
         private Stopwatch _drawindDelayStopwath;
+        private Language _language;
 
         public MainWindow() {
             _config = ConfigurationManager.OpenExeConfiguration($@"{AppDomain.CurrentDomain.BaseDirectory}\gifer.exe").Setup();
+            _language = _config.FindLanguage() ?? gifer.Utils.Language.RU;
 
             InitializeComponent();
             
@@ -161,13 +163,15 @@ namespace giferWpf {
         private void ShowSettings(Configuration config) {
             var settings = new SettingsWindow(
                 onRenderingModeChanged: m => RenderOptions.SetBitmapScalingMode(pictureBox1, m),
-                onLanguagehanged: l => this.OnLanguageChanged(l)
+                onLanguagehanged: l => this.OnLanguageChanged(l),
+                language: _language
             );
             settings.ShowDialog();
         }        
 
         private void OnLanguageChanged(Language language) {
-            // 
+            _language = language;
+            _config.SetLanguage(_language);
         }
         
         private void SetDefaultImage() {

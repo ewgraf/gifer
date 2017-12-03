@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace gifer {
+namespace gifer.Resources {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace gifer {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("gifer.Resource", typeof(Resource).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("gifer.Resources.Resource", typeof(Resource).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,15 @@ namespace gifer {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Language:.
+        /// </summary>
+        internal static string EN_Settings_LanguageLabel {
+            get {
+                return ResourceManager.GetString("EN_Settings_LanguageLabel", resourceCulture);
             }
         }
         
@@ -97,6 +106,15 @@ namespace gifer {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Язык:.
+        /// </summary>
+        internal static string RU_Settings_LanguageLabel {
+            get {
+                return ResourceManager.GetString("RU_Settings_LanguageLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Fant (Качественное).
         /// </summary>
         internal static string RU_Settings_RenderingModeFant {
@@ -129,6 +147,24 @@ namespace gifer {
         internal static string RU_Settings_RenderingModeNearestNeighbor {
             get {
                 return ResourceManager.GetString("RU_Settings_RenderingModeNearestNeighbor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на English.
+        /// </summary>
+        internal static string Settings_Language_EN {
+            get {
+                return ResourceManager.GetString("Settings_Language_EN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Русский.
+        /// </summary>
+        internal static string Settings_Language_RU {
+            get {
+                return ResourceManager.GetString("Settings_Language_RU", resourceCulture);
             }
         }
     }
