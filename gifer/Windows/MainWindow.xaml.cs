@@ -23,6 +23,7 @@ namespace giferWpf {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
+        private static readonly NaturalSortingComparer NaturalSortingComparer = new NaturalSortingComparer();
         private readonly Configuration _config;
         private readonly DispatcherTimer _gifTimer;
         private readonly DispatcherTimer _resizeTimer;
@@ -41,7 +42,7 @@ namespace giferWpf {
             _language = _config.FindLanguage() ?? gifer.Utils.Language.RU;
 
             InitializeComponent();
-            
+
             var horizontalMargin = SystemParameters.PrimaryScreenWidth  / 2 - this.pictureBox1.Width  / 2;
             var verticalMargin   = SystemParameters.PrimaryScreenHeight / 2 - this.pictureBox1.Height / 2;
             this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
@@ -102,6 +103,7 @@ namespace giferWpf {
             _currentImagePath = imagePath;
             _imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
                 .Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
+                .OrderBy(p => p, NaturalSortingComparer)
                 .ToList();
             
             _writableBitmap = _gifImage.GetWritableBitmap();
