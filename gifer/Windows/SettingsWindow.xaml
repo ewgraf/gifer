@@ -1,0 +1,22 @@
+﻿<Window x:Class="gifer.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:gifer"
+        mc:Ignorable="d"
+        Title="Settings" Height="106" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp">
+    <Grid>
+        <ComboBox x:Name="Settings_RenderingModeComboBox" HorizontalAlignment="Left" Margin="111,12,0,0" VerticalAlignment="Top" Width="270" SelectedIndex="2" MouseEnter="Settings_RenderingModeComboBox_MouseEnter" Height="24">
+            <ComboBoxItem x:Name="Settings_RenderingModeLinear" Content="Settings_RenderingModeLinear"/>
+            <ComboBoxItem x:Name="Settings_RenderingModeFant" Content="Settings_RenderingModeFant"/>
+            <ComboBoxItem x:Name="Settings_RenderingModeNearestNeighbor" Content="Ближайший сосед (Оригинальные пиксели)"/>
+        </ComboBox>
+        <Label x:Name="Settings_RenderingModeLabel" Content="Rendering:" HorizontalAlignment="Left" Margin="14,10,0,0" VerticalAlignment="Top"/>
+        <ComboBox x:Name="Settings_LanguageComboBox" HorizontalAlignment="Left" Margin="253,43,0,0" VerticalAlignment="Top" Width="128" SelectedIndex="1" MouseEnter="Settings_LanguageComboBox_MouseEnter" Height="24">
+            <ComboBoxItem x:Name="Settings_Language_EN" Content="English"/>
+            <ComboBoxItem x:Name="Settings_Language_RU" Content="Русский"/>
+        </ComboBox>
+        <Label x:Name="Settings_LanguageLabel" Content="Language:" HorizontalAlignment="Left" Margin="14,41,0,0" VerticalAlignment="Top"/>
+    </Grid>
+</Window>

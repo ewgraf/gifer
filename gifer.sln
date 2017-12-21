@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.10
+VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gifer", "gifer\gifer.csproj", "{0BD07D55-2E36-4FE5-A6C3-520FAA1E1835}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "giferWindowsForms", "giferWindowsForms\giferWindowsForms.csproj", "{0BD07D55-2E36-4FE5-A6C3-520FAA1E1835}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gifer", "gifer\gifer.csproj", "{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gifer.Domain", "gifer.Domain\gifer.Domain.csproj", "{9CC12B2D-0038-4876-865E-36688CA7F248}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gifer.Utils", "gifer.Utils\gifer.Utils.csproj", "{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +27,30 @@ Global
 		{0BD07D55-2E36-4FE5-A6C3-520FAA1E1835}.Release|Any CPU.Build.0 = Release|Any CPU
 		{0BD07D55-2E36-4FE5-A6C3-520FAA1E1835}.Release|x86.ActiveCfg = Release|Any CPU
 		{0BD07D55-2E36-4FE5-A6C3-520FAA1E1835}.Release|x86.Build.0 = Release|Any CPU
+		{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}.Debug|x86.Build.0 = Debug|Any CPU
+		{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}.Release|x86.ActiveCfg = Release|Any CPU
+		{989DB82F-CC17-4C5C-8AE4-B17B55827ACE}.Release|x86.Build.0 = Release|Any CPU
+		{9CC12B2D-0038-4876-865E-36688CA7F248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CC12B2D-0038-4876-865E-36688CA7F248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CC12B2D-0038-4876-865E-36688CA7F248}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9CC12B2D-0038-4876-865E-36688CA7F248}.Debug|x86.Build.0 = Debug|Any CPU
+		{9CC12B2D-0038-4876-865E-36688CA7F248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CC12B2D-0038-4876-865E-36688CA7F248}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CC12B2D-0038-4876-865E-36688CA7F248}.Release|x86.ActiveCfg = Release|Any CPU
+		{9CC12B2D-0038-4876-865E-36688CA7F248}.Release|x86.Build.0 = Release|Any CPU
+		{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}.Debug|x86.Build.0 = Debug|Any CPU
+		{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}.Release|x86.ActiveCfg = Release|Any CPU
+		{E559FAB8-608A-41D7-A814-4DEDF6DEEEAE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
