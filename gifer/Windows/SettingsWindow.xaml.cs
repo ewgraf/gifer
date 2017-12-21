@@ -4,9 +4,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using gifer.Utils;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace gifer {
     public partial class SettingsWindow : Window {
+        private static readonly BitmapScalingMode[] ScalingModes = new[] { BitmapScalingMode.Linear, BitmapScalingMode.NearestNeighbor };
+
         private readonly Action<BitmapScalingMode> _onRenderingModeChanged;
         private readonly Action<Language> _onLanguagehanged;
         private BitmapScalingMode _scalingMode;
@@ -32,7 +36,7 @@ namespace gifer {
             this.Settings_RenderingModeComboBox.Items.Clear();
             this.Settings_RenderingModeComboBox.Items.Add(LanguageDictionary.GetString(language, nameof(Settings_RenderingModeLinear)));
             this.Settings_RenderingModeComboBox.Items.Add(LanguageDictionary.GetString(language, nameof(Settings_RenderingModeNearestNeighbor)));
-            this.Settings_RenderingModeComboBox.SelectedIndex = _scalingMode == BitmapScalingMode.NearestNeighbor ? 1 : 0;
+            this.Settings_RenderingModeComboBox.SelectedIndex = Array.IndexOf(ScalingModes, _scalingMode);
             this.Settings_LanguageLabel.Content = LanguageDictionary.GetString(language, nameof(Settings_LanguageLabel));
             this.Settings_LanguageComboBox.Items.Clear();
             this.Settings_LanguageComboBox.Items.Add(LanguageDictionary.GetString(nameof(Settings_Language_EN)));
@@ -46,7 +50,7 @@ namespace gifer {
             if (e.RemovedItems.Count != 1 || e.AddedItems.Count != 1) { // Item_Added/Removed by Items.Clear(), not Selection_Changed directly
                 return;
             }
-            _scalingMode = (BitmapScalingMode)(this.Settings_RenderingModeComboBox.SelectedIndex + 1);
+            _scalingMode = ScalingModes[this.Settings_RenderingModeComboBox.SelectedIndex];
             _onRenderingModeChanged(_scalingMode);
         }
 
