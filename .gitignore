@@ -1,0 +1,14 @@
+*.compressed
+*.cache
+*.cache
+*.pdb
+*.tmp
+*.pdb
+*.ide
+*.pdb
+*.dll
+*.cache
+*.ide
+obj/
+.vs/
+.vs/
