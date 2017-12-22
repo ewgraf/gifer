@@ -15,7 +15,7 @@ namespace gifer.Utils {
                 config.Save(ConfigurationSaveMode.Minimal);
             }
             if (!config.AppSettings.Settings.AllKeys.Contains("language")) {
-                config.AppSettings.Settings.Add("language", "RU");
+                config.AppSettings.Settings.Add("language", "EN");
                 config.Save(ConfigurationSaveMode.Minimal);
             }
             if (!config.AppSettings.Settings.AllKeys.Contains("scalingMode")) {
