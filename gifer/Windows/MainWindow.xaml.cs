@@ -42,6 +42,8 @@ namespace giferWpf {
             _language = ConfigHelper.FindLanguage() ?? gifer.Utils.Language.RU;
 
             InitializeComponent();
+            OnScalingModeChanged(_scalingMode);
+            OnLanguageChanged(_language);
 
             var horizontalMargin = SystemParameters.PrimaryScreenWidth  / 2 - this.pictureBox1.Width  / 2;
             var verticalMargin   = SystemParameters.PrimaryScreenHeight / 2 - this.pictureBox1.Height / 2;
