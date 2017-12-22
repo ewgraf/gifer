@@ -1,11 +1,12 @@
 ﻿<Window x:Class="giferWpf.HelpWindow"
+        x:Name="HelpForm"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:giferWpf"
         mc:Ignorable="d"
-        Title="Help &amp; Settings" Height="317" Width="315" FontFamily="Courier New" KeyUp="Window_KeyUp" Closing="Window_Closing" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp">
+        Height="317" Width="315" FontFamily="Courier New" KeyUp="Window_KeyUp" Closing="Window_Closing" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -16,8 +17,7 @@
             <ColumnDefinition Width="0*"/>
         </Grid.ColumnDefinitions>
         <GroupBox Header="❔" HorizontalAlignment="Left" Width="279" Margin="10,2,0,0" FontSize="18" Height="237" VerticalAlignment="Top"/>
-        <Label Content="'🖱" HorizontalAlignment="Left" Margin="13,53,0,0" VerticalAlignment="Top" Height="36" Width="109" FontSize="18"/>
-        <Label Content="[⇧Shift],[Ctrl],[Alt]" HorizontalAlignment="Left" Margin="30,32,0,0" VerticalAlignment="Top" Height="26" Width="172"/>
+        <Label Content="'🖱" HorizontalAlignment="Left" Margin="11,53,0,0" VerticalAlignment="Top" Height="36" Width="109" FontSize="18"/>
         <Label Content="🖱', [Esc]" HorizontalAlignment="Left" Margin="16,205,0,0" VerticalAlignment="Top" Height="33" Width="120" FontSize="18"/>
         <Label Content="[←], [→]" HorizontalAlignment="Left" Margin="12,74,0,0" VerticalAlignment="Top" Height="30" Width="99" FontSize="18"/>
         <Label Content="[Delete]" HorizontalAlignment="Left" Margin="12,126,0,0" VerticalAlignment="Top" Height="32" Width="99" FontSize="18"/>
@@ -57,9 +57,9 @@
             <Label Content="↕" HorizontalAlignment="Left" VerticalAlignment="Top" Height="49" Width="23" FontSize="28" FontFamily="Courier New" Margin="-2,-6,0,0" />
             <Label Content="↔" HorizontalAlignment="Left" VerticalAlignment="Top" Height="36" Width="49" FontSize="26" FontFamily="Courier New" Margin="-1,-5,0,0"/>
         </Grid>
-        <Grid Margin="14,22,163,218">
+        <Grid Margin="14,22,142,229">
             <Label Content="🖱" HorizontalAlignment="Left" Margin="0,2,0,0" VerticalAlignment="Top" Height="33" Width="28" FontSize="18"/>
-            <Label Content="⟳±" HorizontalAlignment="Left" Margin="17,-6,0,0" VerticalAlignment="Top" Height="26" Width="42" FontSize="18"/>
+            <Label Content="⟳±" HorizontalAlignment="Left" Margin="17,-3,0,0" VerticalAlignment="Top" Height="26" Width="42" FontSize="18"/>
         </Grid>
         <CheckBox x:Name="checkBox1" HorizontalAlignment="Left" Margin="12,249,0,0" VerticalAlignment="Top" IsChecked="True" Width="16" Height="15"/>
         <Image HorizontalAlignment="Left" Height="17" Margin="51,247,0,0" VerticalAlignment="Top" Width="15" Source="/gifer;component/Resources/power.png" RenderTransformOrigin="2.571,-2.929"/>

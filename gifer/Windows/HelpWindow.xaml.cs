@@ -1,14 +1,20 @@
-﻿using System;
+﻿using gifer.Languages;
+using gifer.Utils;
+using System;
 using System.Windows;
 using System.Windows.Input;
 
 namespace giferWpf {
     public partial class HelpWindow : Window {
+        private Language _language;
         public bool ShowHelpAtStartup { get; private set; }
 
-        public HelpWindow(bool showHelpAtStartUp) {
+        public HelpWindow(bool showHelpAtStartUp, Language language) {
+            _language = language;
+
             InitializeComponent();
 
+            this.Title = LanguageDictionary.GetString(_language, "Help_Title");
             this.checkBox1.IsChecked = showHelpAtStartUp;
         }
 

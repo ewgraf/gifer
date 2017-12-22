@@ -18,6 +18,8 @@ namespace gifer.Languages {
             new[] { "RU_Settings_RenderingModeNearestNeighbor", "Ближайший сосед (Оригинальные пиксели)" },
             new[] { "EN_Settings_Title", "[S]ettings" },
             new[] { "RU_Settings_Title", "[S] Настройки" },
+            new[] { "EN_Help_Title", "[H]elp" },
+            new[] { "RU_Help_Title", "[H] Помощь" },
             new[] { "Settings_Language_EN", "English" },
             new[] { "Settings_Language_RU", "Русский" }
         }

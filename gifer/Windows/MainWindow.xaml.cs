@@ -160,7 +160,7 @@ namespace giferWpf {
 
         private void ShowHelp(Configuration config) {
             bool showHelp = config.GetShowHelpAtStartup();
-            var helpForm = new HelpWindow(showHelp);
+            var helpForm = new HelpWindow(showHelp, _language);
             helpForm.ShowDialog();
             config.SetShowHelpAtStartup(helpForm.ShowHelpAtStartup);
         }
