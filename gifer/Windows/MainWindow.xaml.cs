@@ -415,7 +415,7 @@ namespace giferWpf {
         private void pictureBox1_MouseRightButtonUp(object s, MouseButtonEventArgs e) {
             // костыль, да, но при текущей реализации - изображение рисуется на прозрачном окне вов есь экран - надо проверять что кликнули таки на картинку
             var clickPoint = e.GetPosition(this.pictureBox1);
-            if (clickPoint.X >= 0 || clickPoint.Y >= 0) { // right-clicked out of image
+            if (clickPoint.X >= 0 && clickPoint.Y >= 0) { // right-clicked out of image
                 this.Close();
             }
         }
