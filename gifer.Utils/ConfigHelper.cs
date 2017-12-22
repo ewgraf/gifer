@@ -7,6 +7,7 @@ namespace gifer.Utils {
     public static class ConfigHelper {
         private readonly static BitmapScalingMode[] Modes = (BitmapScalingMode[])Enum.GetValues(typeof(BitmapScalingMode));
         private readonly static Language[] Languages = (Language[])Enum.GetValues(typeof(Language));
+        private readonly static string ExePath = $@"{AppDomain.CurrentDomain.BaseDirectory}\gifer.exe";
 
         public static Configuration Setup(this Configuration config) {
             if (!config.AppSettings.Settings.AllKeys.Contains("showHelpAtStartup")) {
@@ -24,11 +25,13 @@ namespace gifer.Utils {
             return config;
         }
 
-        public static bool GetShowHelpAtStartup(this Configuration config) {
+        public static bool GetShowHelpAtStartup() {
+            var config = ConfigurationManager.OpenExeConfiguration(ExePath).Setup();
             return bool.Parse(config.AppSettings.Settings["showHelpAtStartup"].Value);
         }
 
-        public static void SetShowHelpAtStartup(this Configuration config, bool showHelpAtStartup) {
+        public static void SetShowHelpAtStartup(bool showHelpAtStartup) {
+            var config = ConfigurationManager.OpenExeConfiguration(ExePath).Setup();
             if (config.AppSettings.Settings["showHelpAtStartup"].Value != showHelpAtStartup.ToString()) {
                 config.AppSettings.Settings.Remove("showHelpAtStartup");
                 config.AppSettings.Settings.Add("showHelpAtStartup", showHelpAtStartup.ToString());
@@ -36,7 +39,8 @@ namespace gifer.Utils {
             }
         }
 
-        public static Language? FindLanguage(this Configuration config) {
+        public static Language? FindLanguage() {
+            var config = ConfigurationManager.OpenExeConfiguration(ExePath).Setup();
             Language language;
             string value = config.AppSettings.Settings[nameof(language)]?.Value;
             if (value != null && Enum.TryParse(value, out language) && Languages.Contains(language)) {
@@ -46,7 +50,8 @@ namespace gifer.Utils {
             }
         }
 
-        public static void SetLanguage(this Configuration config, Language language) {
+        public static void SetLanguage(Language language) {
+            var config = ConfigurationManager.OpenExeConfiguration(ExePath).Setup();
             if (config.AppSettings.Settings[nameof(language)].Value != language.ToString()) {
                 config.AppSettings.Settings.Remove(nameof(language));
                 config.AppSettings.Settings.Add(nameof(language), language.ToString());
@@ -54,7 +59,8 @@ namespace gifer.Utils {
             }
         }
 
-        public static BitmapScalingMode? FindScalingMode(this Configuration config) {
+        public static BitmapScalingMode? FindScalingMode() {
+            var config = ConfigurationManager.OpenExeConfiguration(ExePath).Setup();
             BitmapScalingMode scalingMode;
             string value = config.AppSettings.Settings[nameof(scalingMode)]?.Value;
             if (value != null && Enum.TryParse(value, out scalingMode) && Modes.Contains(scalingMode)) {
@@ -64,7 +70,8 @@ namespace gifer.Utils {
             }
         }
 
-        public static void SetScalingMode(this Configuration config, BitmapScalingMode scalingMode) {
+        public static void SetScalingMode(BitmapScalingMode scalingMode) {
+            var config = ConfigurationManager.OpenExeConfiguration(ExePath).Setup();
             if (config.AppSettings.Settings[nameof(scalingMode)].Value != scalingMode.ToString()) {
                 config.AppSettings.Settings.Remove(nameof(scalingMode));
                 config.AppSettings.Settings.Add(nameof(scalingMode), scalingMode.ToString());

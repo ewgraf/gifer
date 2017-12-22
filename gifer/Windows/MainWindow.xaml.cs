@@ -38,9 +38,8 @@ namespace giferWpf {
         private Language _language;
 
         public MainWindow() {
-            _config = ConfigurationManager.OpenExeConfiguration($@"{AppDomain.CurrentDomain.BaseDirectory}\gifer.exe").Setup();
-            _scalingMode = _config.FindScalingMode() ?? BitmapScalingMode.NearestNeighbor;
-            _language = _config.FindLanguage() ?? gifer.Utils.Language.RU;
+            _scalingMode = ConfigHelper.FindScalingMode() ?? BitmapScalingMode.NearestNeighbor;
+            _language = ConfigHelper.FindLanguage() ?? gifer.Utils.Language.RU;
 
             InitializeComponent();
 
@@ -73,8 +72,8 @@ namespace giferWpf {
                 SetDefaultImage();
             }
 
-            if (_config.GetShowHelpAtStartup()) {
-                ShowHelp(_config);
+            if (ConfigHelper.GetShowHelpAtStartup()) {
+                ShowHelp();
             }
         }
 
@@ -158,11 +157,11 @@ namespace giferWpf {
             }
         }
 
-        private void ShowHelp(Configuration config) {
-            bool showHelp = config.GetShowHelpAtStartup();
+        private void ShowHelp() {
+            bool showHelp = ConfigHelper.GetShowHelpAtStartup();
             var helpForm = new HelpWindow(showHelp, _language);
             helpForm.ShowDialog();
-            config.SetShowHelpAtStartup(helpForm.ShowHelpAtStartup);
+            ConfigHelper.SetShowHelpAtStartup(helpForm.ShowHelpAtStartup);
         }
 
         private void ShowSettings(Configuration config) {
@@ -178,12 +177,12 @@ namespace giferWpf {
         private void OnScalingModeChanged(BitmapScalingMode scalingMode) {
             _scalingMode = scalingMode;
             RenderOptions.SetBitmapScalingMode(pictureBox1, scalingMode);
-            _config.SetScalingMode(_scalingMode);
+            ConfigHelper.SetScalingMode(_scalingMode);
         }
 
         private void OnLanguageChanged(Language language) {
             _language = language;
-            _config.SetLanguage(_language);
+            ConfigHelper.SetLanguage(_language);
             if(_currentImagePath == null) { // still default image is set
                 SetDefaultImage();
             }
@@ -374,7 +373,7 @@ namespace giferWpf {
                     break;
                 case Key.F1:
                 case Key.H:
-                    ShowHelp(_config);
+                    ShowHelp();
                     break;
                 case Key.S:
                     ShowSettings(_config);
