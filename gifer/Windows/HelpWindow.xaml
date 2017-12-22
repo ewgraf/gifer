@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:giferWpf"
         mc:Ignorable="d"
-        Height="306" Width="307" FontFamily="Courier New" KeyUp="Window_KeyUp" Closing="Window_Closing" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" ResizeMode="NoResize">
+        Height="306" Width="307" FontFamily="Courier New" Closing="Window_Closing" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" ResizeMode="NoResize" KeyDown="HelpForm_KeyDown">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>
