@@ -22,7 +22,6 @@ namespace gifer {
             _language = language;
 
             InitializeComponent();
-
             OnLanguageChanged(_language);
 
             this.Settings_RenderingModeComboBox.SelectionChanged += RenderingModeComboBox_SelectionChanged;
@@ -81,7 +80,7 @@ namespace gifer {
         }
 
         private void Window_KeyUp(object sender, KeyEventArgs e) {
-            if (e.Key == Key.Escape) {
+            if (e.Key == Key.Escape || e.Key == Key.S) {
                 this.Close();
             }
         }

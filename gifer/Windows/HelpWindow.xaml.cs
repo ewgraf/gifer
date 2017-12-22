@@ -1,8 +1,8 @@
-﻿using gifer.Languages;
-using gifer.Utils;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Input;
+using gifer.Languages;
+using gifer.Utils;
 
 namespace giferWpf {
     public partial class HelpWindow : Window {
@@ -19,7 +19,7 @@ namespace giferWpf {
         }
 
         private void Window_KeyUp(object s, KeyEventArgs e) {
-            if (e.Key == Key.Escape) {
+            if (e.Key == Key.Escape || e.Key == Key.H) {
                 this.Close();
             }
         }
