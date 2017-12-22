@@ -3,9 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using gifer.Languages;
 using gifer.Utils;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace gifer {
     public partial class SettingsWindow : Window {

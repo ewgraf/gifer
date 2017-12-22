@@ -3,6 +3,7 @@
   <Costura>
     <IncludeAssemblies>
       gifer.Domain
+      gifer.Languages
       gifer.Utils
     </IncludeAssemblies>
   </Costura>

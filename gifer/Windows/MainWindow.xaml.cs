@@ -17,6 +17,7 @@ using Microsoft.VisualBasic.FileIO;
 using gifer;
 using gifer.Domain;
 using gifer.Utils;
+using gifer.Languages;
 
 namespace giferWpf {
     /// <summary>
