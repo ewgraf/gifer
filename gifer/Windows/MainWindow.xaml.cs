@@ -115,7 +115,7 @@ namespace giferWpf {
 
             if (_gifImage.IsGif && _gifImage.Frames > 1) {
                 if(_gifImage.CurrentFrameDelay == 0) {
-                    MessageBox.Show("Gif has 0 ms frame delay, that is strange");
+                    //MessageBox.Show("Gif has 0 ms frame delay, that is strange");
                 }
                 _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.CurrentFrameDelay);
                 _gifTimer.Start();
