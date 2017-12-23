@@ -62,8 +62,8 @@
         <Label Content="⟳±" HorizontalAlignment="Left" Margin="38,20,0,0" VerticalAlignment="Top" Height="26" Width="42" FontSize="16"/>
         <Label Content="🖱" HorizontalAlignment="Left" Margin="21,24,0,0" VerticalAlignment="Top" Height="33" Width="28" FontSize="18"/>
         <CheckBox x:Name="checkBox1" HorizontalAlignment="Left" Margin="12,249,0,0" VerticalAlignment="Top" IsChecked="True" Width="16" Height="15"/>
-        <Image HorizontalAlignment="Left" Height="17" Margin="51,247,0,0" VerticalAlignment="Top" Width="15" Source="/gifer;component/Resources/power.png" RenderTransformOrigin="2.571,-2.929"/>
-        <Label Content="❔" HorizontalAlignment="Left" Margin="28,243,0,0" VerticalAlignment="Top" Width="26" FontSize="16"/>
+        <Image HorizontalAlignment="Left" Height="17" Margin="60,247,0,0" VerticalAlignment="Top" Width="15" Source="/gifer;component/Resources/power.png" RenderTransformOrigin="2.571,-2.929"/>
+        <Label Content="❔@" HorizontalAlignment="Left" Margin="28,243,0,0" VerticalAlignment="Top" Width="37" FontSize="16" Height="34"/>
         <Label Content="⛰" HorizontalAlignment="Left" Margin="221,20,0,0" VerticalAlignment="Top" Height="52" Width="63" FontSize="24"/>
         <Label Content="⇆" HorizontalAlignment="Left" Margin="206,25,0,0" VerticalAlignment="Top" Height="32" Width="27" FontSize="18"/>
     </Grid>
