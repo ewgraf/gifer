@@ -1,5 +1,7 @@
 # Gifer
+
 Pure gif&images viewer for Windows
+
 Download: https://github.com/ewgraf/Gifer/releases/tag/v1
 
 # Debug Drug&Drop
