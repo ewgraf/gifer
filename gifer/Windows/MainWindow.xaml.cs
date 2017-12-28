@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -25,15 +24,14 @@ namespace giferWpf {
     /// </summary>
     public partial class MainWindow : Window {
         private static readonly NaturalSortingComparer NaturalSortingComparer = new NaturalSortingComparer();
-        private readonly Configuration _config;
-        private readonly DispatcherTimer _gifTimer;
-        private readonly DispatcherTimer _resizeTimer;
-        private readonly DispatcherTimer _iconTimer;
+        private readonly DispatcherTimer _gifTimer = new DispatcherTimer();
+        private readonly DispatcherTimer _resizeTimer = new DispatcherTimer();
+        private readonly DispatcherTimer _iconTimer = new DispatcherTimer();
         private GifImage _gifImage;
         private List<string> _imagesInFolder;
         private string _currentImagePath;
         private WriteableBitmap _writableBitmap;
-        private Stopwatch _drawindDelayStopwath;
+        private Stopwatch _drawindDelayStopwath = new Stopwatch();
         private BitmapScalingMode _scalingMode;
         private Language _language;
 
@@ -44,15 +42,12 @@ namespace giferWpf {
             InitializeComponent();
             OnScalingModeChanged(_scalingMode);
             OnLanguageChanged(_language);
-
-            var horizontalMargin = SystemParameters.PrimaryScreenWidth  / 2 - this.pictureBox1.Width  / 2;
-            var verticalMargin   = SystemParameters.PrimaryScreenHeight / 2 - this.pictureBox1.Height / 2;
+            
+            // center pictureBox
+            var horizontalMargin = SystemParameters.VirtualScreenWidth  / 2 - this.pictureBox1.Width  / 2;
+            var verticalMargin   = SystemParameters.VirtualScreenHeight / 2 - this.pictureBox1.Height / 2;
             this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
-            this.canvas.Margin = new Thickness(0d, 0d, SystemParameters.PrimaryScreenWidth - this.canvas.Width, SystemParameters.PrimaryScreenHeight - this.canvas.Height);
-            _drawindDelayStopwath = new Stopwatch();
-            _gifTimer = new DispatcherTimer();
-            _resizeTimer = new DispatcherTimer();
-            _iconTimer = new DispatcherTimer();
+            
             _gifTimer.Tick += (s, e) => {
                 _drawindDelayStopwath.Restart();
                 _gifTimer.Stop();
@@ -166,7 +161,7 @@ namespace giferWpf {
             ConfigHelper.SetShowHelpAtStartup(helpForm.ShowHelpAtStartup);
         }
 
-        private void ShowSettings(Configuration config) {
+        private void ShowSettings() {
             var settings = new SettingsWindow(
                 m => this.OnScalingModeChanged(m),
                 l => this.OnLanguageChanged(l),
@@ -228,13 +223,18 @@ namespace giferWpf {
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
-            var s = sender as System.Windows.Controls.Image;
-            if (!_moving || s == null) {
+            var pictureBox = sender as System.Windows.Controls.Image; // moving whole pictureBox
+
+            var p = e.GetPosition(this.pictureBox1);
+            Debug.WriteLine($"position {p.X} {p.Y} == {this.pictureBox1.Width / p.X} {this.pictureBox1.Height / p.Y}");
+
+
+            if (!_moving || pictureBox == null) {
                 return;
             }
             System.Windows.Point position = e.GetPosition(this);
-            s.SetValue(Canvas.LeftProperty, e.GetPosition(canvas).X - s.Margin.Left - _position.X);
-            s.SetValue(Canvas.TopProperty,  e.GetPosition(canvas).Y - s.Margin.Top  - _position.Y);
+            pictureBox.SetValue(Canvas.LeftProperty, e.GetPosition(canvas).X - pictureBox.Margin.Left - _position.X);
+            pictureBox.SetValue(Canvas.TopProperty,  e.GetPosition(canvas).Y - pictureBox.Margin.Top  - _position.Y);
         }
 
         private void pictureBox1_MouseUp(object sender, MouseButtonEventArgs e) {
@@ -255,7 +255,7 @@ namespace giferWpf {
         private double _deltaWidth;
         private double _deltaHeigth;
         private System.Windows.Size _newSize;
-        private uint _resizeIterations;
+        private int _resizeIterations;
 
         private void resizeTimer_Tick(object sender, EventArgs e) {
             if (_resizeIterations-->0) {
@@ -263,9 +263,9 @@ namespace giferWpf {
                     DispatcherPriority.Background,
                     new ThreadStart(delegate {
                         pictureBox1.Margin = new Thickness(
-                            pictureBox1.Margin.Left + _deltaMargin.Left,
-                            pictureBox1.Margin.Top + _deltaMargin.Top,
-                            pictureBox1.Margin.Right + _deltaMargin.Right,
+                            pictureBox1.Margin.Left   + _deltaMargin.Left,
+                            pictureBox1.Margin.Top    + _deltaMargin.Top,
+                            pictureBox1.Margin.Right  + _deltaMargin.Right,
                             pictureBox1.Margin.Bottom + _deltaMargin.Bottom
                         );
                         pictureBox1.Width  += _deltaWidth;
@@ -309,33 +309,50 @@ namespace giferWpf {
             _resizing = false;
         }
 
+        System.Windows.Point NewCursorPosition;
+
         private void Zoom(double ratio, MouseWheelEventArgs e) {
-            Thickness margin = pictureBox1.Margin;
-            var size = new System.Windows.Size(
-                SystemParameters.PrimaryScreenWidth - (pictureBox1.Margin.Left + pictureBox1.Margin.Right),
-                SystemParameters.PrimaryScreenHeight - (pictureBox1.Margin.Top + pictureBox1.Margin.Bottom)
+            Thickness originalMargin = pictureBox1.Margin;
+            var originalSize = new System.Windows.Size(
+                SystemParameters.VirtualScreenWidth  - (originalMargin.Left + originalMargin.Right ),
+                SystemParameters.VirtualScreenHeight - (originalMargin.Top  + originalMargin.Bottom)
             );
-            double enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
-            double delta = enlargementRatio;
+            double enlargementRatio = AnimationHelper.GetEnlargementValue(ratio); // 1.35 -> 1.35, -1.35 -> 0.74 (|1/ratio|)
             _newSize = new System.Windows.Size(
-                size.Width * enlargementRatio,
-                size.Height * enlargementRatio
+                originalSize.Width  * enlargementRatio,
+                originalSize.Height * enlargementRatio
             );
 
-            _deltaWidth = ((_newSize.Width - pictureBox1.Width)) / 60;
-            _deltaHeigth = ((_newSize.Height - pictureBox1.Height)) / 60;
+            int fps = 60;
+            _deltaWidth  = ((_newSize.Width  - originalSize.Width )) / fps;
+            _deltaHeigth = ((_newSize.Height - originalSize.Height)) / fps;
 
-            float animationAcceleration = 10.0f;
-
-            _deltaWidth *= animationAcceleration;
+            // tuning
+            float animationAcceleration = 11.1f;
+            _deltaWidth  *= animationAcceleration;
             _deltaHeigth *= animationAcceleration;
 
+            
+            var cursorPositionOnPictureBox = e.GetPosition(this.pictureBox1);
+            Debug.WriteLine($"cursorPositionOnPictureBox {cursorPositionOnPictureBox.X} {cursorPositionOnPictureBox.Y}");
+            double distanceRatioLeft = cursorPositionOnPictureBox.X / originalSize.Width;
+            double distanceRatioTop = cursorPositionOnPictureBox.Y / originalSize.Height;
+            var newCursorPosition = new System.Windows.Point(_newSize.Width * distanceRatioLeft, _newSize.Height * distanceRatioTop);            
+            Debug.WriteLine($"newCursorPosition {newCursorPosition.X} {newCursorPosition.Y}");
+            double horizontalShift = 0;// ((originalSize.Width - _newSize.Width) / 2 + newCursorPosition.X / 2);
+            Debug.WriteLine($"horizontalShift {horizontalShift}");
+            NewCursorPosition = newCursorPosition;
+
             _newMargin = new Thickness(
-                margin.Left - (pictureBox1.Width - _newSize.Width) / 2,
-                margin.Top - (pictureBox1.Height - _newSize.Height) / 2,
-                margin.Right - (pictureBox1.Width - _newSize.Width) / 2,
-                margin.Bottom - (pictureBox1.Height - _newSize.Height) / 2
+                originalMargin.Left   - (originalSize.Width  - _newSize.Width ) / 2 + (horizontalShift),
+                originalMargin.Top    - (originalSize.Height - _newSize.Height) / 2 /*- (newCursorPosition.Y - cursorPositionOnPictureBox.Y)*/,
+                originalMargin.Right  - (originalSize.Width  - _newSize.Width ) / 2 - (horizontalShift),
+                originalMargin.Bottom - (originalSize.Height - _newSize.Height) / 2 /*+ (newCursorPosition.Y - cursorPositionOnPictureBox.Y)*/
             );
+
+            //_newMargin.Left += newCursorPosition.X - cursorPositionOnPictureBox.X;
+            //_newMargin.Top  += newCursorPosition.Y - cursorPositionOnPictureBox.Y;
+
             //System.Windows.Point center = new System.Windows.Point(_newMargin.Left + _newSize.Width / 2, _newMargin.Top + _newSize.Height / 2);
             //System.Windows.Point position = e.GetPosition(this.pictureBox1);
             //_newMargin = new Thickness(
@@ -345,17 +362,25 @@ namespace giferWpf {
             //    _newMargin.Bottom + Math.Sign(ratio) * (pictureBox1.Height / 2 - position.Y) / 2
             //);
             _deltaMargin = new Thickness(
-                ((pictureBox1.Margin.Left - _newMargin.Left) / 60) * animationAcceleration,
-                ((pictureBox1.Margin.Top - _newMargin.Top) / 60) * animationAcceleration,
-                ((pictureBox1.Margin.Right - _newMargin.Right) / 60) * animationAcceleration,
-                ((pictureBox1.Margin.Bottom - _newMargin.Bottom) / 60) * animationAcceleration
+                ((pictureBox1.Margin.Left   - _newMargin.Left  ) / fps) * animationAcceleration,
+                ((pictureBox1.Margin.Top    - _newMargin.Top   ) / fps) * animationAcceleration,
+                ((pictureBox1.Margin.Right  - _newMargin.Right ) / fps) * animationAcceleration,
+                ((pictureBox1.Margin.Bottom - _newMargin.Bottom) / fps) * animationAcceleration
             );
-            _resizeIterations = (uint)((_newSize.Width - pictureBox1.Width) / _deltaWidth);
+
+            //SetCursorPos((int)(_newMargin.Left + newCursorPosition.X + 7), (int)e.GetPosition(this).Y);
+
+
+
+            _resizeIterations = (int)((_newSize.Width - originalSize.Width) / _deltaWidth);
             _resizeTimer.Start();
         }
 
+        [System.Runtime.InteropServices.DllImport("User32.dll")]
+        private static extern bool SetCursorPos(int X, int Y);
+
         #endregion
-        
+
         private void Window_KeyDown(object sender, KeyEventArgs e) {
             switch (e.Key) {
                 case Key.Left:
@@ -378,7 +403,7 @@ namespace giferWpf {
                     ShowHelp();
                     break;
                 case Key.S:
-                    ShowSettings(_config);
+                    ShowSettings();
                     break;
                 case Key.Delete:
                     if (_currentImagePath == null) {
