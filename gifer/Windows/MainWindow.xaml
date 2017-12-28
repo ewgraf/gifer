@@ -8,13 +8,15 @@
         AllowsTransparency="True"
         WindowStyle="None"
         Background="Transparent"
-        Title="MainWindow" Height="300" Width="300" KeyDown="Window_KeyDown" WindowState="Maximized" WindowStartupLocation="CenterScreen">
+        Title="MainWindow" KeyDown="Window_KeyDown" WindowState="Maximized">
     <Grid>
-        <Canvas x:Name="canvas" Width="128" Height="128">
+        <Canvas x:Name="canvas">
             <Image x:Name="pictureBox1"
                    RenderOptions.BitmapScalingMode="NearestNeighbor"
+                   
                 Width="256" Height="256"
-                HorizontalAlignment="Left" AllowDrop="True" Drop="pictureBox1_Drop" Margin="0" 
+                AllowDrop="True" Drop="pictureBox1_Drop" 
+                   Margin="0"
                 Stretch="Fill" MouseDown="pictureBox1_MouseDown" MouseMove="pictureBox1_MouseMove" MouseUp="pictureBox1_MouseUp" MouseWheel="pictureBox1_MouseWheel" SizeChanged="pictureBox1_SizeChanged" MouseRightButtonUp="pictureBox1_MouseRightButtonUp"
                 />
         </Canvas>
