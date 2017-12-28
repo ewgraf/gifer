@@ -120,6 +120,7 @@ namespace giferWpf {
                 _gifTimer.Start();
                 _iconTimer.Start();
             } else {
+                this.Icon = _writableBitmap;
                 this.pictureBox1.Source.Freeze();
             }
         }
