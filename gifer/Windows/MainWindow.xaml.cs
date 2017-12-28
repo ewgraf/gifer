@@ -47,6 +47,9 @@ namespace giferWpf {
             var horizontalMargin = SystemParameters.VirtualScreenWidth  / 2 - this.pictureBox1.Width  / 2;
             var verticalMargin   = SystemParameters.VirtualScreenHeight / 2 - this.pictureBox1.Height / 2;
             this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, horizontalMargin, verticalMargin);
+
+            // Canvas are -7,-7 for some misterious reason, when Window is Miximized
+            this.canvas.Margin = new Thickness(7, 7, 0, 0);
             
             _gifTimer.Tick += (s, e) => {
                 _drawindDelayStopwath.Restart();
