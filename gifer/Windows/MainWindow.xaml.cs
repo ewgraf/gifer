@@ -263,10 +263,10 @@ namespace giferWpf {
                     DispatcherPriority.Background,
                     new ThreadStart(delegate {
                         pictureBox1.Margin = new Thickness(
-                            pictureBox1.Margin.Left   + _deltaMargin.Left,
-                            pictureBox1.Margin.Top    + _deltaMargin.Top,
-                            pictureBox1.Margin.Right  + _deltaMargin.Right,
-                            pictureBox1.Margin.Bottom + _deltaMargin.Bottom
+                            pictureBox1.Margin.Left   - _deltaMargin.Left,
+                            pictureBox1.Margin.Top    - _deltaMargin.Top,
+                            pictureBox1.Margin.Right  - _deltaMargin.Right,
+                            pictureBox1.Margin.Bottom - _deltaMargin.Bottom
                         );
                         pictureBox1.Width  += _deltaWidth;
                         pictureBox1.Height += _deltaHeigth;
@@ -339,15 +339,15 @@ namespace giferWpf {
             double distanceRatioTop = cursorPositionOnPictureBox.Y / originalSize.Height;
             var newCursorPosition = new System.Windows.Point(_newSize.Width * distanceRatioLeft, _newSize.Height * distanceRatioTop);            
             Debug.WriteLine($"newCursorPosition {newCursorPosition.X} {newCursorPosition.Y}");
-            double horizontalShift = 0;// ((originalSize.Width - _newSize.Width) / 2 + newCursorPosition.X / 2);
+            double horizontalShift = ((_newSize.Width - originalSize.Width) / 2 - (newCursorPosition.X - cursorPositionOnPictureBox.X));
             Debug.WriteLine($"horizontalShift {horizontalShift}");
             NewCursorPosition = newCursorPosition;
 
             _newMargin = new Thickness(
-                originalMargin.Left   - (originalSize.Width  - _newSize.Width ) / 2 + (horizontalShift),
-                originalMargin.Top    - (originalSize.Height - _newSize.Height) / 2 /*- (newCursorPosition.Y - cursorPositionOnPictureBox.Y)*/,
-                originalMargin.Right  - (originalSize.Width  - _newSize.Width ) / 2 - (horizontalShift),
-                originalMargin.Bottom - (originalSize.Height - _newSize.Height) / 2 /*+ (newCursorPosition.Y - cursorPositionOnPictureBox.Y)*/
+                originalMargin.Left   - (_newSize.Width - originalSize.Width  ) / 2 + (horizontalShift),
+                originalMargin.Top    - (_newSize.Height - originalSize.Height) / 2 /*- (newCursorPosition.Y - cursorPositionOnPictureBox.Y)*/,
+                originalMargin.Right  - (_newSize.Width - originalSize.Width  ) / 2 - (horizontalShift),
+                originalMargin.Bottom - (_newSize.Height - originalSize.Height) / 2 /*+ (newCursorPosition.Y - cursorPositionOnPictureBox.Y)*/
             );
 
             //_newMargin.Left += newCursorPosition.X - cursorPositionOnPictureBox.X;
@@ -368,7 +368,8 @@ namespace giferWpf {
                 ((pictureBox1.Margin.Bottom - _newMargin.Bottom) / fps) * animationAcceleration
             );
 
-            //SetCursorPos((int)(_newMargin.Left + newCursorPosition.X + 7), (int)e.GetPosition(this).Y);
+
+            //SetCursorPos((int)(_newMargin.Left + newCursorPosition.X), (int)e.GetPosition(this).Y);
 
 
 
