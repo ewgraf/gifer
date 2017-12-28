@@ -224,11 +224,10 @@ namespace giferWpf {
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
             var pictureBox = sender as System.Windows.Controls.Image; // moving whole pictureBox
-
+#if DEBUG
             var p = e.GetPosition(this.pictureBox1);
             Debug.WriteLine($"position {p.X} {p.Y} == {this.pictureBox1.Width / p.X} {this.pictureBox1.Height / p.Y}");
-
-
+#endif
             if (!_moving || pictureBox == null) {
                 return;
             }
@@ -309,15 +308,15 @@ namespace giferWpf {
             _resizing = false;
         }
 
-        System.Windows.Point NewCursorPosition;
-
         private void Zoom(double ratio, MouseWheelEventArgs e) {
             Thickness originalMargin = pictureBox1.Margin;
             var originalSize = new System.Windows.Size(
                 SystemParameters.VirtualScreenWidth  - (originalMargin.Left + originalMargin.Right ),
                 SystemParameters.VirtualScreenHeight - (originalMargin.Top  + originalMargin.Bottom)
             );
-            double enlargementRatio = AnimationHelper.GetEnlargementValue(ratio); // 1.35 -> 1.35, -1.35 -> 0.74 (|1/ratio|)
+            // [-inf, +inf] -> [0, 1]
+            // 1.35 -> 1.35, -1.35 -> 0.74 (|1/ratio|)
+            double enlargementRatio = AnimationHelper.GetEnlargementValue(ratio); 
             _newSize = new System.Windows.Size(
                 originalSize.Width  * enlargementRatio,
                 originalSize.Height * enlargementRatio
@@ -332,53 +331,34 @@ namespace giferWpf {
             _deltaWidth  *= animationAcceleration;
             _deltaHeigth *= animationAcceleration;
 
-            
-            var cursorPositionOnPictureBox = e.GetPosition(this.pictureBox1);
-            Debug.WriteLine($"cursorPositionOnPictureBox {cursorPositionOnPictureBox.X} {cursorPositionOnPictureBox.Y}");
-            double distanceRatioLeft = cursorPositionOnPictureBox.X / originalSize.Width;
-            double distanceRatioTop = cursorPositionOnPictureBox.Y / originalSize.Height;
-            var newCursorPosition = new System.Windows.Point(_newSize.Width * distanceRatioLeft, _newSize.Height * distanceRatioTop);            
+            var originalCursorPosition = e.GetPosition(this.pictureBox1);
+            double xRatio = originalCursorPosition.X / originalSize.Width;
+            double yRatio = originalCursorPosition.Y / originalSize.Height;
+            var newCursorPosition = new System.Windows.Point(_newSize.Width * xRatio, _newSize.Height * yRatio);
+#if DEBUG            
+            Debug.WriteLine($"cursorPositionOnPictureBox {cursorPositionOnPictureBox.X} {cursorPositionOnPictureBox.Y}");            
             Debug.WriteLine($"newCursorPosition {newCursorPosition.X} {newCursorPosition.Y}");
-            double horizontalShift = ((_newSize.Width - originalSize.Width) / 2 - (newCursorPosition.X - cursorPositionOnPictureBox.X));
-            Debug.WriteLine($"horizontalShift {horizontalShift}");
-            NewCursorPosition = newCursorPosition;
+#endif
+            double widthDifference  = (_newSize.Width   - originalSize.Width ) / 2;
+            double heightDifference = (_newSize.Height  - originalSize.Height) / 2;
+            double horizontalShift  = (widthDifference  - (newCursorPosition.X - originalCursorPosition.X));
+            double verticalShift    = (heightDifference - (newCursorPosition.Y - originalCursorPosition.Y));
 
             _newMargin = new Thickness(
-                originalMargin.Left   - (_newSize.Width - originalSize.Width  ) / 2 + (horizontalShift),
-                originalMargin.Top    - (_newSize.Height - originalSize.Height) / 2 /*- (newCursorPosition.Y - cursorPositionOnPictureBox.Y)*/,
-                originalMargin.Right  - (_newSize.Width - originalSize.Width  ) / 2 - (horizontalShift),
-                originalMargin.Bottom - (_newSize.Height - originalSize.Height) / 2 /*+ (newCursorPosition.Y - cursorPositionOnPictureBox.Y)*/
+                originalMargin.Left   - widthDifference  + horizontalShift,
+                originalMargin.Top    - heightDifference + verticalShift,
+                originalMargin.Right  - widthDifference  - horizontalShift,
+                originalMargin.Bottom - heightDifference - verticalShift
             );
-
-            //_newMargin.Left += newCursorPosition.X - cursorPositionOnPictureBox.X;
-            //_newMargin.Top  += newCursorPosition.Y - cursorPositionOnPictureBox.Y;
-
-            //System.Windows.Point center = new System.Windows.Point(_newMargin.Left + _newSize.Width / 2, _newMargin.Top + _newSize.Height / 2);
-            //System.Windows.Point position = e.GetPosition(this.pictureBox1);
-            //_newMargin = new Thickness(
-            //    _newMargin.Left   - Math.Sign(ratio) * (pictureBox1.Width / 2 - position.X) / 2,
-            //    _newMargin.Top    - Math.Sign(ratio) * (pictureBox1.Height / 2 - position.Y) / 2,
-            //    _newMargin.Right  + Math.Sign(ratio) * (pictureBox1.Width / 2 - position.X) / 2,
-            //    _newMargin.Bottom + Math.Sign(ratio) * (pictureBox1.Height / 2 - position.Y) / 2
-            //);
             _deltaMargin = new Thickness(
-                ((pictureBox1.Margin.Left   - _newMargin.Left  ) / fps) * animationAcceleration,
-                ((pictureBox1.Margin.Top    - _newMargin.Top   ) / fps) * animationAcceleration,
-                ((pictureBox1.Margin.Right  - _newMargin.Right ) / fps) * animationAcceleration,
-                ((pictureBox1.Margin.Bottom - _newMargin.Bottom) / fps) * animationAcceleration
+                ((originalMargin.Left   - _newMargin.Left  ) / fps) * animationAcceleration,
+                ((originalMargin.Top    - _newMargin.Top   ) / fps) * animationAcceleration,
+                ((originalMargin.Right  - _newMargin.Right ) / fps) * animationAcceleration,
+                ((originalMargin.Bottom - _newMargin.Bottom) / fps) * animationAcceleration
             );
-
-
-            //SetCursorPos((int)(_newMargin.Left + newCursorPosition.X), (int)e.GetPosition(this).Y);
-
-
-
             _resizeIterations = (int)((_newSize.Width - originalSize.Width) / _deltaWidth);
             _resizeTimer.Start();
         }
-
-        [System.Runtime.InteropServices.DllImport("User32.dll")]
-        private static extern bool SetCursorPos(int X, int Y);
 
         #endregion
 
