@@ -336,7 +336,7 @@ namespace giferWpf {
             double yRatio = originalCursorPosition.Y / originalSize.Height;
             var newCursorPosition = new System.Windows.Point(_newSize.Width * xRatio, _newSize.Height * yRatio);
 #if DEBUG            
-            Debug.WriteLine($"cursorPositionOnPictureBox {cursorPositionOnPictureBox.X} {cursorPositionOnPictureBox.Y}");            
+            Debug.WriteLine($"cursorPositionOnPictureBox {originalCursorPosition.X} {originalCursorPosition.Y}");            
             Debug.WriteLine($"newCursorPosition {newCursorPosition.X} {newCursorPosition.Y}");
 #endif
             double widthDifference  = (_newSize.Width   - originalSize.Width ) / 2;
