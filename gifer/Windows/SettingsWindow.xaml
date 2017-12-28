@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:gifer"
         mc:Ignorable="d"
-        Title="Settings" Height="106" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp">
+        Title="Settings" Height="106" Width="400" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" KeyDown="Window_KeyDown">
     <Grid>
         <ComboBox x:Name="Settings_RenderingModeComboBox" HorizontalAlignment="Left" Margin="111,12,0,0" VerticalAlignment="Top" Width="270" SelectedIndex="2" MouseEnter="Settings_RenderingModeComboBox_MouseEnter" Height="24">
             <ComboBoxItem x:Name="Settings_RenderingModeLinear" Content="Settings_RenderingModeLinear"/>

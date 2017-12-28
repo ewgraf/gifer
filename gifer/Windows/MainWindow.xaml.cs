@@ -17,6 +17,7 @@ using Microsoft.VisualBasic.FileIO;
 using gifer;
 using gifer.Domain;
 using gifer.Utils;
+using gifer.Languages;
 
 namespace giferWpf {
     /// <summary>
@@ -37,11 +38,12 @@ namespace giferWpf {
         private Language _language;
 
         public MainWindow() {
-            _config = ConfigurationManager.OpenExeConfiguration($@"{AppDomain.CurrentDomain.BaseDirectory}\gifer.exe").Setup();
-            _scalingMode = _config.FindScalingMode() ?? BitmapScalingMode.NearestNeighbor;
-            _language = _config.FindLanguage() ?? gifer.Utils.Language.RU;
+            _scalingMode = ConfigHelper.FindScalingMode() ?? BitmapScalingMode.NearestNeighbor;
+            _language = ConfigHelper.FindLanguage() ?? gifer.Utils.Language.RU;
 
             InitializeComponent();
+            OnScalingModeChanged(_scalingMode);
+            OnLanguageChanged(_language);
 
             var horizontalMargin = SystemParameters.PrimaryScreenWidth  / 2 - this.pictureBox1.Width  / 2;
             var verticalMargin   = SystemParameters.PrimaryScreenHeight / 2 - this.pictureBox1.Height / 2;
@@ -72,8 +74,8 @@ namespace giferWpf {
                 SetDefaultImage();
             }
 
-            if (_config.GetShowHelpAtStartup()) {
-                ShowHelp(_config);
+            if (ConfigHelper.GetShowHelpAtStartup()) {
+                ShowHelp();
             }
         }
 
@@ -114,7 +116,7 @@ namespace giferWpf {
 
             if (_gifImage.IsGif && _gifImage.Frames > 1) {
                 if(_gifImage.CurrentFrameDelay == 0) {
-                    MessageBox.Show("Gif has 0 ms frame delay, that is strange");
+                    //MessageBox.Show("Gif has 0 ms frame delay, that is strange");
                 }
                 _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: _gifImage.CurrentFrameDelay);
                 _gifTimer.Start();
@@ -157,11 +159,11 @@ namespace giferWpf {
             }
         }
 
-        private void ShowHelp(Configuration config) {
-            bool showHelp = config.GetShowHelpAtStartup();
-            var helpForm = new HelpWindow(showHelp);
+        private void ShowHelp() {
+            bool showHelp = ConfigHelper.GetShowHelpAtStartup();
+            var helpForm = new HelpWindow(showHelp, _language);
             helpForm.ShowDialog();
-            config.SetShowHelpAtStartup(helpForm.ShowHelpAtStartup);
+            ConfigHelper.SetShowHelpAtStartup(helpForm.ShowHelpAtStartup);
         }
 
         private void ShowSettings(Configuration config) {
@@ -177,12 +179,12 @@ namespace giferWpf {
         private void OnScalingModeChanged(BitmapScalingMode scalingMode) {
             _scalingMode = scalingMode;
             RenderOptions.SetBitmapScalingMode(pictureBox1, scalingMode);
-            _config.SetScalingMode(_scalingMode);
+            ConfigHelper.SetScalingMode(_scalingMode);
         }
 
         private void OnLanguageChanged(Language language) {
             _language = language;
-            _config.SetLanguage(_language);
+            ConfigHelper.SetLanguage(_language);
             if(_currentImagePath == null) { // still default image is set
                 SetDefaultImage();
             }
@@ -373,7 +375,7 @@ namespace giferWpf {
                     break;
                 case Key.F1:
                 case Key.H:
-                    ShowHelp(_config);
+                    ShowHelp();
                     break;
                 case Key.S:
                     ShowSettings(_config);
@@ -411,8 +413,12 @@ namespace giferWpf {
             }
         }
 
-        private void pictureBox1_MouseRightButtonUp(object s, EventArgs e) {
-            this.Close();
+        private void pictureBox1_MouseRightButtonUp(object s, MouseButtonEventArgs e) {
+            // костыль, да, но при текущей реализации - изображение рисуется на прозрачном окне вов есь экран - надо проверять что кликнули таки на картинку
+            var clickPoint = e.GetPosition(this.pictureBox1);
+            if (clickPoint.X >= 0 && clickPoint.Y >= 0) { // right-clicked out of image
+                this.Close();
+            }
         }
 
         #endregion

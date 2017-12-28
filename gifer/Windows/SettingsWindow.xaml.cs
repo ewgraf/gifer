@@ -3,9 +3,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using gifer.Languages;
 using gifer.Utils;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace gifer {
     public partial class SettingsWindow : Window {
@@ -23,7 +22,6 @@ namespace gifer {
             _language = language;
 
             InitializeComponent();
-
             OnLanguageChanged(_language);
 
             this.Settings_RenderingModeComboBox.SelectionChanged += RenderingModeComboBox_SelectionChanged;
@@ -77,6 +75,12 @@ namespace gifer {
 
         private void Window_MouseUp(object sender, MouseButtonEventArgs e) {
             if (e.ChangedButton == MouseButton.Right) {
+                this.Close();
+            }
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Escape || e.Key == Key.S) {
                 this.Close();
             }
         }

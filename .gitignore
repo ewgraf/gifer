@@ -1,14 +1,3 @@
-*.compressed
-*.cache
-*.cache
-*.pdb
-*.tmp
-*.pdb
-*.ide
-*.pdb
-*.dll
-*.cache
-*.ide
+.vs/
 obj/
-.vs/
-.vs/
+gifer*/bin/
