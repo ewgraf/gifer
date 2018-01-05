@@ -40,14 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Language.cs" />
     <Compile Include="Strings.cs" />
     <Compile Include="LanguageDictionary.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\gifer.Utils\gifer.Utils.csproj">
-      <Project>{e559fab8-608a-41d7-a814-4dedf6deeeae}</Project>
-      <Name>gifer.Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

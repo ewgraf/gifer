@@ -48,12 +48,17 @@
     <Compile Include="AnimationHelper.cs" />
     <Compile Include="BitmapExtensions.cs" />
     <Compile Include="ConfigHelper.cs" />
-    <Compile Include="Language.cs" />
     <Compile Include="NaturalSortingComparer.cs" />
     <Compile Include="SizeExtensions.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\gifer.Languages\gifer.Languages.csproj">
+      <Project>{853bbba5-3e8d-4919-ab16-19b9ca7a1500}</Project>
+      <Name>gifer.Languages</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

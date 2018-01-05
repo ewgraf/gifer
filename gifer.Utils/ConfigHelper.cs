@@ -3,6 +3,7 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Windows.Media;
+using gifer.Languages;
 
 namespace gifer.Utils {
     public static class ConfigHelper {
@@ -39,6 +40,14 @@ namespace gifer.Utils {
             }
             if (!config.AppSettings.Settings.AllKeys.Contains("scalingMode")) {
                 config.AppSettings.Settings.Add("scalingMode", "NearestNeighbor");
+                config.Save(ConfigurationSaveMode.Minimal);
+            }
+            if (!config.AppSettings.Settings.AllKeys.Contains("checkForUpdate")) {
+                config.AppSettings.Settings.Add("checkForUpdate", "true");
+                config.Save(ConfigurationSaveMode.Minimal);
+            }
+            if (!config.AppSettings.Settings.AllKeys.Contains("centerOpenedImage")) {
+                config.AppSettings.Settings.Add("centerOpenedImage", "true");
                 config.Save(ConfigurationSaveMode.Minimal);
             }
             return config;
@@ -97,5 +106,35 @@ namespace gifer.Utils {
                 config.Save(ConfigurationSaveMode.Minimal);
             }
         }
-    }
+
+        public static bool CheckForUpdate() {
+            var config = GetConfiguration();
+            string value = config.AppSettings.Settings["checkForUpdate"]?.Value;
+            return bool.Parse(value);
+        }
+
+		public static void SetCheckForUpdate(bool checkForUpdate) {
+			var config = GetConfiguration();
+			if (config.AppSettings.Settings["checkForUpdate"].Value != checkForUpdate.ToString()) {
+				config.AppSettings.Settings.Remove("checkForUpdate");
+				config.AppSettings.Settings.Add("checkForUpdate", checkForUpdate.ToString());
+				config.Save(ConfigurationSaveMode.Minimal);
+			}
+		}
+
+		public static bool CenterOpenedImage() {
+            var config = GetConfiguration();
+            string value = config.AppSettings.Settings["centerOpenedImage"]?.Value;
+            return bool.Parse(value);
+        }
+
+		public static void SetCenterOpenedImage(bool centerOpenedImage) {
+			var config = GetConfiguration();
+			if (config.AppSettings.Settings["centerOpenedImage"].Value != centerOpenedImage.ToString()) {
+				config.AppSettings.Settings.Remove("centerOpenedImage");
+				config.AppSettings.Settings.Add("centerOpenedImage", centerOpenedImage.ToString());
+				config.Save(ConfigurationSaveMode.Minimal);
+			}
+		}
+	}
 }

@@ -14,7 +14,7 @@ namespace giferWpf {
 
             InitializeComponent();
 
-            this.Title = LanguageDictionary.GetString(_language, "Help_Title");
+            this.Title = LanguageDictionary.GetString("Help_Title", _language);
             this.checkBox1.IsChecked = showHelpAtStartUp;
         }
 

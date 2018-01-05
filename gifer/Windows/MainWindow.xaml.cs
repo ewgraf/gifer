@@ -34,12 +34,16 @@ namespace giferWpf {
         private Stopwatch _drawindDelayStopwath = new Stopwatch();
         private BitmapScalingMode _scalingMode;
         private Language _language;
+		private bool _checkForUpdate;
+		private bool _centerOpenedImage;
 
-        public MainWindow() {
+		public MainWindow() {
             _scalingMode = ConfigHelper.FindScalingMode() ?? BitmapScalingMode.NearestNeighbor;
-            _language = ConfigHelper.FindLanguage() ?? gifer.Utils.Language.RU;
+            _language = ConfigHelper.FindLanguage() ?? gifer.Languages.Language.RU;
+			_centerOpenedImage = ConfigHelper.CenterOpenedImage();
+			_checkForUpdate = ConfigHelper.CheckForUpdate();
 
-            InitializeComponent();
+			InitializeComponent();
             OnScalingModeChanged(_scalingMode);
             OnLanguageChanged(_language);
             
@@ -111,8 +115,17 @@ namespace giferWpf {
             this.Title = _currentImagePath;
             this.pictureBox1.Margin = ResizeImageMargin(this.pictureBox1, _writableBitmap.PixelWidth, _writableBitmap.PixelHeight);
             this.pictureBox1.Source = _writableBitmap;
+#if DEBUG
+			double top = (double)this.pictureBox1.GetValue(Canvas.TopProperty);
+			double left = (double)this.pictureBox1.GetValue(Canvas.LeftProperty);
+			Debug.WriteLine(top + " " + left);
+#endif
+			if (_centerOpenedImage) {
+				Canvas.SetLeft(this.pictureBox1, 0);
+				Canvas.SetTop(this.pictureBox1, 0);
+			}
 
-            if (_gifImage.IsGif && _gifImage.Frames > 1) {
+			if (_gifImage.IsGif && _gifImage.Frames > 1) {
                 if(_gifImage.CurrentFrameDelay == 0) {
                     //MessageBox.Show("Gif has 0 ms frame delay, that is strange");
                 }
@@ -169,6 +182,8 @@ namespace giferWpf {
             var settings = new SettingsWindow(
                 m => this.OnScalingModeChanged(m),
                 l => this.OnLanguageChanged(l),
+				_checkForUpdate,    v => { _checkForUpdate = v;    ConfigHelper.SetCheckForUpdate(v);    },
+				_centerOpenedImage, v => { _centerOpenedImage = v; ConfigHelper.SetCenterOpenedImage(v); },
                 _scalingMode,
                 _language
             );
@@ -198,7 +213,7 @@ namespace giferWpf {
                     LineAlignment = StringAlignment.Center,
                     Alignment = StringAlignment.Center
                 };                
-                string message = LanguageDictionary.GetString(_language, "DefaultMessage");
+                string message = LanguageDictionary.GetString("DefaultMessage", _language);
                 g.DrawString(message, new Font("Courier New", 9), System.Drawing.Brushes.Black, rect, format);
             }
             this.pictureBox1.Source = image.ToBitmapSource();
@@ -434,11 +449,12 @@ namespace giferWpf {
         #endregion
 
         private Thickness ResizeImageMargin(System.Windows.Controls.Image image, double imageWidth, double imageHeight) {
-            var center = new System.Windows.Point(
-                image.Margin.Left + image.Width / 2,
-                image.Margin.Top + image.Height / 2
-            );
-            if (imageWidth > SystemParameters.PrimaryScreenWidth || imageHeight > SystemParameters.PrimaryScreenHeight) {
+			System.Windows.Point center = new System.Windows.Point(
+				image.Margin.Left + image.Width / 2,
+				image.Margin.Top + image.Height / 2
+			);
+
+			if (imageWidth > SystemParameters.PrimaryScreenWidth || imageHeight > SystemParameters.PrimaryScreenHeight) {
                 var size = ResizeProportionaly(
                     new System.Windows.Size(
                         imageWidth,
