@@ -2,7 +2,6 @@
 using System.Windows;
 using System.Windows.Input;
 using gifer.Languages;
-using gifer.Utils;
 
 namespace giferWpf {
     public partial class HelpWindow : Window {
@@ -15,7 +14,7 @@ namespace giferWpf {
             InitializeComponent();
 
             this.Title = LanguageDictionary.GetString("Help_Title", _language);
-            this.checkBox1.IsChecked = showHelpAtStartUp;
+            this.checkBox1.IsChecked = showHelpAtStartUp;			
         }
 
         private void Window_Closing(object s, EventArgs e) {
