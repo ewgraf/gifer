@@ -26,17 +26,21 @@ namespace giferWpf {
             }
 
             if (ConfigHelper.CheckForUpdate()) {
-                using (var client = new HttpClient()) {
-                    string version = await client.GetStringAsync("https://raw.githubusercontent.com/ewgraf/Gifer/master/version.txt");
-                    if (Gifer.MyVersion != version) {
-                        Process.Start(new ProcessStartInfo(giferUpdateScrips, Assembly.GetEntryAssembly().Location) {
-                            Verb = "runas"
-                        });
-                        Thread.Sleep(1000);
-                        Application.Current.Shutdown(); // in case script does not stop process in time
-                    }
-                }
-            }
+				try {
+					using (var client = new HttpClient()) {
+						string version = await client.GetStringAsync("https://raw.githubusercontent.com/ewgraf/Gifer/master/version.txt");
+						if (Gifer.MyVersion != version) {
+							Process.Start(new ProcessStartInfo(giferUpdateScrips, Assembly.GetEntryAssembly().Location) {
+								Verb = "runas"
+							});
+							Thread.Sleep(1000);
+							Application.Current.Shutdown(); // in case script does not stop process in time
+						}
+					}
+				} catch { // in case no internet
+				}
+
+			}
 
             base.OnStartup(e);
         }
