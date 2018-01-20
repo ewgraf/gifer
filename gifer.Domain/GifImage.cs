@@ -19,12 +19,12 @@ namespace gifer.Domain {
         private readonly Bitmap _gif;
         private readonly FileStream _stream;
         private readonly byte[] _property;
-        private readonly Rectangle _rectangle;
         private readonly object share = new object();
         private readonly string _imagePath;
-        private int _currentFrame = 0;
+		private int _currentFrame = 0;
+		private Rectangle _rectangle;
 
-        public int CurrentFrameDelay { get; set; }
+		public int CurrentFrameDelay { get; set; }
         public int Frames { get; set; }
         public bool IsGif { get; private set; }
         public GifType Type { get; private set; }
@@ -90,11 +90,11 @@ namespace gifer.Domain {
             //string s = Encoding.ASCII.GetString(signature);
             //string v = Encoding.ASCII.GetString(version);
             _stream.Seek(0, SeekOrigin.Begin);
+			// Important! Bitmap(Stream s) captures stream, and all manipulations with Stream should be before "new Bitmap(stream)"
+			_gif = new Bitmap(_stream);
+			_rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
 
-            if (signature.SequenceEqual(GifHeader)) {
-                // Important! Bitmap(Stream s) captures stream, and all manipulations with Stream should be before "new Bitmap(stream)"
-                _gif = new Bitmap(_stream);
-                _rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
+			if (signature.SequenceEqual(GifHeader)) {
                 Frames = _gif.GetFrameCount(FrameDimension.Time);
                 CurrentFrameDelay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
                 IsGif = true;
@@ -138,7 +138,12 @@ namespace gifer.Domain {
             BitmapData frameData = _gif.LockBits(_rectangle, ImageLockMode.ReadOnly, _gif.PixelFormat);
             bitmap.Lock();
             NativeMethods.CopyMemory(bitmap.BackBuffer, frameData.Scan0, Math.Abs(frameData.Stride * _gif.Height));
-            bitmap.AddDirtyRect(new Int32Rect(0, 0, _rectangle.Width, _rectangle.Height));
+			try {
+				bitmap.AddDirtyRect(new Int32Rect(0, 0, (int)bitmap.Width, (int)bitmap.Height));
+			} catch (ArgumentOutOfRangeException ex) {
+				bitmap.AddDirtyRect(new Int32Rect(0, 0, _rectangle.Width - 1, _rectangle.Height));
+			}
+            
             bitmap.Unlock();
             _gif.UnlockBits(frameData);
         }
@@ -153,10 +158,23 @@ namespace gifer.Domain {
             bitmap.CacheOption = BitmapCacheOption.None;
             bitmap.StreamSource = stream;
             bitmap.EndInit();
-            BitmapSource prgbaSource = new FormatConvertedBitmap(bitmap, PixelFormats.Pbgra32, null, 0);
-            var writeableBitmap = new WriteableBitmap(prgbaSource);
-            _currentFrame++;
-            return writeableBitmap;
+
+			WriteableBitmap writeableBitmap = null;
+			if (bitmap.PixelWidth == _rectangle.Width) {
+				BitmapSource prgbaSource = new FormatConvertedBitmap(bitmap, PixelFormats.Pbgra32, null, 0);
+				writeableBitmap = new WriteableBitmap(prgbaSource);
+			} else {
+				DrawingVisual dv = new DrawingVisual();
+				using (DrawingContext dc = dv.RenderOpen()) {
+					dc.DrawImage(bitmap, new Rect(0, 0, bitmap.Width, bitmap.Height));
+				}
+				RenderTargetBitmap rtb = new RenderTargetBitmap(_rectangle.Width, _rectangle.Height, 96, 96, PixelFormats.Pbgra32);
+				rtb.Render(dv);
+				writeableBitmap = new WriteableBitmap(rtb);
+			}
+
+			_currentFrame++;
+			return writeableBitmap;
         }
 
         public void Dispose() {
