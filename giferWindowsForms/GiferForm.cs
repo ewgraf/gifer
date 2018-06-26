@@ -83,8 +83,7 @@ namespace gifer {
             }
         }
 
-        public GiferForm(Configuration config, string imagePath) : this(config) 
-            => LoadImageAndFolder(imagePath);
+        public GiferForm(Configuration config, string imagePath) : this(config) => LoadImageAndFolder(imagePath);
 
         private void LoadImageAndFolder(string imagePath) {
 			if (string.IsNullOrEmpty(imagePath)) {
@@ -249,9 +248,31 @@ namespace gifer {
         //    return exp(-(x - mu) ^ 2 / (2 * sigma ^ 2)) / sqrt(2 * pi * sigma ^ 2)
         //}
 
-        bool uber = false;
-
         private void Zoom(double ratio, Form form, PictureBox pictureBox) {
+            Size size = form.Size;
+            Point location;
+            bool toEnlarge = true;
+            if (ratio > 0 && (form.Width >= Screen.PrimaryScreen.Bounds.Width + 20
+                              || form.Height >= Screen.PrimaryScreen.Bounds.Height + 20)) {
+                toEnlarge = false;
+            }
+            location = form.Location;
+            double enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
+            var newSize = toEnlarge ? new Size {
+                                        Width = Convert.ToInt32(size.Width * enlargementRatio),
+                                        Height = Convert.ToInt32(size.Height * enlargementRatio)
+                                    }
+                                    : size;
+            Size widening = newSize - size;
+            var newLocation = Point.Add(location, widening.Divide(-2));
+            //form.Hide();
+            pictureBox.Size = newSize;
+            form.Size = newSize;
+            form.Location = newLocation;
+            //form.Show();
+        }
+
+        private void ZoomSmooth(double ratio, Form form, PictureBox pictureBox) {
             Size size;
             if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
                 pictureBox.Height >= Screen.PrimaryScreen.Bounds.Height) {
@@ -321,7 +342,7 @@ namespace gifer {
         #endregion
 
         private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
-            if (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left) {
+            if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
                 if (e.KeyCode == Keys.Right) {
                     _currentImagePath = _imagesInFolder.Next(_currentImagePath);
                 } else if (e.KeyCode == Keys.Left) {
@@ -378,11 +399,13 @@ namespace gifer {
         }
 
 		private void timer1_Tick(object sender, EventArgs e) {
-            //pictureBox1.Image = _gifImage.Next();
+            pictureBox1.Image = _gifImage.Next();
         }
 
         private void timerUpdateTaskbarIcon_Tick(object sender, EventArgs e) {
-            this.Icon = Icon.FromHandle((PadImage(pictureBox1.Image)).GetHicon());
+            if (pictureBox1.Image != null) {
+                this.Icon = Icon.FromHandle((PadImage(pictureBox1.Image)).GetHicon());
+            }            
         }
 
         public static Bitmap PadImage(Image image) {

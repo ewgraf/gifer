@@ -26,16 +26,16 @@ namespace giferWpf {
         private readonly DispatcherTimer _gifTimer = new DispatcherTimer();
         private readonly DispatcherTimer _resizeTimer = new DispatcherTimer();
         private readonly DispatcherTimer _iconTimer = new DispatcherTimer();
+        private readonly System.Windows.Size _screenSize;
         private GifImage _gifImage;
         private List<string> _imagesInFolder;
         private string _currentImagePath;
         private WriteableBitmap _writableBitmap;
-        private Stopwatch _drawindDelayStopwath = new Stopwatch();
+        private Stopwatch _drawingDelayStopwath = new Stopwatch();
         private BitmapScalingMode _scalingMode;
         private Language _language;
 		private bool _checkForUpdate;
 		private bool _centerOpenedImage;
-		private readonly System.Windows.Size _screenSize;
 
 		public MainWindow() {
             _scalingMode = ConfigHelper.FindScalingMode() ?? BitmapScalingMode.NearestNeighbor;

@@ -150,6 +150,14 @@ namespace gifer.Domain {
 
         public Bitmap Copy() => (Bitmap)_gif.Clone();
 
+        public Bitmap Next() {
+            if (_currentFrame >= Frames || _currentFrame < 1) {
+                _currentFrame = 0;
+            }
+            _gif.SelectActiveFrame(FrameDimension.Time, _currentFrame++);
+            return Image.FromHbitmap(new Bitmap(_gif).GetHbitmap());
+        }
+
         private WriteableBitmap CreateImageSource(Stream stream) {
             stream.Position = 0;
             
@@ -179,8 +187,8 @@ namespace gifer.Domain {
 
         public void Dispose() {
             _gif?.Dispose();
-            _stream.Close();
-            _stream.Dispose();
+            _stream?.Close();
+            _stream?.Dispose();
         }
 	}
 }
