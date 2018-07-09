@@ -6,15 +6,12 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace gifer
-{
-    static class Program
-    {
+namespace gifer {
+    static class Program {
         private static Mutex mutex = new Mutex(true, "gefaa2cb-1f90-470e-b3a0-beb6c3e4fdc4");
 
         [STAThread]
-        static void Main(string[] args)
-        {
+        static void Main(string[] args) {
             //FileAssotiationHelper.CheckGiferIsRegistered(); it would require admin
             if (args.Length == 0) {
                 //args = new[] { @"E:\img\gif\Shinobu\Kiss-Shot part I\KizuI-Acerola1.gif" };

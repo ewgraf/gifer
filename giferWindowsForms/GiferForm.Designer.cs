@@ -65,6 +65,8 @@
             this.Controls.Add(this.pictureBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "GiferForm";
+            this.Activated += new System.EventHandler(this.GiferForm_Activated);
+            this.Deactivate += new System.EventHandler(this.GiferForm_Deactivate);
             this.Load += new System.EventHandler(this.GiferForm_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);

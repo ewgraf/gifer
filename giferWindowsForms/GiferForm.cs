@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using gifer.Domain;
 using gifer.Utils;
 using Microsoft.VisualBasic.FileIO;
+using System.Runtime.InteropServices;
 
 namespace gifer {
 	public partial class GiferForm : Form {
@@ -123,10 +124,11 @@ namespace gifer {
 		}
 
 		private void SetImage(Bitmap image) {
+            //SuspendDrawing(this);
             timer1.Stop();
             timerUpdateTaskbarIcon.Stop();
             if (image.Width > Screen.PrimaryScreen.Bounds.Size.Width || image.Height > Screen.PrimaryScreen.Bounds.Size.Height) {
-				pictureBox1.Size = ResizeProportionaly(image.Size, this.Size);
+				pictureBox1.Size = ResizeProportionaly(image.Size, Screen.PrimaryScreen.Bounds.Size);
             } else {
 				pictureBox1.Size = image.Size;
             }
@@ -149,6 +151,8 @@ namespace gifer {
                 pictureBox1.Image = image;
                 this.Icon = Icon.FromHandle(((Bitmap)image).GetHicon());                
             }
+            this.BringToFront();
+            //ResumeDrawing(this);
 		}
 
 		public static Size ResizeProportionaly(Size size, Size fitSize) {
@@ -203,11 +207,25 @@ namespace gifer {
 			_moving = false;
 		}
 
-		#endregion
+        #endregion
 
-		#region Resizing
+        #region Resizing
 
-		private bool _resizing = false;
+        [DllImport("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
+
+        private const int WM_SETREDRAW = 11;
+
+        public static void SuspendDrawing(Control parent) {
+            SendMessage(parent.Handle, WM_SETREDRAW, false, 0);
+        }
+
+        public static void ResumeDrawing(Control parent) {
+            SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
+            parent.Refresh();
+        }
+
+        private bool _resizing = false;
 
         public void pictureBox1_MouseWheel(object sender, MouseEventArgs e) {
 			pictureBox1_Resize(sender, e);
@@ -248,12 +266,15 @@ namespace gifer {
         //    return exp(-(x - mu) ^ 2 / (2 * sigma ^ 2)) / sqrt(2 * pi * sigma ^ 2)
         //}
 
+        [DllImport("User32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
+        private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool Repaint);
+
         private void Zoom(double ratio, Form form, PictureBox pictureBox) {
             Size size = form.Size;
             Point location;
             bool toEnlarge = true;
-            if (ratio > 0 && (form.Width >= Screen.PrimaryScreen.Bounds.Width + 20
-                              || form.Height >= Screen.PrimaryScreen.Bounds.Height + 20)) {
+            if (ratio > 0 && (form.Width >= Screen.PrimaryScreen.Bounds.Width
+                              || form.Height >= Screen.PrimaryScreen.Bounds.Height)) {
                 toEnlarge = false;
             }
             location = form.Location;
@@ -263,12 +284,36 @@ namespace gifer {
                                         Height = Convert.ToInt32(size.Height * enlargementRatio)
                                     }
                                     : size;
+            if (newSize.Width > Screen.PrimaryScreen.Bounds.Width && newSize.Height > Screen.PrimaryScreen.Bounds.Height) {
+                // consider landscape monitors
+                float proportion = (float)newSize.Height/ newSize.Width;
+                SizeF newSizeF = new SizeF(newSize.Width, newSize.Height);
+                do {
+                    newSizeF.Width--;
+                    newSizeF.Height -= proportion;
+                } while (newSizeF.Width > Screen.PrimaryScreen.Bounds.Width || newSizeF.Height > Screen.PrimaryScreen.Bounds.Height);
+                newSize = new Size((int)Math.Round(newSizeF.Width), (int)Math.Round(newSizeF.Height));
+                ;
+            }
+            if (newSize.Width > Screen.PrimaryScreen.Bounds.Width) {
+                float cropRatio = (float)Screen.PrimaryScreen.Bounds.Width / newSize.Width;
+                newSize.Width = Screen.PrimaryScreen.Bounds.Width;
+                double height = newSize.Height * cropRatio;
+                newSize.Height = (int)Math.Floor(height);
+            } else if (newSize.Height > Screen.PrimaryScreen.Bounds.Height) {
+                float cropRatio = (float)Screen.PrimaryScreen.Bounds.Height / newSize.Height;
+                newSize.Height = Screen.PrimaryScreen.Bounds.Height;
+                double width = newSize.Width * cropRatio;
+                newSize.Width = (int)Math.Floor(width);
+            }
             Size widening = newSize - size;
             var newLocation = Point.Add(location, widening.Divide(-2));
             //form.Hide();
+            //SuspendDrawing(this);
             pictureBox.Size = newSize;
             form.Size = newSize;
             form.Location = newLocation;
+            //ResumeDrawing(this);
             //form.Show();
         }
 
@@ -429,19 +474,21 @@ namespace gifer {
         }
 
         private void GiferForm_Load(object sender, EventArgs e) {
-            //this.SetStyle(
-            //    ControlStyles.AllPaintingInWmPaint |
-            //    ControlStyles.OptimizedDoubleBuffer |
-            //    ControlStyles.ResizeRedraw |
-            //    ControlStyles.DoubleBuffer |
-            //    ControlStyles.UserPaint,
-            //    true);
-            //this.MaximumSize = new Size(10000, 10000);
             bool showHelp;
             bool.TryParse(_config.AppSettings.Settings["showHelpAtStartup"].Value, out showHelp);
             if (showHelp) {
                 ShowHelp(_config);
             }
+        }
+
+        private void GiferForm_Activated(object sender, EventArgs e) {
+            this.TopMost = true;
+            Debug.WriteLine("this.TopMost: " + this.TopMost);
+        }
+
+        private void GiferForm_Deactivate(object sender, EventArgs e) {
+            this.TopMost = false;
+            Debug.WriteLine("this.TopMost: " + this.TopMost);
         }
     }
 }
