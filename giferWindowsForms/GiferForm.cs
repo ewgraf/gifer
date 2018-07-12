@@ -15,14 +15,14 @@ using System.Runtime.InteropServices;
 
 namespace gifer {
 	public partial class GiferForm : Form {
-        private readonly Configuration _config;
+        //private readonly Configuration _config;
         private GifImage _gifImage;
         private string _currentImagePath;
         private List<string> _imagesInFolder;
         private readonly OpenWithListener _openWithListener;
 
-        public GiferForm(Configuration config) {
-            _config = config;
+        public GiferForm(/*Configuration config*/) {
+            //_config = config;
             _openWithListener = new OpenWithListener(Gifer.EndPoint);
 
             InitializeComponent();
@@ -39,19 +39,19 @@ namespace gifer {
             // making transparent form fullscreen
             //this.Size = Screen.PrimaryScreen.Bounds.Size;
             //this.TransparencyKey = this.BackColor;
-            //this.pictureBox1.BackColor = Color.Red;
-            
+            //this.pictureBox1.BackColor = Color.Red;            
 
-            SetDefaultImage();
+            //SetDefaultImage();
+            //this.pictureBox1.BackColor = Color.LightGray;
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+            this.groupBox1.BackColor = Color.Transparent;
 
             int x = (this.Width / 2) - (pictureBox1.Width / 2);
             int y = (this.Height / 2) - (pictureBox1.Height / 2);
             pictureBox1.Location = new Point(x, y);
-            SetupStandalone(bool.Parse(_config.AppSettings.Settings["openInStandalone"].Value));
+            //SetupStandalone(bool.Parse(_config.AppSettings.Settings["openInStandalone"].Value));
             //this.OnPaintBackground
         }
-
-
 
         //protected override void OnPaintBackground(PaintEventArgs e) {
         //    var backgroundBrush = new SolidBrush(Color.Transparent);
@@ -65,6 +65,7 @@ namespace gifer {
             using (Graphics g = Graphics.FromImage(image)) {
                 g.FillRectangle(Brushes.LightGray, 0, 0, image.Width, image.Height);
                 g.DrawString("[Drag GIF/Image Here]", new Font("Courier New", 9), Brushes.Black, 47, 125);
+                //
             }
             SetImage(image);
         }
@@ -84,7 +85,7 @@ namespace gifer {
             }
         }
 
-        public GiferForm(Configuration config, string imagePath) : this(config) => LoadImageAndFolder(imagePath);
+        public GiferForm(/*Configuration config, */string imagePath) : this(/*config*/) => LoadImageAndFolder(imagePath);
 
         private void LoadImageAndFolder(string imagePath) {
 			if (string.IsNullOrEmpty(imagePath)) {
@@ -394,8 +395,8 @@ namespace gifer {
                     _currentImagePath = _imagesInFolder.Previous(_currentImagePath);
                 }
                 SetImage((Bitmap)Bitmap.FromFile(_currentImagePath));
-            } else if (e.KeyCode == Keys.H) {
-                ShowHelp(_config);
+            //} else if (e.KeyCode == Keys.H) {
+            //    ShowHelp(_config);
             } else if (e.KeyCode == Keys.Delete) {
                 if (_currentImagePath == null) {
                     return;
@@ -474,11 +475,11 @@ namespace gifer {
         }
 
         private void GiferForm_Load(object sender, EventArgs e) {
-            bool showHelp;
-            bool.TryParse(_config.AppSettings.Settings["showHelpAtStartup"].Value, out showHelp);
-            if (showHelp) {
-                ShowHelp(_config);
-            }
+            //bool showHelp;
+            //bool.TryParse(_config.AppSettings.Settings["showHelpAtStartup"].Value, out showHelp);
+            //if (showHelp) {
+            //    ShowHelp(_config);
+            //}
         }
 
         private void GiferForm_Activated(object sender, EventArgs e) {

@@ -20,11 +20,11 @@ namespace gifer {
 			Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath).Setup();
+            //Configuration config = ConfigurationManager.OpenExeConfiguration(Application.ExecutablePath).Setup();
             
-            if (config.AppSettings.Settings["openInStandalone"].Value == true.ToString()) {
+            //if (config.AppSettings.Settings["openInStandalone"].Value == true.ToString()) {
                 if (mutex.WaitOne(TimeSpan.Zero, true)) {
-                    GiferForm form = GetForm(config, args);
+                    GiferForm form = GetForm(/*config, */args);
                     Application.Run(form);
                     //mutex.ReleaseMutex();
                 } else {
@@ -43,15 +43,15 @@ namespace gifer {
                     } finally {
                     }
                 }
-            } else {
-                GiferForm form = GetForm(config, args);
-                Application.Run(form);
-            }
+            //} else {
+            //    GiferForm form = GetForm(config, args);
+            //    Application.Run(form);
+            //}
         }
 
-        private static GiferForm GetForm(Configuration config, string[] args) {
-            return args.Length == 0 ? new GiferForm(config) 
-                                    : new GiferForm(config, args[0]);
+        private static GiferForm GetForm(/*Configuration config, */string[] args) {
+            return args.Length == 0 ? new GiferForm(/*config*/) 
+                                    : new GiferForm(/*config, */args[0]);
         }
 
         private static Configuration Setup(this Configuration config)
