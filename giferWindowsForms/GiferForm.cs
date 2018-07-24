@@ -20,6 +20,7 @@ namespace gifer {
         private string _currentImagePath;
         private List<string> _imagesInFolder;
         private readonly OpenWithListener _openWithListener;
+		private bool _helpWindow = true;
 
         public GiferForm(/*Configuration config*/) {
             //_config = config;
@@ -51,7 +52,11 @@ namespace gifer {
             pictureBox1.Location = new Point(x, y);
             //SetupStandalone(bool.Parse(_config.AppSettings.Settings["openInStandalone"].Value));
             //this.OnPaintBackground
-        }
+
+	        this.groupBox1.MouseDown += groupBox1_MouseDown;
+	        this.groupBox1.MouseMove += groupBox1_MouseMove;
+	        this.groupBox1.MouseUp += groupBox1_MouseUp;
+		}
 
         //protected override void OnPaintBackground(PaintEventArgs e) {
         //    var backgroundBrush = new SolidBrush(Color.Transparent);
@@ -167,10 +172,11 @@ namespace gifer {
             e.Effect = DragDropEffects.All;
         }
 
-        private void Form1_DragDrop(object sender, DragEventArgs e) {
-	        groupBox1.Visible = false;
+		private void Form1_DragDrop(object sender, DragEventArgs e) {
+			groupBox1.Visible = false;
+			_helpWindow = false;
 			string imagePath = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
-            LoadImageAndFolder(imagePath);
+			LoadImageAndFolder(imagePath);
 			this.Activate();
 		}
 
@@ -189,47 +195,66 @@ namespace gifer {
 			_y = e.Y;
 		}
 
-        private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
+		private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
 			var c = sender as PictureBox;
 			if (!_moving || c == null) {
 				return;
 			}
 
-            //c.Top = e.Y + c.Top - _y;
-            //c.Left = e.X + c.Left - _x;
-            this.Top  = e.Y + this.Top  - _y;
-            this.Left = e.X + this.Left - _x;
-        }
+			//c.Top = e.Y + c.Top - _y;
+			//c.Left = e.X + c.Left - _x;
+			this.Top  = e.Y + this.Top  - _y;
+			this.Left = e.X + this.Left - _x;
+		}
 
 		private void pictureBox1_MouseUp(object sender, MouseEventArgs e) {
 			var c = sender as PictureBox;
 			if (c == null) {
 				return;
-			}			
+			}
+			_moving = false;
+		}
+
+		private void groupBox1_MouseDown(object sender, MouseEventArgs e) {
+			if (e.Button != MouseButtons.Left) {
+				return;
+			}
+			_moving = true;
+			_x = e.X;
+			_y = e.Y;
+		}
+
+        private void groupBox1_MouseMove(object sender, MouseEventArgs e) {
+			var c = sender as GroupBox;
+			if (!_moving || c == null) {
+				return;
+			}
+
+			//c.Top = e.Y + c.Top - _y;
+			//c.Left = e.X + c.Left - _x;
+			this.Top  = e.Y + this.Top  - _y;
+			this.Left = e.X + this.Left - _x;
+		}
+
+		private void groupBox1_MouseUp(object sender, MouseEventArgs e) {
+			var c = sender as GroupBox;
+			if (c == null) {
+				return;
+			}
 			_moving = false;
 		}
 
         #endregion
 
-        #region Resizing
+		#region Resizing
 
-        [DllImport("user32.dll")]
-        public static extern int SendMessage(IntPtr hWnd, Int32 wMsg, bool wParam, Int32 lParam);
+		private bool _resizing;
 
-        private const int WM_SETREDRAW = 11;
+		public void pictureBox1_MouseWheel(object sender, MouseEventArgs e) {
+			if (_helpWindow) {
+				return;
+			}
 
-        public static void SuspendDrawing(Control parent) {
-            SendMessage(parent.Handle, WM_SETREDRAW, false, 0);
-        }
-
-        public static void ResumeDrawing(Control parent) {
-            SendMessage(parent.Handle, WM_SETREDRAW, true, 0);
-            parent.Refresh();
-        }
-
-        private bool _resizing = false;
-
-        public void pictureBox1_MouseWheel(object sender, MouseEventArgs e) {
 			pictureBox1_Resize(sender, e);
 		}
 		
@@ -237,14 +262,14 @@ namespace gifer {
 			var args = e as MouseEventArgs;
 			if(args == null) { // if resize is caused not by mouse wheel, but by 'pictureBox1.Size = ' or '+='.
 				return;
-            }
+			}
 
-            if (_resizing) {
-                //_resizing = false;
-                return;
-            }
+			if (_resizing) {
+				//_resizing = false;
+				return;
+			}
 
-            int delta = args.Delta;
+			int delta = args.Delta;
 			if(delta == 0) {
 				return;
 			}
@@ -253,8 +278,8 @@ namespace gifer {
 			if (ModifierKeys.HasFlag(Keys.Control)) {
 				ratio = 1.05;
 			} else if (ModifierKeys.HasFlag(Keys.Shift)) {
-                ratio = 2.0;
-            }
+				ratio = 2.0;
+			}
 
 			_resizing = true;
 			Zoom(Math.Sign(delta)*ratio, this, this.pictureBox1);
@@ -386,7 +411,7 @@ namespace gifer {
             }
         }
 
-        #endregion
+		#endregion
 
         private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
             if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
