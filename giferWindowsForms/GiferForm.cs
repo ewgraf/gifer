@@ -43,7 +43,7 @@ namespace gifer {
 			// making transparent form fullscreen
 			//this.Size = Screen.PrimaryScreen.Bounds.Size;
 			//this.TransparencyKey = this.BackColor;
-			//this.pictureBox1.BackColor = Color.Red;            
+			//this.pictureBox1.BackColor = Color.Red;
 
 			//SetDefaultImage();
 			//this.pictureBox1.BackColor = Color.LightGray;
@@ -73,7 +73,6 @@ namespace gifer {
             using (Graphics g = Graphics.FromImage(image)) {
                 g.FillRectangle(Brushes.LightGray, 0, 0, image.Width, image.Height);
                 g.DrawString("[Drag GIF/Image Here]", new Font("Courier New", 9), Brushes.Black, 47, 125);
-                //
             }
             SetImage(image);
         }
@@ -417,6 +416,11 @@ namespace gifer {
 
 		#endregion
 
+		private void Reinitialize() {
+			this.Controls.Clear();
+			this.Initialize();
+		}
+
 		private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
 			if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
 				if (e.KeyCode == Keys.Right) {
@@ -426,9 +430,7 @@ namespace gifer {
 				}
 				SetImage((Bitmap)Bitmap.FromFile(_currentImagePath));
 			} else if (e.KeyCode == Keys.H) {
-				this.Controls.Clear();
-				this.Initialize();
-				//this.Invalidate();
+				this.Reinitialize();
 			} else if (e.KeyCode == Keys.Delete) {
 				if (_currentImagePath == null) {
 					return;
@@ -439,7 +441,7 @@ namespace gifer {
 				_imagesInFolder.Remove(imageToDeletePath);
 				if (imageToDeletePath == _currentImagePath) {
 					_currentImagePath = null;
-					SetDefaultImage();
+					this.Reinitialize();
 				}
 				FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
 			} else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P) {
