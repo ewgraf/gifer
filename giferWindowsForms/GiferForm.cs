@@ -6,12 +6,12 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualBasic.FileIO;
 using gifer.Domain;
 using gifer.Utils;
-using Microsoft.VisualBasic.FileIO;
-using System.Runtime.InteropServices;
 
 namespace gifer {
 	public partial class GiferForm : Form {
@@ -32,7 +32,7 @@ namespace gifer {
             this.AllowDrop = true;
             // Form.BackgroungImage flickers when updated, therefore can not be used as a thind to draw a gif on 
             // we have to use PictureBox
-            this.pictureBox1.MouseWheel += new MouseEventHandler(this.pictureBox1_MouseWheel);
+            this.pictureBox1.MouseWheel += pictureBox1_MouseWheel;
             this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             this.StartPosition = FormStartPosition.CenterScreen;
 
@@ -173,7 +173,8 @@ namespace gifer {
         }
 
 		private void Form1_DragDrop(object sender, DragEventArgs e) {
-			groupBox1.Visible = false;
+			this.groupBox1.Visible = false;
+			this.labelDragAndDrop.Visible = false;
 			_helpWindow = false;
 			string imagePath = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
 			LoadImageAndFolder(imagePath);

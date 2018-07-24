@@ -42,11 +42,11 @@
 			this.label7 = new System.Windows.Forms.Label();
 			this.label6 = new System.Windows.Forms.Label();
 			this.label4 = new System.Windows.Forms.Label();
-			this.label1 = new System.Windows.Forms.Label();
 			this.label15 = new System.Windows.Forms.Label();
 			this.label5 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
+			this.labelDragAndDrop = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -181,17 +181,6 @@
 			this.label4.TabIndex = 17;
 			this.label4.Text = "Hotkeys";
 			// 
-			// label1
-			// 
-			this.label1.AutoSize = true;
-			this.label1.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-			this.label1.ForeColor = System.Drawing.Color.Silver;
-			this.label1.Location = new System.Drawing.Point(26, 340);
-			this.label1.Name = "label1";
-			this.label1.Size = new System.Drawing.Size(322, 24);
-			this.label1.TabIndex = 16;
-			this.label1.Text = "[Drag&&Drop GIF/Image Here]";
-			// 
 			// label15
 			// 
 			this.label15.AutoSize = true;
@@ -236,12 +225,23 @@
 			this.label3.TabIndex = 2;
 			this.label3.Text = "[←], [→]";
 			// 
+			// labelDragAndDrop
+			// 
+			this.labelDragAndDrop.AutoSize = true;
+			this.labelDragAndDrop.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.labelDragAndDrop.ForeColor = System.Drawing.Color.Silver;
+			this.labelDragAndDrop.Location = new System.Drawing.Point(26, 340);
+			this.labelDragAndDrop.Name = "labelDragAndDrop";
+			this.labelDragAndDrop.Size = new System.Drawing.Size(322, 24);
+			this.labelDragAndDrop.TabIndex = 16;
+			this.labelDragAndDrop.Text = "[Drag&&Drop GIF/Image Here]";
+			// 
 			// GiferForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(375, 375);
-			this.Controls.Add(this.label1);
+			this.Controls.Add(this.labelDragAndDrop);
 			this.Controls.Add(this.groupBox1);
 			this.Controls.Add(this.pictureBox1);
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -266,7 +266,7 @@
 		private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Timer timerUpdateTaskbarIcon;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelDragAndDrop;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label2;
