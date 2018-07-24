@@ -23,39 +23,42 @@ namespace gifer {
 		private bool _helpWindow = true;
 
         public GiferForm(/*Configuration config*/) {
-            //_config = config;
-            _openWithListener = new OpenWithListener(Gifer.EndPoint);
+			//_config = config;
+			_openWithListener = new OpenWithListener(Gifer.EndPoint);
+			Initialize();
+		}
 
-            InitializeComponent();
+		private void Initialize() {
+			InitializeComponent();
 
-            this.FormBorderStyle = FormBorderStyle.None;
-            this.AllowDrop = true;
-            // Form.BackgroungImage flickers when updated, therefore can not be used as a thind to draw a gif on 
-            // we have to use PictureBox
-            this.pictureBox1.MouseWheel += pictureBox1_MouseWheel;
-            this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-            this.StartPosition = FormStartPosition.CenterScreen;
+			this.FormBorderStyle = FormBorderStyle.None;
+			this.AllowDrop = true;
+			// Form.BackgroungImage flickers when updated, therefore can not be used as a thind to draw a gif on 
+			// we have to use PictureBox
+			this.pictureBox1.MouseWheel += pictureBox1_MouseWheel;
+			this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+			this.StartPosition = FormStartPosition.CenterScreen;
 
-            // moving picturebox insible invisible form
-            // making transparent form fullscreen
-            //this.Size = Screen.PrimaryScreen.Bounds.Size;
-            //this.TransparencyKey = this.BackColor;
-            //this.pictureBox1.BackColor = Color.Red;            
+			// moving picturebox insible invisible form
+			// making transparent form fullscreen
+			//this.Size = Screen.PrimaryScreen.Bounds.Size;
+			//this.TransparencyKey = this.BackColor;
+			//this.pictureBox1.BackColor = Color.Red;            
 
-            //SetDefaultImage();
-            //this.pictureBox1.BackColor = Color.LightGray;
-            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-            this.groupBox1.BackColor = Color.Transparent;
+			//SetDefaultImage();
+			//this.pictureBox1.BackColor = Color.LightGray;
+			this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+			this.groupBox1.BackColor = Color.Transparent;
 
-            int x = (this.Width / 2) - (pictureBox1.Width / 2);
-            int y = (this.Height / 2) - (pictureBox1.Height / 2);
-            pictureBox1.Location = new Point(x, y);
-            //SetupStandalone(bool.Parse(_config.AppSettings.Settings["openInStandalone"].Value));
-            //this.OnPaintBackground
+			int x = (this.Width / 2) - (pictureBox1.Width / 2);
+			int y = (this.Height / 2) - (pictureBox1.Height / 2);
+			pictureBox1.Location = new Point(x, y);
+			//SetupStandalone(bool.Parse(_config.AppSettings.Settings["openInStandalone"].Value));
+			//this.OnPaintBackground
 
-	        this.groupBox1.MouseDown += groupBox1_MouseDown;
-	        this.groupBox1.MouseMove += groupBox1_MouseMove;
-	        this.groupBox1.MouseUp += groupBox1_MouseUp;
+			this.groupBox1.MouseDown += groupBox1_MouseDown;
+			this.groupBox1.MouseMove += groupBox1_MouseMove;
+			this.groupBox1.MouseUp += groupBox1_MouseUp;
 		}
 
         //protected override void OnPaintBackground(PaintEventArgs e) {
@@ -414,41 +417,43 @@ namespace gifer {
 
 		#endregion
 
-        private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
-            if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
-                if (e.KeyCode == Keys.Right) {
-                    _currentImagePath = _imagesInFolder.Next(_currentImagePath);
-                } else if (e.KeyCode == Keys.Left) {
-                    _currentImagePath = _imagesInFolder.Previous(_currentImagePath);
-                }
-                SetImage((Bitmap)Bitmap.FromFile(_currentImagePath));
-            //} else if (e.KeyCode == Keys.H) {
-            //    ShowHelp(_config);
-            } else if (e.KeyCode == Keys.Delete) {
-                if (_currentImagePath == null) {
-                    return;
-                }
-                string imageToDeletePath = _currentImagePath;
-                _currentImagePath = _imagesInFolder.Next(_currentImagePath);
-                LoadImageAndFolder(_currentImagePath);
-                _imagesInFolder.Remove(imageToDeletePath);
-                if (imageToDeletePath == _currentImagePath) {
-                    _currentImagePath = null;
-                    SetDefaultImage();
-                }
-                FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
-            } else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P) {
-                if (_currentImagePath == null) {
-                    return;
-                }
-                var p = new Process();
-                p.StartInfo.FileName = _currentImagePath;
-                p.StartInfo.Verb = "Print";
-                p.Start();
-            } else if (e.KeyCode == Keys.Escape) {
-                Application.Exit();
-            }
-        }
+		private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
+			if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
+				if (e.KeyCode == Keys.Right) {
+					_currentImagePath = _imagesInFolder.Next(_currentImagePath);
+				} else if (e.KeyCode == Keys.Left) {
+					_currentImagePath = _imagesInFolder.Previous(_currentImagePath);
+				}
+				SetImage((Bitmap)Bitmap.FromFile(_currentImagePath));
+			} else if (e.KeyCode == Keys.H) {
+				this.Controls.Clear();
+				this.Initialize();
+				//this.Invalidate();
+			} else if (e.KeyCode == Keys.Delete) {
+				if (_currentImagePath == null) {
+					return;
+				}
+				string imageToDeletePath = _currentImagePath;
+				_currentImagePath = _imagesInFolder.Next(_currentImagePath);
+				LoadImageAndFolder(_currentImagePath);
+				_imagesInFolder.Remove(imageToDeletePath);
+				if (imageToDeletePath == _currentImagePath) {
+					_currentImagePath = null;
+					SetDefaultImage();
+				}
+				FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+			} else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P) {
+				if (_currentImagePath == null) {
+					return;
+				}
+				var p = new Process();
+				p.StartInfo.FileName = _currentImagePath;
+				p.StartInfo.Verb = "Print";
+				p.Start();
+			} else if (e.KeyCode == Keys.Escape) {
+				Application.Exit();
+			}
+		}
 
         private void ShowHelp(Configuration config) {
             bool showHelp;

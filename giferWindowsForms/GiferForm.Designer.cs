@@ -47,6 +47,8 @@
 			this.label2 = new System.Windows.Forms.Label();
 			this.label3 = new System.Windows.Forms.Label();
 			this.labelDragAndDrop = new System.Windows.Forms.Label();
+			this.label1 = new System.Windows.Forms.Label();
+			this.label13 = new System.Windows.Forms.Label();
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			this.SuspendLayout();
@@ -74,6 +76,8 @@
 			// 
 			// groupBox1
 			// 
+			this.groupBox1.Controls.Add(this.label13);
+			this.groupBox1.Controls.Add(this.label1);
 			this.groupBox1.Controls.Add(this.label10);
 			this.groupBox1.Controls.Add(this.label11);
 			this.groupBox1.Controls.Add(this.label12);
@@ -98,7 +102,7 @@
 			this.label10.AutoSize = true;
 			this.label10.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.label10.ForeColor = System.Drawing.Color.DarkGray;
-			this.label10.Location = new System.Drawing.Point(129, 117);
+			this.label10.Location = new System.Drawing.Point(128, 117);
 			this.label10.Name = "label10";
 			this.label10.Size = new System.Drawing.Size(207, 19);
 			this.label10.TabIndex = 22;
@@ -109,7 +113,7 @@
 			this.label11.AutoSize = true;
 			this.label11.Font = new System.Drawing.Font("Consolas", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.label11.ForeColor = System.Drawing.Color.DarkGray;
-			this.label11.Location = new System.Drawing.Point(315, 135);
+			this.label11.Location = new System.Drawing.Point(314, 162);
 			this.label11.Name = "label11";
 			this.label11.Size = new System.Drawing.Size(25, 28);
 			this.label11.TabIndex = 23;
@@ -120,7 +124,7 @@
 			this.label12.AutoSize = true;
 			this.label12.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.label12.ForeColor = System.Drawing.Color.DarkGray;
-			this.label12.Location = new System.Drawing.Point(141, 139);
+			this.label12.Location = new System.Drawing.Point(140, 166);
 			this.label12.Name = "label12";
 			this.label12.Size = new System.Drawing.Size(180, 19);
 			this.label12.TabIndex = 24;
@@ -197,7 +201,7 @@
 			this.label5.AutoSize = true;
 			this.label5.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.label5.ForeColor = System.Drawing.Color.DarkGray;
-			this.label5.Location = new System.Drawing.Point(12, 139);
+			this.label5.Location = new System.Drawing.Point(12, 166);
 			this.label5.Name = "label5";
 			this.label5.Size = new System.Drawing.Size(81, 19);
 			this.label5.TabIndex = 7;
@@ -235,6 +239,28 @@
 			this.labelDragAndDrop.Size = new System.Drawing.Size(322, 24);
 			this.labelDragAndDrop.TabIndex = 16;
 			this.labelDragAndDrop.Text = "[Drag&&Drop GIF/Image Here]";
+			// 
+			// label1
+			// 
+			this.label1.AutoSize = true;
+			this.label1.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.label1.ForeColor = System.Drawing.Color.DarkGray;
+			this.label1.Location = new System.Drawing.Point(12, 142);
+			this.label1.Name = "label1";
+			this.label1.Size = new System.Drawing.Size(36, 19);
+			this.label1.TabIndex = 25;
+			this.label1.Text = "[H]";
+			// 
+			// label13
+			// 
+			this.label13.AutoSize = true;
+			this.label13.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+			this.label13.ForeColor = System.Drawing.Color.DarkGray;
+			this.label13.Location = new System.Drawing.Point(165, 142);
+			this.label13.Name = "label13";
+			this.label13.Size = new System.Drawing.Size(171, 19);
+			this.label13.TabIndex = 26;
+			this.label13.Text = "Help (this window)";
 			// 
 			// GiferForm
 			// 
@@ -279,6 +305,8 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
 		private System.Windows.Forms.Label label12;
+		private System.Windows.Forms.Label label13;
+		private System.Windows.Forms.Label label1;
 	}
 }
 
