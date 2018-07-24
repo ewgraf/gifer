@@ -168,7 +168,8 @@ namespace gifer {
         }
 
         private void Form1_DragDrop(object sender, DragEventArgs e) {
-            string imagePath = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
+	        groupBox1.Visible = false;
+			string imagePath = ((string[])e.Data.GetData(DataFormats.FileDrop))[0];
             LoadImageAndFolder(imagePath);
 			this.Activate();
 		}
@@ -491,5 +492,7 @@ namespace gifer {
             this.TopMost = false;
             Debug.WriteLine("this.TopMost: " + this.TopMost);
         }
-    }
+
+		private void groupBox1_DragDrop(object s, DragEventArgs e) => this.Form1_DragDrop(s, e);
+	}
 }
