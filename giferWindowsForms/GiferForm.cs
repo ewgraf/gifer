@@ -26,6 +26,8 @@ namespace gifer {
 			//_config = config;
 			_openWithListener = new OpenWithListener(Gifer.EndPoint);
 			Initialize();
+			this.label17.Parent = this.groupBox1;
+			this.label17.BackColor = Color.Transparent;
 		}
 
 		private void Initialize() {

@@ -59,11 +59,11 @@ namespace giferWpf {
 			this.pictureBox1.Margin = new Thickness(horizontalMargin, verticalMargin, 0, 0);
 
 			_gifTimer.Tick += (s, e) => {
-                _drawindDelayStopwath.Restart();
+                _drawingDelayStopwath.Restart();
                 _gifTimer.Stop();
                 _gifImage.DrawNext(ref _writableBitmap);
-                _drawindDelayStopwath.Stop();
-                int delay = _gifImage.CurrentFrameDelay - (int)_drawindDelayStopwath.ElapsedMilliseconds;
+                _drawingDelayStopwath.Stop();
+                int delay = _gifImage.CurrentFrameDelay - (int)_drawingDelayStopwath.ElapsedMilliseconds;
                 _gifTimer.Interval = new TimeSpan(0, 0, 0, 0, milliseconds: delay > 0 ? delay : 0);
                 _gifTimer.Start();
             };
