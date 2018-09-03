@@ -21,45 +21,33 @@ namespace gifer {
         private List<string> _imagesInFolder;
         private readonly OpenWithListener _openWithListener;
 		private bool _helpWindow = true;
+        private MoveFormWithControlsHandler _handler;
 
         public GiferForm(/*Configuration config*/) {
 			//_config = config;
 			_openWithListener = new OpenWithListener(Gifer.EndPoint);
 			Initialize();
-		}
+            var controls = this.Controls.ToArray().Concat(this.groupBox1.Controls.ToArray()).ToArray();
+            _handler = new MoveFormWithControlsHandler(form: this, controls: controls);
+        }
 
-		private void Initialize() {
+        private void Initialize() {
 			InitializeComponent();
-
 			this.FormBorderStyle = FormBorderStyle.None;
 			this.AllowDrop = true;
-			// Form.BackgroungImage flickers when updated, therefore can not be used as a thind to draw a gif on 
-			// we have to use PictureBox
+			// Form.BackgroungImage flickers when updated, therefore can not be used as a thind to draw a gif on we have to use PictureBox
 			this.pictureBox1.MouseWheel += pictureBox1_MouseWheel;
 			this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 			this.StartPosition = FormStartPosition.CenterScreen;
-
-			// moving picturebox insible invisible form
-			// making transparent form fullscreen
-			//this.Size = Screen.PrimaryScreen.Bounds.Size;
-			//this.TransparencyKey = this.BackColor;
-			//this.pictureBox1.BackColor = Color.Red;
-
-			//SetDefaultImage();
-			//this.pictureBox1.BackColor = Color.LightGray;
-			this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
-			this.groupBox1.BackColor = Color.Transparent;
-
 			int x = (this.Width / 2) - (pictureBox1.Width / 2);
 			int y = (this.Height / 2) - (pictureBox1.Height / 2);
 			pictureBox1.Location = new Point(x, y);
-			//SetupStandalone(bool.Parse(_config.AppSettings.Settings["openInStandalone"].Value));
-			//this.OnPaintBackground
-
-			this.groupBox1.MouseDown += groupBox1_MouseDown;
-			this.groupBox1.MouseMove += groupBox1_MouseMove;
-			this.groupBox1.MouseUp += groupBox1_MouseUp;
 		}
+
+        private void Reinitialize() {
+            this.Controls.Clear();
+            this.Initialize();
+        }
 
         //protected override void OnPaintBackground(PaintEventArgs e) {
         //    var backgroundBrush = new SolidBrush(Color.Transparent);
@@ -182,72 +170,6 @@ namespace gifer {
 			LoadImageAndFolder(imagePath);
 			this.Activate();
 		}
-
-		#region Moving
-
-		private int _x;
-		private int _y;
-		private bool _moving;
-
-		private void pictureBox1_MouseDown(object sender, MouseEventArgs e) {
-			if (e.Button != MouseButtons.Left) {
-				return;
-			}
-			_moving = true;
-			_x = e.X;
-			_y = e.Y;
-		}
-
-		private void pictureBox1_MouseMove(object sender, MouseEventArgs e) {
-			var c = sender as PictureBox;
-			if (!_moving || c == null) {
-				return;
-			}
-
-			//c.Top = e.Y + c.Top - _y;
-			//c.Left = e.X + c.Left - _x;
-			this.Top  = e.Y + this.Top  - _y;
-			this.Left = e.X + this.Left - _x;
-		}
-
-		private void pictureBox1_MouseUp(object sender, MouseEventArgs e) {
-			var c = sender as PictureBox;
-			if (c == null) {
-				return;
-			}
-			_moving = false;
-		}
-
-		private void groupBox1_MouseDown(object sender, MouseEventArgs e) {
-			if (e.Button != MouseButtons.Left) {
-				return;
-			}
-			_moving = true;
-			_x = e.X;
-			_y = e.Y;
-		}
-
-        private void groupBox1_MouseMove(object sender, MouseEventArgs e) {
-			var c = sender as GroupBox;
-			if (!_moving || c == null) {
-				return;
-			}
-
-			//c.Top = e.Y + c.Top - _y;
-			//c.Left = e.X + c.Left - _x;
-			this.Top  = e.Y + this.Top  - _y;
-			this.Left = e.X + this.Left - _x;
-		}
-
-		private void groupBox1_MouseUp(object sender, MouseEventArgs e) {
-			var c = sender as GroupBox;
-			if (c == null) {
-				return;
-			}
-			_moving = false;
-		}
-
-        #endregion
 
 		#region Resizing
 
@@ -416,11 +338,6 @@ namespace gifer {
 
 		#endregion
 
-		private void Reinitialize() {
-			this.Controls.Clear();
-			this.Initialize();
-		}
-
 		private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
 			if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
 				if (e.KeyCode == Keys.Right) {
@@ -506,14 +423,6 @@ namespace gifer {
             if (e.Button == MouseButtons.Right) {
                 Application.Exit();
             }
-        }
-
-        private void GiferForm_Load(object sender, EventArgs e) {
-            //bool showHelp;
-            //bool.TryParse(_config.AppSettings.Settings["showHelpAtStartup"].Value, out showHelp);
-            //if (showHelp) {
-            //    ShowHelp(_config);
-            //}
         }
 
         private void GiferForm_Activated(object sender, EventArgs e) {

@@ -85,6 +85,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControlExtensions.cs" />
     <Compile Include="Gifer.cs" />
     <Compile Include="GiferForm.cs">
       <SubType>Form</SubType>
@@ -98,6 +99,7 @@
     <Compile Include="HelpForm.Designer.cs">
       <DependentUpon>HelpForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MoveFormWithControlsHandler.cs" />
     <Compile Include="Program.cs" />
     <EmbeddedResource Include="GiferForm.resx">
       <DependentUpon>GiferForm.cs</DependentUpon>
