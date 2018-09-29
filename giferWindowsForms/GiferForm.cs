@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -15,7 +14,6 @@ using gifer.Utils;
 
 namespace gifer {
 	public partial class GiferForm : Form {
-        //private readonly Configuration _config;
         private GifImage _gifImage;
         private string _currentImagePath;
         private List<string> _imagesInFolder;
@@ -23,8 +21,7 @@ namespace gifer {
 		private bool _helpWindow = true;
         private MoveFormWithControlsHandler _handler;
 
-        public GiferForm(/*Configuration config*/) {
-			//_config = config;
+        public GiferForm() {
 			_openWithListener = new OpenWithListener(Gifer.EndPoint);
 			Initialize();
             var controls = this.Controls.ToArray().Concat(this.groupBox1.Controls.ToArray()).ToArray();
@@ -80,7 +77,7 @@ namespace gifer {
             }
         }
 
-        public GiferForm(/*Configuration config, */string imagePath) : this(/*config*/) => LoadImageAndFolder(imagePath);
+        public GiferForm(string imagePath) : this() => LoadImageAndFolder(imagePath);
 
         private void LoadImageAndFolder(string imagePath) {
 			if (string.IsNullOrEmpty(imagePath)) {
@@ -373,27 +370,6 @@ namespace gifer {
 				Application.Exit();
 			}
 		}
-
-        private void ShowHelp(Configuration config) {
-            bool showHelp;
-            bool standalone;
-            bool.TryParse(config.AppSettings.Settings["showHelpAtStartup"].Value, out showHelp);
-            bool.TryParse(config.AppSettings.Settings["openInStandalone"].Value, out standalone);
-            var helpForm = new HelpForm(showHelp, standalone);
-            helpForm.StartPosition = FormStartPosition.CenterScreen;
-            helpForm.ShowDialog();
-            if (config.AppSettings.Settings["showHelpAtStartup"].Value != helpForm.ShowHelpAtStartup.ToString()) {
-                config.AppSettings.Settings.Remove("showHelpAtStartup");
-                config.AppSettings.Settings.Add("showHelpAtStartup", helpForm.ShowHelpAtStartup.ToString());
-                config.Save(ConfigurationSaveMode.Minimal);
-            }
-            if (config.AppSettings.Settings["openInStandalone"].Value != helpForm.OpenInStandalone.ToString()) {
-                config.AppSettings.Settings.Remove("openInStandalone");
-                config.AppSettings.Settings.Add("openInStandalone", helpForm.OpenInStandalone.ToString());
-                config.Save(ConfigurationSaveMode.Minimal);
-                SetupStandalone(helpForm.OpenInStandalone);
-            }
-        }
 
 		private void timer1_Tick(object sender, EventArgs e) {
             pictureBox1.Image = _gifImage.Next();
