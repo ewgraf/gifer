@@ -92,19 +92,10 @@
     <Compile Include="GiferForm.Designer.cs">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="HelpForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="HelpForm.Designer.cs">
-      <DependentUpon>HelpForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="MoveFormWithControlsHandler.cs" />
     <Compile Include="Program.cs" />
     <EmbeddedResource Include="GiferForm.resx">
       <DependentUpon>GiferForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="HelpForm.resx">
-      <DependentUpon>HelpForm.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
