@@ -18,8 +18,8 @@ namespace gifer {
         private string _currentImagePath;
         private List<string> _imagesInFolder;
         private readonly OpenWithListener _openWithListener;
-		private bool _helpWindow = true;
         private MoveFormWithControlsHandler _handler;
+		private bool _helpWindow = true;
 
         public GiferForm() {
 			_openWithListener = new OpenWithListener(Gifer.EndPoint);
