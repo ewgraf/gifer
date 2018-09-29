@@ -112,7 +112,7 @@
             this.labelMoveText.AutoSize = true;
             this.labelMoveText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelMoveText.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelMoveText.Location = new System.Drawing.Point(188, 73);
+            this.labelMoveText.Location = new System.Drawing.Point(205, 77);
             this.labelMoveText.Name = "labelMoveText";
             this.labelMoveText.Size = new System.Drawing.Size(50, 22);
             this.labelMoveText.TabIndex = 18;
@@ -123,7 +123,7 @@
             this.labelMoveIcon.AutoSize = true;
             this.labelMoveIcon.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelMoveIcon.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelMoveIcon.Location = new System.Drawing.Point(229, 62);
+            this.labelMoveIcon.Location = new System.Drawing.Point(245, 66);
             this.labelMoveIcon.Name = "labelMoveIcon";
             this.labelMoveIcon.Size = new System.Drawing.Size(45, 41);
             this.labelMoveIcon.TabIndex = 31;
@@ -134,7 +134,7 @@
             this.labelDeleteIcon.AutoSize = true;
             this.labelDeleteIcon.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelDeleteIcon.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelDeleteIcon.Location = new System.Drawing.Point(341, 303);
+            this.labelDeleteIcon.Location = new System.Drawing.Point(358, 295);
             this.labelDeleteIcon.Name = "labelDeleteIcon";
             this.labelDeleteIcon.Size = new System.Drawing.Size(39, 41);
             this.labelDeleteIcon.TabIndex = 23;
@@ -145,7 +145,7 @@
             this.labelCloseKey1.AutoSize = true;
             this.labelCloseKey1.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelCloseKey1.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelCloseKey1.Location = new System.Drawing.Point(95, 177);
+            this.labelCloseKey1.Location = new System.Drawing.Point(82, 177);
             this.labelCloseKey1.Name = "labelCloseKey1";
             this.labelCloseKey1.Size = new System.Drawing.Size(80, 22);
             this.labelCloseKey1.TabIndex = 20;
@@ -156,7 +156,7 @@
             this.labelCloseKey0.AutoSize = true;
             this.labelCloseKey0.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelCloseKey0.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelCloseKey0.Location = new System.Drawing.Point(49, 162);
+            this.labelCloseKey0.Location = new System.Drawing.Point(35, 162);
             this.labelCloseKey0.Name = "labelCloseKey0";
             this.labelCloseKey0.Size = new System.Drawing.Size(63, 41);
             this.labelCloseKey0.TabIndex = 30;
@@ -167,7 +167,7 @@
             this.labelZoomKey.AutoSize = true;
             this.labelZoomKey.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelZoomKey.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelZoomKey.Location = new System.Drawing.Point(49, 108);
+            this.labelZoomKey.Location = new System.Drawing.Point(35, 110);
             this.labelZoomKey.Name = "labelZoomKey";
             this.labelZoomKey.Size = new System.Drawing.Size(69, 41);
             this.labelZoomKey.TabIndex = 28;
@@ -178,7 +178,7 @@
             this.labelHelpText.AutoSize = true;
             this.labelHelpText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelHelpText.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelHelpText.Location = new System.Drawing.Point(188, 270);
+            this.labelHelpText.Location = new System.Drawing.Point(204, 264);
             this.labelHelpText.Name = "labelHelpText";
             this.labelHelpText.Size = new System.Drawing.Size(120, 22);
             this.labelHelpText.TabIndex = 26;
@@ -189,7 +189,7 @@
             this.labelHelpKey.AutoSize = true;
             this.labelHelpKey.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelHelpKey.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelHelpKey.Location = new System.Drawing.Point(54, 270);
+            this.labelHelpKey.Location = new System.Drawing.Point(41, 264);
             this.labelHelpKey.Name = "labelHelpKey";
             this.labelHelpKey.Size = new System.Drawing.Size(40, 22);
             this.labelHelpKey.TabIndex = 25;
@@ -200,7 +200,7 @@
             this.labelPrevNextText.AutoSize = true;
             this.labelPrevNextText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelPrevNextText.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelPrevNextText.Location = new System.Drawing.Point(188, 224);
+            this.labelPrevNextText.Location = new System.Drawing.Point(204, 220);
             this.labelPrevNextText.Name = "labelPrevNextText";
             this.labelPrevNextText.Size = new System.Drawing.Size(190, 22);
             this.labelPrevNextText.TabIndex = 22;
@@ -211,7 +211,7 @@
             this.labelDeleteText.AutoSize = true;
             this.labelDeleteText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelDeleteText.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelDeleteText.Location = new System.Drawing.Point(188, 315);
+            this.labelDeleteText.Location = new System.Drawing.Point(205, 307);
             this.labelDeleteText.Name = "labelDeleteText";
             this.labelDeleteText.Size = new System.Drawing.Size(160, 22);
             this.labelDeleteText.TabIndex = 24;
@@ -222,7 +222,7 @@
             this.labelZoomText.AutoSize = true;
             this.labelZoomText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelZoomText.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelZoomText.Location = new System.Drawing.Point(188, 122);
+            this.labelZoomText.Location = new System.Drawing.Point(204, 124);
             this.labelZoomText.Name = "labelZoomText";
             this.labelZoomText.Size = new System.Drawing.Size(50, 22);
             this.labelZoomText.TabIndex = 21;
@@ -233,7 +233,7 @@
             this.labelCloseText.AutoSize = true;
             this.labelCloseText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelCloseText.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelCloseText.Location = new System.Drawing.Point(188, 177);
+            this.labelCloseText.Location = new System.Drawing.Point(205, 177);
             this.labelCloseText.Name = "labelCloseText";
             this.labelCloseText.Size = new System.Drawing.Size(60, 22);
             this.labelCloseText.TabIndex = 15;
@@ -244,7 +244,7 @@
             this.labelDeleteKey.AutoSize = true;
             this.labelDeleteKey.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelDeleteKey.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelDeleteKey.Location = new System.Drawing.Point(54, 315);
+            this.labelDeleteKey.Location = new System.Drawing.Point(41, 307);
             this.labelDeleteKey.Name = "labelDeleteKey";
             this.labelDeleteKey.Size = new System.Drawing.Size(90, 22);
             this.labelDeleteKey.TabIndex = 7;
@@ -255,7 +255,7 @@
             this.labelPrevNextKey.AutoSize = true;
             this.labelPrevNextKey.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelPrevNextKey.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelPrevNextKey.Location = new System.Drawing.Point(55, 223);
+            this.labelPrevNextKey.Location = new System.Drawing.Point(41, 219);
             this.labelPrevNextKey.Name = "labelPrevNextKey";
             this.labelPrevNextKey.Size = new System.Drawing.Size(110, 22);
             this.labelPrevNextKey.TabIndex = 2;
@@ -266,7 +266,7 @@
             this.labelMoveKey.AutoSize = true;
             this.labelMoveKey.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelMoveKey.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelMoveKey.Location = new System.Drawing.Point(30, 58);
+            this.labelMoveKey.Location = new System.Drawing.Point(16, 62);
             this.labelMoveKey.Name = "labelMoveKey";
             this.labelMoveKey.Size = new System.Drawing.Size(82, 41);
             this.labelMoveKey.TabIndex = 27;
@@ -277,7 +277,7 @@
             this.labelZoomIcon.AutoSize = true;
             this.labelZoomIcon.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelZoomIcon.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelZoomIcon.Location = new System.Drawing.Point(232, 112);
+            this.labelZoomIcon.Location = new System.Drawing.Point(248, 114);
             this.labelZoomIcon.Name = "labelZoomIcon";
             this.labelZoomIcon.Size = new System.Drawing.Size(37, 41);
             this.labelZoomIcon.TabIndex = 32;
@@ -288,7 +288,7 @@
             this.labelCloseIcon.AutoSize = true;
             this.labelCloseIcon.Font = new System.Drawing.Font("Consolas", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.labelCloseIcon.ForeColor = System.Drawing.Color.DarkGray;
-            this.labelCloseIcon.Location = new System.Drawing.Point(241, 170);
+            this.labelCloseIcon.Location = new System.Drawing.Point(257, 170);
             this.labelCloseIcon.Name = "labelCloseIcon";
             this.labelCloseIcon.Size = new System.Drawing.Size(36, 34);
             this.labelCloseIcon.TabIndex = 33;
