@@ -124,7 +124,7 @@
 			this.labelZoomKey.AutoSize = true;
 			this.labelZoomKey.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelZoomKey.ForeColor = System.Drawing.Color.Gray;
-			this.labelZoomKey.Location = new System.Drawing.Point(102, 136);
+			this.labelZoomKey.Location = new System.Drawing.Point(102, 135);
 			this.labelZoomKey.Name = "labelZoomKey";
 			this.labelZoomKey.Size = new System.Drawing.Size(69, 41);
 			this.labelZoomKey.TabIndex = 28;
@@ -245,7 +245,7 @@
 			this.labelZoomText.AutoSize = true;
 			this.labelZoomText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelZoomText.ForeColor = System.Drawing.Color.DarkGray;
-			this.labelZoomText.Location = new System.Drawing.Point(174, 148);
+			this.labelZoomText.Location = new System.Drawing.Point(174, 147);
 			this.labelZoomText.Name = "labelZoomText";
 			this.labelZoomText.Size = new System.Drawing.Size(50, 22);
 			this.labelZoomText.TabIndex = 21;
@@ -289,7 +289,7 @@
 			this.labelZoomIcon.AutoSize = true;
 			this.labelZoomIcon.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelZoomIcon.ForeColor = System.Drawing.Color.DarkGray;
-			this.labelZoomIcon.Location = new System.Drawing.Point(218, 138);
+			this.labelZoomIcon.Location = new System.Drawing.Point(218, 137);
 			this.labelZoomIcon.Name = "labelZoomIcon";
 			this.labelZoomIcon.Size = new System.Drawing.Size(37, 41);
 			this.labelZoomIcon.TabIndex = 32;
