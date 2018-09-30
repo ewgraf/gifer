@@ -12,7 +12,7 @@ namespace gifer {
         private static readonly byte[] Gif87aVersion = new byte[] { 56, 55, 97 }; // 87a
         private static readonly byte[] Gif89aVersion = new byte[] { 56, 57, 97 }; // 89a
 
-        private readonly Bitmap _gif;
+        private readonly Bitmap _image;
         private readonly FileStream _stream;
         private readonly byte[] _property;
         private readonly object share = new object();
@@ -24,14 +24,18 @@ namespace gifer {
         public int Frames { get; set; }
         public bool IsGif { get; private set; }
         public GifType Type { get; private set; }
+		public int Width { get => _image.Width; }
+		public int Height { get => _image.Height; }
+		public Size Size { get => _image.Size; }
+		public Bitmap Image { get => _image; }
 
-        [Obsolete("Лучше используйте GifImage(byte[] bytes)")]
+		[Obsolete("Лучше используйте GifImage(byte[] bytes)")]
         public GifImage(Bitmap image) {
-            _gif = image;
-            _rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
+            _image = image;
+            _rectangle = new Rectangle(0, 0, _image.Width, _image.Height);
             //PropertyItem item = current_image.GetPropertyItem(0x5100); // FrameDelay in libgdiplus
             //delay = (item.Value[0] + item.Value[1] * 256) * 10; // Time is in 1/100th of a second
-            Frames = _gif.GetFrameCount(FrameDimension.Time);
+            Frames = _image.GetFrameCount(FrameDimension.Time);
             CurrentFrameDelayMilliseconds = BitConverter.ToInt32(image.GetPropertyItem(20736).Value, 0) * 10;
             if (CurrentFrameDelayMilliseconds == 0) {
                 CurrentFrameDelayMilliseconds = 100;
@@ -40,9 +44,9 @@ namespace gifer {
 
         public GifImage(byte[] bytes) {
             //_stream = new MemoryStream(bytes);
-            _gif = new Bitmap(_stream);
+            _image = new Bitmap(_stream);
 
-            _rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
+            _rectangle = new Rectangle(0, 0, _image.Width, _image.Height);
             byte[] signature = bytes.Take(6).ToArray();
 
             //if (signature.SequenceEqual(Gif89aHeader)) {
@@ -62,8 +66,8 @@ namespace gifer {
             IsGif = true;
 
             if (IsGif) {
-                Frames = _gif.GetFrameCount(FrameDimension.Time);
-                CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
+                Frames = _image.GetFrameCount(FrameDimension.Time);
+                CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_image.GetPropertyItem(20736).Value, 0) * 10;
                 if (CurrentFrameDelayMilliseconds == 0) {
                     CurrentFrameDelayMilliseconds = 100;
                 }
@@ -87,13 +91,16 @@ namespace gifer {
             //string v = Encoding.ASCII.GetString(version);
             _stream.Seek(0, SeekOrigin.Begin);
 			// Important! Bitmap(Stream s) captures stream, and all manipulations with Stream should be before "new Bitmap(stream)"
-			_gif = new Bitmap(_stream);
-			_rectangle = new Rectangle(0, 0, _gif.Width, _gif.Height);
-
+			_image = new Bitmap(_stream);
+			_rectangle = new Rectangle(0, 0, _image.Width, _image.Height);
+			// image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")
 			if (signature.SequenceEqual(GifHeader)) {
-                Frames = _gif.GetFrameCount(FrameDimension.Time);
-                CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
-                IsGif = true;
+                Frames = _image.GetFrameCount(FrameDimension.Time);
+                CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_image.GetPropertyItem(20736).Value, 0) * 10;
+				if (CurrentFrameDelayMilliseconds == 0) {
+					CurrentFrameDelayMilliseconds = 100;
+				}
+				IsGif = true;
                 //byte[] logicalScreenDescriptor = new byte[7];
                 //_stream.Read(logicalScreenDescriptor, 0, 7);
                 //// TO DO: update, when screen resolutions are >65535px
@@ -114,15 +121,15 @@ namespace gifer {
 
         private FileStream OpenReadFileStream(string path) => new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
 
-        public Bitmap Copy() => (Bitmap)_gif.Clone();
+        public Bitmap Copy() => (Bitmap)_image.Clone();
 
         public Bitmap Next() {
             if (_currentFrame >= Frames || _currentFrame < 1) {
                 _currentFrame = 0;
             }
-            _gif.SelectActiveFrame(FrameDimension.Time, _currentFrame);
+            _image.SelectActiveFrame(FrameDimension.Time, _currentFrame);
 			// int32 is 4bytes -> shift is 4
-			CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 4 * _currentFrame) * 10;
+			CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_image.GetPropertyItem(20736).Value, 4 * _currentFrame) * 10;
 			Debug.WriteLine($"CurrentFrameDelay: {CurrentFrameDelayMilliseconds}");
 			_currentFrame++;
 			if (CurrentFrameDelayMilliseconds == 0) {
@@ -132,11 +139,11 @@ namespace gifer {
 				throw new InvalidOperationException($"CurrentFrameDelay {CurrentFrameDelayMilliseconds} <= 0. Is int32 4 bytes length?");
 			}
 
-			return Image.FromHbitmap(new Bitmap(_gif).GetHbitmap());
+			return System.Drawing.Image.FromHbitmap(new Bitmap(_image).GetHbitmap());
         }
 		
         public void Dispose() {
-            _gif?.Dispose();
+            _image?.Dispose();
             _stream?.Close();
             _stream?.Dispose();
         }

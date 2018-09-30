@@ -7,6 +7,8 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security;
+using System.Text;
 using System.Windows.Forms;
 using Microsoft.VisualBasic.FileIO;
 
@@ -32,6 +34,9 @@ namespace gifer {
 
 		private void Initialize() {
 			_currentFrame = null;
+			// hack so that "this.ResumeLayout(false)" at "this.InitializeComponent()" won't throw "ArgumentOutOfRangeException"
+			// as we do "form.MaximumSize = new Size(int.MaxValue, int.MaxValue);" to go out of screen bounds for zooming
+			this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
 			this.InitializeComponent();
 			this.timer1.Stop();
 			this.timerUpdateTaskbarIcon.Stop();
@@ -45,8 +50,7 @@ namespace gifer {
 			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
 			this.Location = Point.Subtract(center, this.Size.Divide(2));
 			Control[] controls = this.Controls.ToArray().Concat(this.groupBox1.Controls.ToArray()).ToArray();
-			_handler = new MoveFormWithControlsHandler(form: this, controls: controls);
-			
+			_handler = new MoveFormWithControlsHandler(form: this, controls: controls);			
 			foreach (Control c in controls) {
 				c.MouseClick += (s, e) => pictureBox1_MouseClick(s, e);
 			}			
@@ -77,16 +81,24 @@ namespace gifer {
                 return;
             }
             if (Gifer.KnownImageFormats.Any(imagePath.ToUpper().EndsWith)) {
-				Bitmap image = (Bitmap)LoadImage(imagePath);
+				//Bitmap image = (Bitmap)LoadImage(imagePath);
+				GifImage image;
+				try {
+					image = new GifImage(imagePath);
+				} catch (Exception ex) {
+					HandleFileStreamException(ex, imagePath);
+					this.Reinitialize();
+					return;
+				}
 				if (image == null) {
-					MessageBox.Show($"Can not load image: '{imagePath}'");
+					throw new Exception($@"Something went terribly wrong - despite ""new FileStream({imagePath}, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);"" has thrown no exception, yet stream == null - gifer couldn't have loaded file. May be some inner operations in new FileStream were intercepted/overriden?");
 				}
                 if (this.InvokeRequired) {
                     this.Invoke(new MethodInvoker(() => {
-                        SetImage(image);
+                        SetGifImage(image);
                     }));
                 } else {
-                    SetImage(image);
+					SetGifImage(image);
                 }
 				_currentImagePath = imagePath;
 				_imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
@@ -96,6 +108,45 @@ namespace gifer {
 				MessageBox.Show($"Unknown image extension at: '{imagePath}' '{Path.GetExtension(imagePath)}'");
 			}
 		}
+
+
+		private void HandleFileStreamException(Exception exception, string filePath) {
+			string title = $"Failed opening file";
+			string parameters = $@"{Environment.NewLine}{Environment.NewLine}path: [{_currentImagePath}],{Environment.NewLine}{Environment.NewLine}exception: [{exception}]";
+
+			var sb = new StringBuilder();
+			sb.AppendLine($"{title} '{filePath}'");
+
+			if (exception is ArgumentNullException) {
+				sb.AppendLine($"Current file's path is null.");
+			} else if (exception is ArgumentOutOfRangeException) {
+				sb.AppendLine($"Mode, which open file in, contains an invalid value.");
+			} else if (exception is ArgumentException) {
+				sb.AppendLine(@"Path is an empty string (""), contains only white space, or contains one or more invalid characters. " +
+							   $@"-or- path refers to a non-file device, such as ""con: "", ""com1: "", ""lpt1:"", etc. in an NTFS environment.");
+			} else if (exception is NotSupportedException) {
+				sb.AppendLine($@"Path refers to a non-file device, such as ""con: "", ""com1: "", ""lpt1: "", etc. in a non-NTFS environment.");
+			} else if (exception is SecurityException) {
+				sb.AppendLine($"Current user does not have the required permission to open file.");
+			} else if (exception is FileNotFoundException) {
+				sb.AppendLine("The file, specified by path, cannot be found, such as when mode is FileMode.Truncate or FileMode.Open, and the file does not exist. " +
+							   $"The file must already exist in these modes.");
+			} else if (exception is DirectoryNotFoundException) {
+				sb.AppendLine($"The specified path is invalid, such as being on an unmapped drive.");
+			} else if (exception is PathTooLongException) {
+				sb.AppendLine("The specified path, file name, or both exceed the system-defined maximum length. " +
+							   $"For example, on Windows-based platforms, paths must be less than 248 characters, and file names must be less than 260 characters.");
+			} else if (exception is IOException) {
+				sb.AppendLine("An I/O error, such as specifying FileMode.CreateNew when the file specified by path already exists, occurred. " +
+							   $"-or- The stream has been closed.");
+			} else if (exception is UnauthorizedAccessException) {
+				sb.AppendLine($"Current user does not have the required permission to open file.");
+			} else {
+				sb.AppendLine($"Unpredicted exception occured.");
+			}
+			MessageBox.Show(sb.ToString(), title);
+		}
+
 
 		private Image LoadImage(string imagePath) {
 			try {
@@ -141,6 +192,36 @@ namespace gifer {
 			_currentFrame = image;
             this.BringToFront();
             //ResumeDrawing(this);
+		}
+
+		private void SetGifImage(GifImage gifImage) {
+			timer1.Stop();
+			timerUpdateTaskbarIcon.Stop();
+			Screen currentScreen = Screen.FromControl(this);
+			if (gifImage.Width > currentScreen.Bounds.Width || gifImage.Height > currentScreen.Bounds.Height) {
+				this.Size = ResizeProportionaly(gifImage.Size, currentScreen.Bounds.Size);
+			} else {
+				this.Size = gifImage.Size;
+			}
+
+			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
+			this.Location = Point.Subtract(center, this.Size.Divide(2));
+			pictureBox1.Image?.Dispose();
+			pictureBox1.Image = null;
+			_gifImage?.Dispose();
+			GC.Collect();
+			_gifImage = gifImage;
+			if (gifImage.IsGif) {
+				timer1.Interval = _gifImage.CurrentFrameDelayMilliseconds;
+				timer1.Start();
+				timerUpdateTaskbarIcon.Start();
+			} else { // if plain image
+				_currentFrame = gifImage.Image;
+				pictureBox1.Image = gifImage.Image;
+				this.Icon = Icon.FromHandle(((Bitmap)gifImage.Image).GetHicon());
+			}
+			this.BringToFront();
+			//ResumeDrawing(this);
 		}
 
 		public static Size ResizeProportionaly(Size size, Size fitSize) {
