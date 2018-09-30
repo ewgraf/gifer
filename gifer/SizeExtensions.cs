@@ -19,7 +19,21 @@ namespace gifer {
             return Size.Round(sizef);
         }
 
-        public static bool AbsMore(this Size size1, Size size2) {
+		public static SizeF Divide(this SizeF size, float by) {
+			var sizef = new SizeF(size.Width / by, size.Height / by);
+			if (Math.Abs(sizef.Width) < 1) {
+				sizef.Width = Math.Sign(sizef.Width);
+			}
+			if (Math.Abs(sizef.Height) < 1) {
+				sizef.Height = Math.Sign(sizef.Height);
+			}
+			// Round    0.1 -> 0, 0.9 -> 1
+			// Ceiling  0.1 -> 1, 0.9 -> 1
+			// Truncate 0.1 -> 0, 0.9 -> 0
+			return Size.Round(sizef);
+		}
+
+		public static bool AbsMore(this Size size1, Size size2) {
             return Math.Abs(size1.Width) > Math.Abs(size2.Width) && Math.Abs(size1.Height) > Math.Abs(size2.Height);
         }
 

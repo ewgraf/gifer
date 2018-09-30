@@ -191,11 +191,11 @@ namespace gifer {
 				return;
 			}
 
-			double ratio = 1.35;
+			float ratio = 1.35f;
 			if (ModifierKeys.HasFlag(Keys.Control)) {
-				ratio = 1.05;
+				ratio = 1.05f;
 			} else if (ModifierKeys.HasFlag(Keys.Shift)) {
-				ratio = 2.0;
+				ratio = 2.0f;
 			}
 
 			_resizing = true;
@@ -211,69 +211,34 @@ namespace gifer {
         //}
 
         [DllImport("User32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-        private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool Repaint);
+        private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool repaint);
 
-        private void Zoom(double ratio, Screen screen, Form form, PictureBox pictureBox) {
-            Point location;
-            location = form.Location;
-            double enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
-            var newSize = new Size {
-                                        Width = Convert.ToInt32(form.Size.Width * enlargementRatio),
-                                        Height = Convert.ToInt32(form.Size.Height * enlargementRatio)
-                                    };
-            //if (newSize.Width > Screen.PrimaryScreen.Bounds.Width && newSize.Height > Screen.PrimaryScreen.Bounds.Height) {
-            //    // consider landscape monitors
-            //    float proportion = (float)newSize.Height/ newSize.Width;
-            //    SizeF newSizeF = new SizeF(newSize.Width, newSize.Height);
-            //    do {
-            //        newSizeF.Width--;
-            //        newSizeF.Height -= proportion;
-            //    } while (newSizeF.Width > Screen.PrimaryScreen.Bounds.Width || newSizeF.Height > Screen.PrimaryScreen.Bounds.Height);
-            //    newSize = new Size((int)Math.Round(newSizeF.Width), (int)Math.Round(newSizeF.Height));
-            //    ;
-            //}
-            //if (newSize.Width > Screen.PrimaryScreen.Bounds.Width) {
-            //    float cropRatio = (float)Screen.PrimaryScreen.Bounds.Width / newSize.Width;
-            //    newSize.Width = Screen.PrimaryScreen.Bounds.Width;
-            //    double height = newSize.Height * cropRatio;
-            //    newSize.Height = (int)Math.Floor(height);
-            //} else if (newSize.Height > Screen.PrimaryScreen.Bounds.Height) {
-            //    float cropRatio = (float)Screen.PrimaryScreen.Bounds.Height / newSize.Height;
-            //    newSize.Height = Screen.PrimaryScreen.Bounds.Height;
-            //    double width = newSize.Width * cropRatio;
-            //    newSize.Width = (int)Math.Floor(width);
-            //}
-            Size widening = newSize - form.Size;
-            var newLocation = Point.Add(location, widening.Divide(-2));
-			Point p = this.pictureBox1.PointToClient(Cursor.Position);			
-			Point center = (Point)screen.Bounds.Size.Divide(2);
-			//form.Hide();
-			//SuspendDrawing(this);
-			this.MaximumSize = new Size(int.MaxValue, int.MaxValue);
-			var shiftX = form.Width / 2 - p.X;
-			var shiftY = form.Height / 2 - p.Y;
-			var originalCursorPosition = p;
-			double xRatio = originalCursorPosition.X / (double)form.Size.Width;
-			double yRatio = originalCursorPosition.Y / (double)form.Size.Height;
-			var newCursorPosition = new System.Windows.Point(newSize.Width * xRatio, newSize.Height * yRatio);
-			double widthDifference = (newSize.Width - form.Size.Width) / 2;
-			double heightDifference = (newSize.Height - form.Size.Height) / 2;
-			double horizontalShift = (widthDifference - (newCursorPosition.X - originalCursorPosition.X));
-			double verticalShift = (heightDifference - (newCursorPosition.Y - originalCursorPosition.Y));
-			bool Result = MoveWindow(this.Handle, newLocation.X + (int)horizontalShift, newLocation.Y + (int)verticalShift, newSize.Width, newSize.Height, false);
-			//bool Result = MoveWindow(this.Handle, 
-			//(int)(newLocation.X - widthDifference + shiftX),
-			//	(int)(newLocation.Y - heightDifference + shiftY, newSize.Width, newSize.Height, false);
-			//;
-			;
-			//form.Size = newSize;
-			//form.Location = newLocation;
-			//pictureBox.Size = newSize;
-			//ResumeDrawing(this);
-			//form.Show();
+        private void Zoom(float ratio, Screen screen, Form form, PictureBox pictureBox) {
+            float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
+            var newSize = new SizeF {
+                Width = form.Size.Width * enlargementRatio,
+				Height = form.Size.Height * enlargementRatio
+            };
+            SizeF widening = newSize - form.Size;
+            var newLocation = PointF.Add(form.Location, widening.Divide(-2));
+			form.MaximumSize = new Size(int.MaxValue, int.MaxValue);
+			Point cursorLocationOnImage = this.pictureBox1.PointToClient(Cursor.Position);
+			float xRatio = cursorLocationOnImage.X / (float)form.Size.Width;
+			float yRatio = cursorLocationOnImage.Y / (float)form.Size.Height;
+			var newCursorPosition = new PointF(newSize.Width * xRatio, newSize.Height * yRatio);
+			float widthDifference = (newSize.Width - form.Size.Width) / 2;
+			float heightDifference = (newSize.Height - form.Size.Height) / 2;
+			float shiftX = (widthDifference - (newCursorPosition.X - cursorLocationOnImage.X));
+			float shiftY = (heightDifference - (newCursorPosition.Y - cursorLocationOnImage.Y));
+			MoveWindow(this.Handle,
+					   (int)Math.Round(newLocation.X + shiftX),
+					   (int)Math.Round(newLocation.Y + (int)shiftY),
+					   (int)Math.Round(newSize.Width),
+					   (int)Math.Round(newSize.Height),
+					   repaint: false);
 		}
 
-		private void ZoomSmooth(double ratio, Form form, PictureBox pictureBox) {
+		private void ZoomSmooth(float ratio, Form form, PictureBox pictureBox) {
             Size size;
             if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
                 pictureBox.Height >= Screen.PrimaryScreen.Bounds.Height) {
@@ -290,7 +255,7 @@ namespace gifer {
                 location = form.Location;
             }
             
-            double enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
+            float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
             var newSize = new Size {
                 Width  = Convert.ToInt32(size.Width  * enlargementRatio),
                 Height = Convert.ToInt32(size.Height * enlargementRatio)
