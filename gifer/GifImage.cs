@@ -1,14 +1,11 @@
-﻿using gifer.Utils;
-using System;
+﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Windows;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 
-namespace gifer.Domain {
+namespace gifer {
     public class GifImage : IDisposable {
         // http://www.onicos.com/staff/iz/formats/gif.html
         private static readonly byte[] GifHeader     = new byte[] { 71, 73, 70 }; // GIF
@@ -23,7 +20,7 @@ namespace gifer.Domain {
 		private int _currentFrame = 0;
 		private Rectangle _rectangle;
 
-		public int CurrentFrameDelay { get; set; }
+		public int CurrentFrameDelayMilliseconds { get; set; }
         public int Frames { get; set; }
         public bool IsGif { get; private set; }
         public GifType Type { get; private set; }
@@ -35,9 +32,9 @@ namespace gifer.Domain {
             //PropertyItem item = current_image.GetPropertyItem(0x5100); // FrameDelay in libgdiplus
             //delay = (item.Value[0] + item.Value[1] * 256) * 10; // Time is in 1/100th of a second
             Frames = _gif.GetFrameCount(FrameDimension.Time);
-            CurrentFrameDelay = BitConverter.ToInt32(image.GetPropertyItem(20736).Value, 0) * 10;
-            if (CurrentFrameDelay == 0) {
-                CurrentFrameDelay = 100;
+            CurrentFrameDelayMilliseconds = BitConverter.ToInt32(image.GetPropertyItem(20736).Value, 0) * 10;
+            if (CurrentFrameDelayMilliseconds == 0) {
+                CurrentFrameDelayMilliseconds = 100;
             }
         }
 
@@ -66,9 +63,9 @@ namespace gifer.Domain {
 
             if (IsGif) {
                 Frames = _gif.GetFrameCount(FrameDimension.Time);
-                CurrentFrameDelay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
-                if (CurrentFrameDelay == 0) {
-                    CurrentFrameDelay = 100;
+                CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
+                if (CurrentFrameDelayMilliseconds == 0) {
+                    CurrentFrameDelayMilliseconds = 100;
                 }
             }
         }
@@ -95,7 +92,7 @@ namespace gifer.Domain {
 
 			if (signature.SequenceEqual(GifHeader)) {
                 Frames = _gif.GetFrameCount(FrameDimension.Time);
-                CurrentFrameDelay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
+                CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 0) * 10;
                 IsGif = true;
                 //byte[] logicalScreenDescriptor = new byte[7];
                 //_stream.Read(logicalScreenDescriptor, 0, 7);
@@ -117,73 +114,27 @@ namespace gifer.Domain {
 
         private FileStream OpenReadFileStream(string path) => new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, FileOptions.SequentialScan);
 
-        public WriteableBitmap GetWritableBitmap() => CreateImageSource(_stream);
-
-        public void DrawNext(ref WriteableBitmap bitmap) {
-            if (_currentFrame >= Frames || _currentFrame < 1) {
-                _currentFrame = 0;
-            }
-            _gif.SelectActiveFrame(FrameDimension.Time, _currentFrame);
-            // int32 is 4bytes -> shift is 4
-            CurrentFrameDelay = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 4 * _currentFrame) * 10;
-            //Debug.WriteLine($"CurrentFrameDelay: {CurrentFrameDelay}");
-            if (CurrentFrameDelay == 0) {
-                CurrentFrameDelay = 100;
-            }
-            if (CurrentFrameDelay < 0) {
-                throw new InvalidOperationException($"CurrentFrameDelay {CurrentFrameDelay} <= 0. Is int32 4 bytes length?");
-            }
-            _currentFrame++;
-            BitmapData frameData = _gif.LockBits(_rectangle, ImageLockMode.ReadOnly, _gif.PixelFormat);
-            bitmap.Lock();
-            NativeMethods.CopyMemory(bitmap.BackBuffer, frameData.Scan0, Math.Abs(frameData.Stride * _gif.Height));
-			try {
-				bitmap.AddDirtyRect(new Int32Rect(0, 0, (int)bitmap.Width, (int)bitmap.Height));
-			} catch (ArgumentOutOfRangeException ex) {
-				bitmap.AddDirtyRect(new Int32Rect(0, 0, _rectangle.Width - 1, _rectangle.Height));
-			}
-            
-            bitmap.Unlock();
-            _gif.UnlockBits(frameData);
-        }
-
         public Bitmap Copy() => (Bitmap)_gif.Clone();
 
         public Bitmap Next() {
             if (_currentFrame >= Frames || _currentFrame < 1) {
                 _currentFrame = 0;
             }
-            _gif.SelectActiveFrame(FrameDimension.Time, _currentFrame++);
-            return Image.FromHbitmap(new Bitmap(_gif).GetHbitmap());
-        }
-
-        private WriteableBitmap CreateImageSource(Stream stream) {
-            stream.Position = 0;
-            
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.CacheOption = BitmapCacheOption.None;
-            bitmap.StreamSource = stream;
-            bitmap.EndInit();
-
-			WriteableBitmap writeableBitmap = null;
-			if (bitmap.PixelWidth == _rectangle.Width) {
-				BitmapSource prgbaSource = new FormatConvertedBitmap(bitmap, PixelFormats.Pbgra32, null, 0);
-				writeableBitmap = new WriteableBitmap(prgbaSource);
-			} else {
-				DrawingVisual dv = new DrawingVisual();
-				using (DrawingContext dc = dv.RenderOpen()) {
-					dc.DrawImage(bitmap, new Rect(0, 0, bitmap.Width, bitmap.Height));
-				}
-				RenderTargetBitmap rtb = new RenderTargetBitmap(_rectangle.Width, _rectangle.Height, 96, 96, PixelFormats.Pbgra32);
-				rtb.Render(dv);
-				writeableBitmap = new WriteableBitmap(rtb);
+            _gif.SelectActiveFrame(FrameDimension.Time, _currentFrame);
+			// int32 is 4bytes -> shift is 4
+			CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_gif.GetPropertyItem(20736).Value, 4 * _currentFrame) * 10;
+			Debug.WriteLine($"CurrentFrameDelay: {CurrentFrameDelayMilliseconds}");
+			_currentFrame++;
+			if (CurrentFrameDelayMilliseconds == 0) {
+				CurrentFrameDelayMilliseconds = 100;
+			}
+			if (CurrentFrameDelayMilliseconds < 0) {
+				throw new InvalidOperationException($"CurrentFrameDelay {CurrentFrameDelayMilliseconds} <= 0. Is int32 4 bytes length?");
 			}
 
-			_currentFrame++;
-			return writeableBitmap;
+			return Image.FromHbitmap(new Bitmap(_gif).GetHbitmap());
         }
-
+		
         public void Dispose() {
             _gif?.Dispose();
             _stream?.Close();

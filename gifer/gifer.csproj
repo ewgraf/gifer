@@ -84,7 +84,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AnimationHelper.cs" />
+    <Compile Include="ImageExtensions.cs" />
     <Compile Include="ControlExtensions.cs" />
+    <Compile Include="ImageOnScreen.cs" />
     <Compile Include="Gifer.cs" />
     <Compile Include="GiferForm.cs">
       <SubType>Form</SubType>
@@ -92,8 +95,12 @@
     <Compile Include="GiferForm.Designer.cs">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="GifImage.cs" />
+    <Compile Include="GifType.cs" />
+    <Compile Include="ListExtensions.cs" />
     <Compile Include="MoveFormWithControlsHandler.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="SizeExtensions.cs" />
     <EmbeddedResource Include="GiferForm.resx">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -129,16 +136,6 @@
   <ItemGroup>
     <Content Include="Resources\gifer logo 42x42 exe icon.ico" />
     <Content Include="Resources\gifer-logo-44x44.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\gifer.Domain\gifer.Domain.csproj">
-      <Project>{9cc12b2d-0038-4876-865e-36688ca7f248}</Project>
-      <Name>gifer.Domain</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\gifer.Utils\gifer.Utils.csproj">
-      <Project>{e559fab8-608a-41d7-a814-4dedf6deeeae}</Project>
-      <Name>gifer.Utils</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

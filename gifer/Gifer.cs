@@ -1,7 +1,6 @@
 ﻿using System.Drawing.Imaging;
 using System.Linq;
 using System.Net;
-using gifer.Utils;
 
 namespace gifer {
     public class Gifer {
