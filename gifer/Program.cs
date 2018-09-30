@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Configuration;
-using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -49,22 +47,9 @@ namespace gifer {
             //}
         }
 
-        private static GiferForm GetForm(/*Configuration config, */string[] args) {
-            return args.Length == 0 ? new GiferForm(/*config*/) 
-                                    : new GiferForm(/*config, */args[0]);
-        }
-
-        private static Configuration Setup(this Configuration config)
-        {
-            if (!config.AppSettings.Settings.AllKeys.Contains("showHelpAtStartup")) {
-                config.AppSettings.Settings.Add("showHelpAtStartup", "true");
-                config.Save(ConfigurationSaveMode.Minimal);
-            }
-            if (!config.AppSettings.Settings.AllKeys.Contains("openInStandalone")) {
-                config.AppSettings.Settings.Add("openInStandalone", "false");
-                config.Save(ConfigurationSaveMode.Minimal);
-            }
-            return config;
+        private static GiferForm GetForm(string[] args) {
+            return args.Length == 0 ? new GiferForm() 
+                                    : new GiferForm(args[0]);
         }
     }
 }
