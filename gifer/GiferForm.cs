@@ -15,13 +15,13 @@ using Microsoft.VisualBasic.FileIO;
 namespace gifer {
 	public partial class GiferForm : Form {
 		private GifImage _gifImage;
-		private Image _currentFrame;
 		private string _currentImagePath;
 		private List<string> _imagesInFolder;
 		private MoveFormWithControlsHandler _handler;
 		private bool _helpWindow = true;
 
 		public GiferForm() {
+			this.SetStyle(ControlStyles.UserPaint, true);
 			this.Initialize();			
 		}
 
@@ -33,7 +33,7 @@ namespace gifer {
 		}
 
 		private void Initialize() {
-			_currentFrame = null;
+			_gifImage = null;
 			// hack so that "this.ResumeLayout(false)" at "this.InitializeComponent()" won't throw "ArgumentOutOfRangeException"
 			// as we do "form.MaximumSize = new Size(int.MaxValue, int.MaxValue);" to go out of screen bounds for zooming
 			this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
@@ -42,7 +42,6 @@ namespace gifer {
 			this.timerUpdateTaskbarIcon.Stop();
 			this.FormBorderStyle = FormBorderStyle.None;
 			this.AllowDrop = true;
-			// Form.BackgroungImage flickers when updated, therefore can not be used as a control to draw a gif on, so we have to use PictureBox
 			this.pictureBox1.MouseWheel += pictureBox1_MouseWheel;
 			this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
 			this.pictureBox1.Image = null;
@@ -60,23 +59,8 @@ namespace gifer {
 			this.Controls.Clear();
 			this.Initialize();
 		}
-
-		//private void SetupStandalone(bool start) {
-		//    if (start && !_openWithListener.Running) {
-		//        Task.Run(() => _openWithListener.Start(filePath => {
-		//            try {
-		//                LoadImageAndFolder(filePath);
-		//            } catch (Exception ex) {
-		//                MessageBox.Show(ex.ToString());
-		//                Application.Exit();
-		//            }
-		//        }));
-		//    } else if (!start && _openWithListener.Running) {
-		//        _openWithListener.Stop();
-		//    }
-		//}
-
-        private void LoadImageAndFolder(string imagePath) {
+		
+		public void LoadImageAndFolder(string imagePath, bool loadFolder = true) {
 			if (string.IsNullOrEmpty(imagePath)) {
                 return;
             }
@@ -101,14 +85,15 @@ namespace gifer {
 					SetGifImage(image);
                 }
 				_currentImagePath = imagePath;
-				_imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
-					.Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
-					.ToList();
+				if (loadFolder) {
+					_imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
+						.Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
+						.ToList();
+				}				
 			} else {
 				MessageBox.Show($"Unknown image extension at: '{imagePath}' '{Path.GetExtension(imagePath)}'");
 			}
 		}
-
 
 		private void HandleFileStreamException(Exception exception, string filePath) {
 			string title = $"Failed opening file";
@@ -147,7 +132,6 @@ namespace gifer {
 			MessageBox.Show(sb.ToString(), title);
 		}
 
-
 		private Image LoadImage(string imagePath) {
 			try {
 				switch (Path.GetExtension(imagePath)) {
@@ -174,10 +158,10 @@ namespace gifer {
             Point center = (Point)currentScreen.Bounds.Size.Divide(2);
             this.Location = Point.Subtract(center, this.Size.Divide(2));
 
-            pictureBox1.Image?.Dispose();
-            pictureBox1.Image = null;
-            _gifImage?.Dispose();
-            GC.Collect();
+            //pictureBox1.Image?.Dispose();
+            //pictureBox1.Image = null;
+           // _gifImage?.Dispose();
+            //GC.Collect();
             if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) 
                 || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
 				_gifImage = new GifImage(image);
@@ -189,7 +173,6 @@ namespace gifer {
                 pictureBox1.Image = image;
                 this.Icon = Icon.FromHandle(((Bitmap)image).GetHicon());                
             }
-			_currentFrame = image;
             this.BringToFront();
             //ResumeDrawing(this);
 		}
@@ -197,29 +180,28 @@ namespace gifer {
 		private void SetGifImage(GifImage gifImage) {
 			timer1.Stop();
 			timerUpdateTaskbarIcon.Stop();
+			_gifImage = gifImage;
+			Size newSize;
 			Screen currentScreen = Screen.FromControl(this);
 			if (gifImage.Width > currentScreen.Bounds.Width || gifImage.Height > currentScreen.Bounds.Height) {
-				this.Size = ResizeProportionaly(gifImage.Size, currentScreen.Bounds.Size);
+				newSize = ResizeProportionaly(gifImage.Size, currentScreen.Bounds.Size);
 			} else {
-				this.Size = gifImage.Size;
+				newSize = gifImage.Size;
 			}
-
+			Point newLocation;
 			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
-			this.Location = Point.Subtract(center, this.Size.Divide(2));
-			pictureBox1.Image?.Dispose();
-			pictureBox1.Image = null;
-			_gifImage?.Dispose();
-			GC.Collect();
-			_gifImage = gifImage;
-			if (gifImage.IsGif) {
+			newLocation = Point.Subtract(center, newSize.Divide(2));
+			if (_gifImage.IsGif) {
 				timer1.Interval = _gifImage.CurrentFrameDelayMilliseconds;
 				timer1.Start();
 				timerUpdateTaskbarIcon.Start();
+				// timer1 OnTick sets pictureBox1's Image
 			} else { // if plain image
-				_currentFrame = gifImage.Image;
-				pictureBox1.Image = gifImage.Image;
-				this.Icon = Icon.FromHandle(((Bitmap)gifImage.Image).GetHicon());
+				pictureBox1.Image = _gifImage.Image;
+				this.Icon = Icon.FromHandle(gifImage.Image.GetHicon());
 			}
+			this.Location = newLocation;
+			this.Size = newSize;
 			this.BringToFront();
 			//ResumeDrawing(this);
 		}
@@ -395,7 +377,7 @@ namespace gifer {
 				} else if (e.KeyCode == Keys.Left) {
 					_currentImagePath = _imagesInFolder.Previous(_currentImagePath);
 				}
-				SetImage((Bitmap)Bitmap.FromFile(_currentImagePath));
+				LoadImageAndFolder(_currentImagePath, loadFolder: false);
 			} else if (e.KeyCode == Keys.H) {
 				_helpWindow = true;
 				this.Reinitialize();
@@ -440,22 +422,8 @@ namespace gifer {
 
         private void timerUpdateTaskbarIcon_Tick(object sender, EventArgs e) {
             if (pictureBox1.Image != null) {
-                this.Icon = Icon.FromHandle((PadImage(pictureBox1.Image)).GetHicon());
+                this.Icon = Icon.FromHandle(pictureBox1.Image.Pad().GetHicon());
             }            
-        }
-
-        public static Bitmap PadImage(Image image) {
-            int largestDimension = Math.Max(image.Height, image.Width);
-            var squareSize = new Size(largestDimension, largestDimension);
-            Bitmap squareImage = new Bitmap(squareSize.Width, squareSize.Height);
-            using (Graphics graphics = Graphics.FromImage(squareImage)) {
-                //graphics.FillRectangle(Brushes.White, 0, 0, squareSize.Width, squareSize.Height);
-                graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
-                graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.Low;
-                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-                graphics.DrawImage(image, (squareSize.Width / 2) - (image.Width / 2), (squareSize.Height / 2) - (image.Height / 2), image.Width, image.Height);
-            }
-            return squareImage;
         }
 
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e) {
@@ -477,20 +445,18 @@ namespace gifer {
 		private void groupBox1_DragDrop(object s, DragEventArgs e) => this.Form1_DragDrop(s, e);
 
 		private void pictureBox1_Paint(object sender, PaintEventArgs e) {
-			//e.Graphics.InterpolationMode = InterpolationMode.NearestNeighbor;
 			e.Graphics.InterpolationMode = _interpolationMode;
-			if (_currentFrame != null) {
+			if (_gifImage?.Image != null) {
 				e.Graphics.DrawImage(
-					_currentFrame,
+					_gifImage.Image,
 					new Rectangle(0, 0, this.Width, this.Height), // destination rectangle
 					0, 0, // upper-left corner of source rectangle
-					_currentFrame.Width, // width of source rectangle
-					_currentFrame.Height, // height of source rectangle
+					_gifImage.Width, // width of source rectangle
+					_gifImage.Height, // height of source rectangle
 					GraphicsUnit.Pixel);
 			} else {
 				base.OnPaint(e);
 			}
-			//base.OnPaint(e);
 		}
 
 		private InterpolationMode _interpolationMode;
