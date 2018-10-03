@@ -28,8 +28,9 @@ namespace gifer {
 		public int Height { get => _image.Height; }
 		public Size Size { get => _image.Size; }
 		public Bitmap Image { get => _image; }
+        public string Path { get => _imagePath; }
 
-		[Obsolete("Лучше используйте GifImage(byte[] bytes)")]
+        [Obsolete("Лучше используйте GifImage(byte[] bytes)")]
         public GifImage(Bitmap image) {
             _image = image;
             _rectangle = new Rectangle(0, 0, _image.Width, _image.Height);
@@ -42,6 +43,7 @@ namespace gifer {
             }
         }
 
+        [Obsolete]
         public GifImage(byte[] bytes) {
             //_stream = new MemoryStream(bytes);
             _image = new Bitmap(_stream);

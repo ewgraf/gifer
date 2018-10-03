@@ -46,5 +46,12 @@ namespace gifer {
             }
             return size;
         }
+
+        public static Size ResizeProportionaly(this Size size, Size fitSize) {
+            double ratioX = (double)fitSize.Width / (double)size.Width;
+            double ratioY = (double)fitSize.Height / (double)size.Height;
+            double ratio = Math.Min(ratioX, ratioY);
+            return size.Multiply(ratio);
+        }
     }
 }

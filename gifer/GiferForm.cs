@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -19,8 +18,9 @@ namespace gifer {
 		private List<string> _imagesInFolder;
 		private MoveFormWithControlsHandler _handler;
 		private bool _helpWindow = true;
+        private InterpolationMode _interpolationMode;
 
-		public GiferForm() {
+        public GiferForm() {
 			this.SetStyle(ControlStyles.UserPaint, true);
 			this.Initialize();			
 		}
@@ -33,7 +33,8 @@ namespace gifer {
 		}
 
 		private void Initialize() {
-			_gifImage = null;
+            _gifImage?.Dispose();
+            _gifImage = null;
 			// hack so that "this.ResumeLayout(false)" at "this.InitializeComponent()" won't throw "ArgumentOutOfRangeException"
 			// as we do "form.MaximumSize = new Size(int.MaxValue, int.MaxValue);" to go out of screen bounds for zooming
 			this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
@@ -56,16 +57,22 @@ namespace gifer {
 		}
 
 		private void Reinitialize() {
-			this.Controls.Clear();
+            this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
+            this.pictureBox1.Image?.Dispose();
+            this.pictureBox1.Image = null;
+            this.Controls.Clear();
 			this.Initialize();
 		}
-		
-		public void LoadImageAndFolder(string imagePath, bool loadFolder = true) {
+        
+        private void GiferForm_Load(object sender, EventArgs e) {
+            this.MaximumSize = new Size(int.MaxValue, int.MaxValue);
+        }
+
+        public void LoadImageAndFolder(string imagePath, bool loadFolder = true) {
 			if (string.IsNullOrEmpty(imagePath)) {
                 return;
             }
             if (Gifer.KnownImageFormats.Any(imagePath.ToUpper().EndsWith)) {
-				//Bitmap image = (Bitmap)LoadImage(imagePath);
 				GifImage image;
 				try {
 					image = new GifImage(imagePath);
@@ -87,8 +94,8 @@ namespace gifer {
 				_currentImagePath = imagePath;
 				if (loadFolder) {
 					_imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
-						.Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
-						.ToList();
+						                       .Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
+						                       .ToList();
 				}				
 			} else {
 				MessageBox.Show($"Unknown image extension at: '{imagePath}' '{Path.GetExtension(imagePath)}'");
@@ -96,7 +103,10 @@ namespace gifer {
 		}
 
 		private void HandleFileStreamException(Exception exception, string filePath) {
-			string title = $"Failed opening file";
+#if DEBUG
+            throw exception;
+#endif
+            string title = $"Failed opening file";
 			string parameters = $@"{Environment.NewLine}{Environment.NewLine}path: [{_currentImagePath}],{Environment.NewLine}{Environment.NewLine}exception: [{exception}]";
 
 			var sb = new StringBuilder();
@@ -129,62 +139,19 @@ namespace gifer {
 			} else {
 				sb.AppendLine($"Unpredicted exception occured.");
 			}
-			MessageBox.Show(sb.ToString(), title);
-		}
+            MessageBox.Show(sb.ToString(), title);
 
-		private Image LoadImage(string imagePath) {
-			try {
-				switch (Path.GetExtension(imagePath)) {
-					default:
-						return Image.FromFile(imagePath);
-				}
-			} catch (Exception ex) {
-				MessageBox.Show(ex.ToString());
-				return null;
-			}
-		}
-
-		private void SetImage(Bitmap image) {
-            //SuspendDrawing(this);
-            timer1.Stop();
-            timerUpdateTaskbarIcon.Stop();
-			Screen currentScreen = Screen.FromControl(this);
-			if (image.Width > currentScreen.Bounds.Width || image.Height > currentScreen.Bounds.Height) {
-				this.Size = ResizeProportionaly(image.Size, currentScreen.Bounds.Size);
-			} else {
-				this.Size = image.Size;
-			}
-			
-            Point center = (Point)currentScreen.Bounds.Size.Divide(2);
-            this.Location = Point.Subtract(center, this.Size.Divide(2));
-
-            //pictureBox1.Image?.Dispose();
-            //pictureBox1.Image = null;
-           // _gifImage?.Dispose();
-            //GC.Collect();
-            if (image.RawFormat == ImageFormat.Gif && ImageAnimator.CanAnimate(image) 
-                || image.RawFormat.Guid == new Guid("b96b3cb0-0728-11d3-9d7b-0000f81ef32e")) {
-				_gifImage = new GifImage(image);
-				//pictureBox1.Image = _gifImage.Next();
-                timer1.Interval = _gifImage.CurrentFrameDelayMilliseconds;
-                timer1.Start();
-                timerUpdateTaskbarIcon.Start();
-            } else { // if plain image
-                pictureBox1.Image = image;
-                this.Icon = Icon.FromHandle(((Bitmap)image).GetHicon());                
-            }
-            this.BringToFront();
-            //ResumeDrawing(this);
-		}
+        }
 
 		private void SetGifImage(GifImage gifImage) {
 			timer1.Stop();
 			timerUpdateTaskbarIcon.Stop();
-			_gifImage = gifImage;
+            _gifImage?.Dispose();
+            _gifImage = gifImage;
 			Size newSize;
 			Screen currentScreen = Screen.FromControl(this);
 			if (gifImage.Width > currentScreen.Bounds.Width || gifImage.Height > currentScreen.Bounds.Height) {
-				newSize = ResizeProportionaly(gifImage.Size, currentScreen.Bounds.Size);
+				newSize = gifImage.Size.ResizeProportionaly(currentScreen.Bounds.Size);
 			} else {
 				newSize = gifImage.Size;
 			}
@@ -203,21 +170,15 @@ namespace gifer {
 			this.Location = newLocation;
 			this.Size = newSize;
 			this.BringToFront();
-			//ResumeDrawing(this);
 		}
 
-		public static Size ResizeProportionaly(Size size, Size fitSize) {
-            double ratioX = (double)fitSize.Width  / (double)size.Width;
-            double ratioY = (double)fitSize.Height / (double)size.Height;
-            double ratio  = Math.Min(ratioX, ratioY);
-            return size.Multiply(ratio);
-		}
-		
+        #region Events
+
         private void Form1_DragEnter(object sender, DragEventArgs e) {
             e.Effect = DragDropEffects.All;
         }
 
-		private void Form1_DragDrop(object sender, DragEventArgs e) {
+        private void Form1_DragDrop(object sender, DragEventArgs e) {
 			this.groupBox1.Visible = false;
 			this.labelDragAndDrop.Visible = false;
 			_helpWindow = false;
@@ -226,9 +187,14 @@ namespace gifer {
 			this.Activate();
 		}
 
-		#region Resizing
+        private void groupBox1_DragDrop(object s, DragEventArgs e) => this.Form1_DragDrop(s, e);
 
-		private bool _resizing;
+        #endregion
+
+
+        #region Resizing
+
+        private bool _resizing;
 
 		public void pictureBox1_MouseWheel(object sender, MouseEventArgs e) {
 			if (_helpWindow) {
@@ -385,15 +351,19 @@ namespace gifer {
 				if (_currentImagePath == null) {
 					return;
 				}
+                this.timer1.Stop();
+                this.timerUpdateTaskbarIcon.Stop();
 				string imageToDeletePath = _currentImagePath;
-				_currentImagePath = _imagesInFolder.Next(_currentImagePath);
-				LoadImageAndFolder(_currentImagePath);
-				_imagesInFolder.Remove(imageToDeletePath);
-				if (imageToDeletePath == _currentImagePath) {
+                _imagesInFolder.Remove(imageToDeletePath);
+				if (!_imagesInFolder.Any()) {
 					_currentImagePath = null;
+                    _gifImage?.Dispose();
 					this.Reinitialize();
-				}
-				FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                } else {
+                    _currentImagePath = _imagesInFolder.Next(_currentImagePath);
+                    LoadImageAndFolder(_currentImagePath, loadFolder: false);
+                }
+                FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
 			} else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P) {
 				if (_currentImagePath == null) {
 					return;
@@ -442,32 +412,24 @@ namespace gifer {
             Debug.WriteLine("this.TopMost: " + this.TopMost);
         }
 
-		private void groupBox1_DragDrop(object s, DragEventArgs e) => this.Form1_DragDrop(s, e);
+        private void PaintWith(InterpolationMode interpolationMode) {
+            _interpolationMode = interpolationMode;
+            this.pictureBox1.Invalidate();
+        }
 
-		private void pictureBox1_Paint(object sender, PaintEventArgs e) {
-			e.Graphics.InterpolationMode = _interpolationMode;
-			if (_gifImage?.Image != null) {
-				e.Graphics.DrawImage(
-					_gifImage.Image,
-					new Rectangle(0, 0, this.Width, this.Height), // destination rectangle
-					0, 0, // upper-left corner of source rectangle
-					_gifImage.Width, // width of source rectangle
-					_gifImage.Height, // height of source rectangle
-					GraphicsUnit.Pixel);
-			} else {
-				base.OnPaint(e);
-			}
-		}
-
-		private InterpolationMode _interpolationMode;
-
-		private void PaintWith(InterpolationMode interpolationMode) {
-			_interpolationMode = interpolationMode;
-			this.pictureBox1.Invalidate();
-		}
-
-		private void GiferForm_Load(object sender, EventArgs e) {
-			this.MaximumSize = new Size(int.MaxValue, int.MaxValue);
-		}
+        private void pictureBox1_Paint(object sender, PaintEventArgs e) {
+            if (_gifImage?.Image != null) {
+                e.Graphics.InterpolationMode = _interpolationMode;
+                e.Graphics.DrawImage(
+                    _gifImage.Image,
+                    new Rectangle(0, 0, this.Width, this.Height), // destination rectangle
+                    0, 0, // upper-left corner of source rectangle
+                    _gifImage.Width, // width of source rectangle
+                    _gifImage.Height, // height of source rectangle
+                    GraphicsUnit.Pixel);
+            } else {
+                base.OnPaint(e);
+            }
+        }
 	}
 }
