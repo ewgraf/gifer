@@ -21,7 +21,8 @@ namespace gifer {
         private InterpolationMode _interpolationMode;
 
         public GiferForm() {
-			this.SetStyle(ControlStyles.UserPaint, true);
+			this.DoubleBuffered = true;
+			//this.SetStyle(ControlStyles.UserPaint, true);
 			this.Initialize();			
 		}
 
@@ -169,6 +170,7 @@ namespace gifer {
 			}
 			this.Location = newLocation;
 			this.Size = newSize;
+			this.pictureBox1.Size = this.Size;
 			this.BringToFront();
 		}
 
@@ -191,7 +193,6 @@ namespace gifer {
 
         #endregion
 
-
         #region Resizing
 
         private bool _resizing;
@@ -205,6 +206,7 @@ namespace gifer {
 		}
 		
 		private void pictureBox1_Resize(object sender, EventArgs e) {
+			this.Opacity = 0.05d;
 			var args = e as MouseEventArgs;
 			if(args == null) { // if resize is caused not by mouse wheel, but by 'pictureBox1.Size = ' or '+='.
 				return;
@@ -259,6 +261,7 @@ namespace gifer {
 			float heightDifference = (newSize.Height - form.Size.Height) / 2;
 			float shiftX = (widthDifference - (newCursorPosition.X - cursorLocationOnImage.X));
 			float shiftY = (heightDifference - (newCursorPosition.Y - cursorLocationOnImage.Y));
+			this.pictureBox1.Size = new Size((int)newSize.Width, (int)newSize.Height);
 			MoveWindow(this.Handle,
 					   (int)Math.Round(newLocation.X + shiftX),
 					   (int)Math.Round(newLocation.Y + (int)shiftY),
@@ -430,6 +433,7 @@ namespace gifer {
             } else {
                 base.OnPaint(e);
             }
-        }
+			this.Opacity = 1d;
+		}
 	}
 }
