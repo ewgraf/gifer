@@ -1,1 +1,2 @@
 maybe fix flickering with removing autoresizeimage on picturebox and changing sizes manually
+OpenWithListener to nuget
