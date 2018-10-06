@@ -270,6 +270,7 @@ namespace gifer {
 					   repaint: false);
 		}
 
+		[Obsolete]
 		private void ZoomSmooth(float ratio, Form form, PictureBox pictureBox) {
             Size size;
             if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
@@ -422,13 +423,24 @@ namespace gifer {
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e) {
             if (_gifImage?.Image != null) {
-                e.Graphics.InterpolationMode = _interpolationMode;
+				var screen = Screen.FromControl(this);
+				e.Graphics.InterpolationMode = _interpolationMode;
+				var destinationRectangle = new Rectangle(0, 0, this.Width, this.Height);
+				Point upperLeftCornerOfSourceRectangle = new Point(0, 0);
+				Size sourceRectangleSize = new Size(_gifImage.Width, _gifImage.Height);
+				if (destinationRectangle.Width > screen.Bounds.Size.Width 
+					&& destinationRectangle.Height > screen.Bounds.Size.Height) {
+					// image is larger than screen
+					destinationRectangle = screen.Bounds;
+					upperLeftCornerOfSourceRectangle = new Point(this.Location.X, this.Location.Y);
+					sourceRectangleSize = screen.Bounds.Size;
+				}
                 e.Graphics.DrawImage(
                     _gifImage.Image,
-                    new Rectangle(0, 0, this.Width, this.Height), // destination rectangle
-                    0, 0, // upper-left corner of source rectangle
-                    _gifImage.Width, // width of source rectangle
-                    _gifImage.Height, // height of source rectangle
+					destinationRectangle,
+					upperLeftCornerOfSourceRectangle.X, upperLeftCornerOfSourceRectangle.Y,
+					sourceRectangleSize.Width, // width of source rectangle
+					sourceRectangleSize.Height, // height of source rectangle
                     GraphicsUnit.Pixel);
             } else {
                 base.OnPaint(e);
