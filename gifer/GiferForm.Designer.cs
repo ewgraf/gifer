@@ -358,6 +358,7 @@
 			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
 			this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
 			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.GiferForm_KeyDown);
+			this.Move += new System.EventHandler(this.GiferForm_Move);
 			((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
 			this.groupBox1.ResumeLayout(false);
 			this.groupBox1.PerformLayout();
