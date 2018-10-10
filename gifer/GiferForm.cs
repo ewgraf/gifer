@@ -358,16 +358,16 @@ namespace gifer {
 				this.timer1.Stop();
 				this.timerUpdateTaskbarIcon.Stop();
 				string imageToDeletePath = _currentImagePath;
-				_imagesInFolder.Remove(imageToDeletePath);
 				if (!_imagesInFolder.Any()) {
 					_currentImagePath = null;
 					_gifImage?.Dispose();
 					this.Reinitialize();
 				} else {
 					_currentImagePath = _imagesInFolder.Next(_currentImagePath);
-					LoadImageAndFolder(_currentImagePath, loadFolder: false);
-				}
-				FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
+                    _imagesInFolder.Remove(imageToDeletePath);
+                    LoadImageAndFolder(_currentImagePath, loadFolder: false);
+                }
+                FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
 			} else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P) {
 				if (_currentImagePath == null) {
 					return;
@@ -449,7 +449,11 @@ namespace gifer {
 					srcArea = new RectangleF(-this.Location.X / ratio, -this.Location.Y / ratio, 1920 / ratio, 1080 / ratio);
 					dstArea = new RectangleF(-this.Location.X, -this.Location.Y, 1920, 1080);
 				}
-				e.Graphics.DrawImage(
+                //e.Graphics.CompositingMode = CompositingMode.SourceCopy;
+                e.Graphics.CompositingQuality = CompositingQuality.HighSpeed;
+                e.Graphics.SmoothingMode = SmoothingMode.HighSpeed;
+                
+                e.Graphics.DrawImage(
 					_gifImage.Image,
 					dstArea,//new Rectangle(0, 0, this.Width, this.Height),// destination rectangle
 					srcArea, //srcRectangle,
