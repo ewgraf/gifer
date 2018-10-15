@@ -22,7 +22,6 @@ namespace gifer {
 
 		public GiferForm() {
 			this.DoubleBuffered = true;
-			//this.SetStyle(ControlStyles.UserPaint, true);
 			this.Initialize();
 		}
 
@@ -170,7 +169,6 @@ namespace gifer {
 			}
 			this.Location = newLocation;
 			this.Size = newSize;
-			this.pictureBox1.Size = this.Size;
 			this.BringToFront();
 		}
 
@@ -206,7 +204,7 @@ namespace gifer {
 		}
 
 		private void pictureBox1_Resize(object sender, EventArgs e) {
-			this.Opacity = 0.05d;
+			//this.Opacity = 0.05d;
 			var args = e as MouseEventArgs;
 			if (args == null) { // if resize is caused not by mouse wheel, but by 'pictureBox1.Size = ' or '+='.
 				return;
@@ -230,7 +228,8 @@ namespace gifer {
 			}
 
 			_resizing = true;
-			Zoom(Math.Sign(delta) * ratio, Screen.FromControl(this), this, this.pictureBox1);
+            //Zoom(Math.Sign(delta) * ratio, this, this.pictureBox1);
+            ZoomSmooth(Math.Sign(delta) * ratio, this, this.pictureBox1);
 			_resizing = false;
 		}
 
@@ -244,7 +243,8 @@ namespace gifer {
 		[DllImport("User32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
 		private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool repaint);
 
-		private void Zoom(float ratio, Screen screen, Form form, PictureBox pictureBox) {
+        [Obsolete]
+        private void Zoom(float ratio, Form form, PictureBox pictureBox) {
 			float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
 			var newSize = new SizeF {
 				Width = form.Size.Width * enlargementRatio,
@@ -261,81 +261,89 @@ namespace gifer {
 			float heightDifference = (newSize.Height - form.Size.Height) / 2;
 			float shiftX = (widthDifference - (newCursorPosition.X - cursorLocationOnImage.X));
 			float shiftY = (heightDifference - (newCursorPosition.Y - cursorLocationOnImage.Y));
-			this.pictureBox1.Size = new Size((int)newSize.Width, (int)newSize.Height);
 			MoveWindow(this.Handle,
 					   (int)Math.Round(newLocation.X + shiftX),
-					   (int)Math.Round(newLocation.Y + (int)shiftY),
+					   (int)Math.Round(newLocation.Y + shiftY),
 					   (int)Math.Round(newSize.Width),
 					   (int)Math.Round(newSize.Height),
 					   repaint: false);
 		}
 
-		[Obsolete]
 		private void ZoomSmooth(float ratio, Form form, PictureBox pictureBox) {
-			Size size;
-			if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
-				pictureBox.Height >= Screen.PrimaryScreen.Bounds.Height) {
-				size = pictureBox.Size;
-			} else {
-				size = form.Size;
-			}
-
-			Point location;
-			if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
-				pictureBox.Height >= Screen.PrimaryScreen.Bounds.Height) {
-				location = pictureBox.Location;
-			} else {
-				location = form.Location;
-			}
-
-			float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
-			var newSize = new Size {
-				Width = Convert.ToInt32(size.Width * enlargementRatio),
-				Height = Convert.ToInt32(size.Height * enlargementRatio)
-			};
-			Size widening = newSize - size;
-			var newLocation = Point.Add(location, widening.Divide(-2));
-			//   const
-			// ---------- -> steps : so that when 'widening' rizes, 'steps' reduses, to resize larger window faster
-			//  widening
-			//
-			// Ex: let widening 64 -> be steps 64, diff 128 -> steps 32
-			//    c
-			// -------- -> 64 steps of resizing => c = 64*64 = 4096
-			//    64
-			// so let it be 4096. pretty round, huh
-			int steps = 4096 / (Math.Abs(widening.Width + widening.Height) / 2);
-			Debug.WriteLine($"Steps: {steps}");
-			widening = widening.Divide(steps).RoundToPowerOf2();
-			Size shift = widening.Divide(2);
-			//parent.Size = newSize;
-			//parent.Location = newLocation;
-			while (_resizing && !ModifierKeys.HasFlag(Keys.Alt) && (pictureBox.Size - newSize).AbsMore(widening)) {
-				pictureBox.Size += widening;
-				//Application.DoEvents();
-				//Application.DoEvents();
-				//Application.DoEvents();
-				if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
-					this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
-					form.Size += widening;
-					form.Location -= shift;
-				} else {
-					pictureBox.Location -= shift;
-				}
-				//parent.Size += widening;
-				//Application.DoEvents();
-				//Application.DoEvents();
-				//parent.Location -= shift;
-				Application.DoEvents();
-			}
-			if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
-				this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
-				form.Size += widening;
-				form.Location -= shift;
-			} else {
-				pictureBox.Size = newSize;
-				pictureBox.Location = newLocation;
-			}
+            var size = form.Size;
+            float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
+            var newSize = new SizeF {
+                Width = form.Size.Width * enlargementRatio,
+                Height = form.Size.Height * enlargementRatio
+            };
+            SizeF widening = newSize - size;
+            var newLocation = PointF.Add(form.Location, widening.Divide(-2));
+            form.MaximumSize = new Size(int.MaxValue, int.MaxValue);
+            Point cursorLocationOnImage = this.pictureBox1.PointToClient(Cursor.Position);
+            float xRatio = cursorLocationOnImage.X / (float)form.Size.Width;
+            float yRatio = cursorLocationOnImage.Y / (float)form.Size.Height;
+            var newCursorPosition = new PointF(newSize.Width * xRatio, newSize.Height * yRatio);
+            float widthDifference = (newSize.Width - form.Size.Width) / 2;
+            float heightDifference = (newSize.Height - form.Size.Height) / 2;
+            float shiftX = (widthDifference - (newCursorPosition.X - cursorLocationOnImage.X));
+            float shiftY = (heightDifference - (newCursorPosition.Y - cursorLocationOnImage.Y));
+            MoveWindow(this.Handle,
+                       (int)Math.Round(newLocation.X + shiftX),
+                       (int)Math.Round(newLocation.Y + shiftY),
+                       (int)Math.Round(newSize.Width),
+                       (int)Math.Round(newSize.Height),
+                       repaint: false);
+            return;
+			//Size size = screen.Bounds.Size;
+			//Point location = form.Location;
+			//float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
+			//var newSize = new Size {
+			//	Width = Convert.ToInt32(size.Width * enlargementRatio),
+			//	Height = Convert.ToInt32(size.Height * enlargementRatio)
+			//};
+			//Size widening = newSize - size;
+			//var newLocation = Point.Add(location, widening.Divide(-2));
+			////   const
+			//// ---------- -> steps : so that when 'widening' rizes, 'steps' reduses, to resize larger window faster
+			////  widening
+			////
+			//// Ex: let widening 64 -> be steps 64, diff 128 -> steps 32
+			////    c
+			//// -------- -> 64 steps of resizing => c = 64*64 = 4096
+			////    64
+			//// so let it be 4096. pretty round, huh
+			//int steps = 4096 / (Math.Abs(widening.Width + widening.Height) / 2);
+			//Debug.WriteLine($"Steps: {steps}");
+			//widening = widening.Divide(steps).RoundToPowerOf2();
+			//Size shift = widening.Divide(2);
+			////parent.Size = newSize;
+			////parent.Location = newLocation;
+			//while (_resizing && !ModifierKeys.HasFlag(Keys.Alt) && (pictureBox.Size - newSize).AbsMore(widening)) {
+			//	pictureBox.Size += widening;
+			//	//Application.DoEvents();
+			//	//Application.DoEvents();
+			//	//Application.DoEvents();
+			//	if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
+			//		this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
+			//		form.Size += widening;
+			//		form.Location -= shift;
+			//	} else {
+			//		pictureBox.Location -= shift;
+			//	}
+			//	//parent.Size += widening;
+			//	//Application.DoEvents();
+			//	//Application.DoEvents();
+			//	//parent.Location -= shift;
+			//	Application.DoEvents();
+			//}
+			//if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
+			//	this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
+			//	form.Size += widening;
+			//	form.Location -= shift;
+			//} else {
+			//	pictureBox.Size = newSize;
+			//	pictureBox.Location = newLocation;
+			//}
 		}
 
 		#endregion
