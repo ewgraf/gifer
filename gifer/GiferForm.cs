@@ -366,13 +366,11 @@ namespace gifer {
 				this.timer1.Stop();
 				this.timerUpdateTaskbarIcon.Stop();
 				string imageToDeletePath = _currentImagePath;
-				if (!_imagesInFolder.Any()) {
-					_currentImagePath = null;
-					_gifImage?.Dispose();
+                _imagesInFolder.Remove(_currentImagePath);
+                _currentImagePath = _imagesInFolder.Next(_currentImagePath);
+                if (_currentImagePath == null) {
 					this.Reinitialize();
 				} else {
-					_currentImagePath = _imagesInFolder.Next(_currentImagePath);
-                    _imagesInFolder.Remove(imageToDeletePath);
                     LoadImageAndFolder(_currentImagePath, loadFolder: false);
                 }
                 FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
