@@ -392,8 +392,6 @@ namespace gifer {
 				PaintWith(InterpolationMode.HighQualityBilinear);
 			} else if (e.KeyCode == Keys.D4) {
 				PaintWith(InterpolationMode.HighQualityBicubic);
-			} else if (e.KeyCode == Keys.Space) {
-				_debugMode = !_debugMode;
 			}
 		}
 
@@ -520,7 +518,7 @@ namespace gifer {
 			//float ratio = (float)this.Width / this._gifImage.Width;
 			//_visibleArea.X = (int)Math.Round(_visibleArea.X / ratio);
 			//_visibleArea.Y = (int)Math.Round(_visibleArea.Y / ratio);
-			Debug.WriteLine($"visible: {_visibleArea} src: {_srcArea}");
+			//Debug.WriteLine($"visible: {_visibleArea} src: {_srcArea}");
 		}
 	}
 }
