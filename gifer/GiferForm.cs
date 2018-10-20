@@ -245,9 +245,6 @@ namespace gifer {
 		//    return exp(-(x - mu) ^ 2 / (2 * sigma ^ 2)) / sqrt(2 * pi * sigma ^ 2)
 		//}
 
-		[DllImport("User32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-		private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool repaint);
-
         private Rectangle Zoom(Form form, float ratio) {
 			float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
 			var newSize = new SizeF {
@@ -290,7 +287,7 @@ namespace gifer {
             float heightDifference = (newSize.Height - form.Size.Height) / 2;
             float shiftX = (widthDifference - (newCursorPosition.X - cursorLocationOnImage.X));
             float shiftY = (heightDifference - (newCursorPosition.Y - cursorLocationOnImage.Y));
-            MoveWindow(this.Handle,
+            GDIHelper.MoveWindow(this.Handle,
                        (int)Math.Round(newLocation.X + shiftX),
                        (int)Math.Round(newLocation.Y + shiftY),
                        (int)Math.Round(newSize.Width),
