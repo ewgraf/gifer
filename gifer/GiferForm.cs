@@ -200,8 +200,11 @@ namespace gifer {
 				return;
 			}
 
-			pictureBox1_Resize(sender, e);
-		}
+            var sw = Stopwatch.StartNew();
+            pictureBox1_Resize(sender, e);
+            sw.Stop();
+            Debug.WriteLine($"Zoomed done in {sw.Elapsed.ToString()} sec.");
+        }
 
 		private void pictureBox1_Resize(object sender, EventArgs e) {
             var args = e as MouseEventArgs;
