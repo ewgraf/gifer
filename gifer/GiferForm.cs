@@ -163,7 +163,8 @@ namespace gifer {
 				timerUpdateTaskbarIcon.Start();
 				// timer1 OnTick sets pictureBox1's Image
 			} else { // if plain image
-				pictureBox1.Image = _gifImage.Image;
+                //pictureBox1.Image = _gifImage.Image;
+                this.Invalidate();
 				this.Icon = Icon.FromHandle(gifImage.Image.GetHicon());
 			}
 			this.Location = newLocation;
@@ -224,12 +225,15 @@ namespace gifer {
 			} else if (ModifierKeys.HasFlag(Keys.Shift)) {
 				ratio = 2.0f;
 			}
+            
+            _bounds = Zoom(this, Math.Sign(delta) * ratio);
+            _zooming = true;
+            this.pictureBox1.Invalidate();
+            //ZoomSmooth(Math.Sign(delta) * ratio, this, this.pictureBox1);
+        }
 
-			_resizing = true;
-            //Zoom(Math.Sign(delta) * ratio, this, this.pictureBox1);
-            ZoomSmooth(Math.Sign(delta) * ratio, this, this.pictureBox1);
-			_resizing = false;
-		}
+        private Rectangle _bounds;
+        private bool _zooming;
 
 		// Gaussiana [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05, 0.01] / 3 => Sum = ~1
 		//private static double[] Gaussiana = new[] { 0.003, 0.016, 0.03, 0.05, 0.06, 0.083, 0.1, 0.116,  0.13,  0.116, 0.1, 0.083, 0.06, 0.05, 0.03, 0.016, 0.003 };
@@ -241,8 +245,7 @@ namespace gifer {
 		[DllImport("User32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
 		private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool repaint);
 
-        [Obsolete]
-        private void Zoom(float ratio, Form form, PictureBox pictureBox) {
+        private Rectangle Zoom(Form form, float ratio) {
 			float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
 			var newSize = new SizeF {
 				Width = form.Size.Width * enlargementRatio,
@@ -259,13 +262,12 @@ namespace gifer {
 			float heightDifference = (newSize.Height - form.Size.Height) / 2;
 			float shiftX = (widthDifference - (newCursorPosition.X - cursorLocationOnImage.X));
 			float shiftY = (heightDifference - (newCursorPosition.Y - cursorLocationOnImage.Y));
-			MoveWindow(this.Handle,
-					   (int)Math.Round(newLocation.X + shiftX),
-					   (int)Math.Round(newLocation.Y + shiftY),
-					   (int)Math.Round(newSize.Width),
-					   (int)Math.Round(newSize.Height),
-					   repaint: false);
-		}
+            var newBounds = new Rectangle((int)Math.Round(newLocation.X + shiftX),
+                                          (int)Math.Round(newLocation.Y + shiftY),
+                                          (int)Math.Round(newSize.Width),
+                                          (int)Math.Round(newSize.Height));
+            return newBounds;
+        }
 
 		private void ZoomSmooth(float ratio, Form form, PictureBox pictureBox) {
             var size = form.Size;
@@ -429,47 +431,52 @@ namespace gifer {
 
 		private Rectangle _visibleArea;
 		private Rectangle _srcArea;
-		private Rectangle _dstArea;
 
-		private bool _debugMode = false;
-
-		private void pictureBox1_Paint(object sender, PaintEventArgs e) {
-			if (_gifImage?.Image != null && !_debugMode) {
-				this.pictureBox1.Image = null;
-				e.Graphics.InterpolationMode = _interpolationMode;
-				var screen = Screen.FromControl(this);
-				Point upperLeftCornerOfSourceRectangle = new Point(0, 0);
-				var srcArea = new RectangleF(0, 0, _gifImage.Width, _gifImage.Height);
-				var dstArea = new RectangleF(0, 0, this.Width, this.Height);
-				bool outOfAllBounds = false;
-				if (this.Location.X < 0 &&
-					this.Location.Y < 0 &&
-					this.Location.X + this.Width > 1920 &&
-					this.Location.Y + this.Height > 1080) {
-					outOfAllBounds = true;
-				}				
-				if (outOfAllBounds) {
-					float ratio = (float)this.Width / _gifImage.Width;
-					srcArea = new RectangleF(-this.Location.X / ratio, -this.Location.Y / ratio, 1920 / ratio, 1080 / ratio);
-					dstArea = new RectangleF(-this.Location.X, -this.Location.Y, 1920, 1080);
-				}
-                //e.Graphics.CompositingMode = CompositingMode.SourceCopy;
+		private void pictureBox1_Paint(object s, PaintEventArgs e) {
+            var sw = Stopwatch.StartNew();
+            if (_gifImage?.Image != null) {
+                if (_zooming) {
+                    GDIHelper.MoveWindow(this.Handle, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height, repaint: false);
+                    _zooming = false;
+                }
+                var srcdst = GetSrcDsrAreas(this, _gifImage);
+                e.Graphics.InterpolationMode = _interpolationMode;
+                e.Graphics.CompositingMode = CompositingMode.SourceCopy;
                 e.Graphics.CompositingQuality = CompositingQuality.HighSpeed;
                 e.Graphics.SmoothingMode = SmoothingMode.HighSpeed;
                 
                 e.Graphics.DrawImage(
-					_gifImage.Image,
-					dstArea,//new Rectangle(0, 0, this.Width, this.Height),// destination rectangle
-					srcArea, //srcRectangle,
-					GraphicsUnit.Pixel);
-			} else {
-				base.OnPaint(e);
-			}
-			this.Opacity = 1d;
-			//base.OnPaint(e);
-		}
+                    _gifImage.Image,
+                    srcdst.Item2, // destination rectangle
+                    srcdst.Item1, // source rectangle
+                    GraphicsUnit.Pixel);
+            }
+            base.OnPaint(e);
+            sw.Stop();
+            Debug.WriteLine($"OnPaint done in {sw.Elapsed.ToString()} sec.");
+        }
 
-		private void GiferForm_Move(object sender, EventArgs e) {
+        private Tuple<RectangleF, RectangleF> GetSrcDsrAreas(Form form, GifImage gifImage) {
+            var screenBounds = Screen.FromControl(form).Bounds;
+            var srcArea = new RectangleF(0, 0, gifImage.Width, gifImage.Height);
+            var dstArea = new RectangleF(0, 0, form.Width, form.Height);
+            // only visible parts
+            //bool outOfAllBounds = false;
+            //if (form.Location.X < 0 &&
+            //    form.Location.Y < 0 &&
+            //    form.Location.X + form.Width > screenBounds.Width &&
+            //    form.Location.Y + form.Height > screenBounds.Height) {
+            //    outOfAllBounds = true;
+            //}
+            //if (outOfAllBounds) {
+            //    float ratio = (float)form.Width / gifImage.Width;
+            //    srcArea = new RectangleF(-form.Location.X / ratio, -form.Location.Y / ratio, screenBounds.Width / ratio, screenBounds.Height / ratio);
+            //    dstArea = new RectangleF(-form.Location.X, -form.Location.Y, screenBounds.Width, screenBounds.Height);
+            //}
+            return Tuple.Create(srcArea, dstArea);
+        }
+        
+        private void GiferForm_Move(object sender, EventArgs e) {
 			if (this._gifImage == null) {
 				return;
 			}
