@@ -85,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AnimationHelper.cs" />
+    <Compile Include="GDIHelper.cs" />
     <Compile Include="ImageExtensions.cs" />
     <Compile Include="ControlExtensions.cs" />
     <Compile Include="ImageOnScreen.cs" />
