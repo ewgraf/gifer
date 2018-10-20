@@ -203,8 +203,7 @@ namespace gifer {
 		}
 
 		private void pictureBox1_Resize(object sender, EventArgs e) {
-			//this.Opacity = 0.05d;
-			var args = e as MouseEventArgs;
+            var args = e as MouseEventArgs;
 			if (args == null) { // if resize is caused not by mouse wheel, but by 'pictureBox1.Size = ' or '+='.
 				return;
 			}
