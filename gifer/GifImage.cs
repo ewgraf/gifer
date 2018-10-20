@@ -14,7 +14,6 @@ namespace gifer {
 
         private readonly Bitmap _image;
         private readonly FileStream _stream;
-        private readonly byte[] _property;
         private readonly object share = new object();
         private readonly string _imagePath;
 		private int _currentFrame = 0;

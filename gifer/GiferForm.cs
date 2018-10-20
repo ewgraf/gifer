@@ -20,8 +20,6 @@ namespace gifer {
 		private InterpolationMode _interpolationMode;
         private Rectangle _bounds;
         private bool _zooming;
-        private Rectangle _visibleArea;
-        private Rectangle _srcArea;
 
         public GiferForm() {
 			this.DoubleBuffered = true;
