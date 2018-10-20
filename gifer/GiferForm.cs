@@ -154,10 +154,9 @@ namespace gifer {
 				newSize = gifImage.Size.ResizeProportionaly(currentScreen.Bounds.Size);
 			} else {
 				newSize = gifImage.Size;
-			}
-			Point newLocation;
-			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
-			newLocation = Point.Subtract(center, newSize.Divide(2));
+            }
+            Point center = (Point)currentScreen.Bounds.Size.Divide(2);
+            Point newLocation = Point.Subtract(center, newSize.Divide(2));
 			if (_gifImage.IsGif) {
 				timer1.Interval = _gifImage.CurrentFrameDelayMilliseconds;
 				timer1.Start();
