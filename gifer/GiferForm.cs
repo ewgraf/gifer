@@ -34,19 +34,20 @@ namespace gifer {
 		}
 
 		private void Initialize() {
-			_gifImage?.Dispose();
+            _gifImage?.Dispose();
 			_gifImage = null;
 			// hack so that "this.ResumeLayout(false)" at "this.InitializeComponent()" won't throw "ArgumentOutOfRangeException"
 			// as we do "form.MaximumSize = new Size(int.MaxValue, int.MaxValue);" to go out of screen bounds for zooming
 			this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
 			this.InitializeComponent();
-			this.timer1.Stop();
-			this.timerUpdateTaskbarIcon.Stop();
-			this.FormBorderStyle = FormBorderStyle.None;
+            this.timer1.Stop();
+            this.timerUpdateTaskbarIcon.Stop();
+            this.pictureBox1.Image?.Dispose();
+            this.pictureBox1.Image = null;
+            this.FormBorderStyle = FormBorderStyle.None;
 			this.AllowDrop = true;
 			this.pictureBox1.MouseWheel += pictureBox1_MouseWheel;
 			this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-			this.pictureBox1.Image = null;
 			Screen currentScreen = Screen.FromControl(this);
 			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
 			this.Location = Point.Subtract(center, this.Size.Divide(2));
@@ -58,9 +59,13 @@ namespace gifer {
 		}
 
 		private void Reinitialize() {
-			this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
-			this.pictureBox1.Image?.Dispose();
-			this.pictureBox1.Image = null;
+            this.timer1?.Stop();
+            this.timerUpdateTaskbarIcon?.Stop();
+            this.pictureBox1.Image?.Dispose();
+            this.pictureBox1.Image = null;
+            _currentImagePath = null;
+            _imagesInFolder.Clear();
+            this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
 			this.Controls.Clear();
 			this.Initialize();
 		}
