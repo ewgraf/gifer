@@ -1,3 +1,1 @@
-﻿maybe fix flickering with removing autoresizeimage on picturebox and changing sizes manually
 OpenWithListener to nuget
-починить переход по папке на второй круг
