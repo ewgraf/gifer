@@ -1,17 +1,16 @@
 ﻿using System.Resources;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Gifer - gif & image viewer")]
-[assembly: AssemblyDescription("Gifer is minimalistic gif and image viewer")]
+[assembly: AssemblyDescription("Gifer is a minimalistic gif and image viewer")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Gridnev's Software")]
 [assembly: AssemblyProduct("Gifer")]
-[assembly: AssemblyCopyright("Gifer")]
+[assembly: AssemblyCopyright("github.com/ewgraf/gifer")]
 [assembly: AssemblyTrademark("Gifer")]
 [assembly: AssemblyCulture("")]
 

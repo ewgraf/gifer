@@ -4,6 +4,9 @@ using System.Linq;
 namespace gifer {
     public static class ListExtensions {
         public static T Next<T>(this List<T> list, T current) {
+            if (list.Count == 0) {
+                return default(T);
+            }
             int index = list.IndexOf(current);
             if (index < list.Count - 1) {
                 return list.ElementAt(index + 1);

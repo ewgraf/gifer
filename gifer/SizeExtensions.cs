@@ -36,6 +36,10 @@ namespace gifer {
 		public static bool AbsMore(this Size size1, Size size2) {
             return Math.Abs(size1.Width) > Math.Abs(size2.Width) && Math.Abs(size1.Height) > Math.Abs(size2.Height);
         }
+        
+        public static bool AbsMore(this SizeF size1, SizeF size2) {
+            return Math.Abs(size1.Width) > Math.Abs(size2.Width) && Math.Abs(size1.Height) > Math.Abs(size2.Height);
+        }
 
         public static Size RoundToPowerOf2(this Size size) {
             if (size.Width % 2 != 0) {

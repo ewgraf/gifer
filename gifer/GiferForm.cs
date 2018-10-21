@@ -5,7 +5,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Security;
 using System.Text;
 using System.Windows.Forms;
@@ -19,10 +18,11 @@ namespace gifer {
 		private MoveFormWithControlsHandler _handler;
 		private bool _helpWindow = true;
 		private InterpolationMode _interpolationMode;
+        private Rectangle _bounds;
+        private bool _zooming;
 
-		public GiferForm() {
+        public GiferForm() {
 			this.DoubleBuffered = true;
-			//this.SetStyle(ControlStyles.UserPaint, true);
 			this.Initialize();
 		}
 
@@ -34,19 +34,20 @@ namespace gifer {
 		}
 
 		private void Initialize() {
-			_gifImage?.Dispose();
+            _gifImage?.Dispose();
 			_gifImage = null;
 			// hack so that "this.ResumeLayout(false)" at "this.InitializeComponent()" won't throw "ArgumentOutOfRangeException"
 			// as we do "form.MaximumSize = new Size(int.MaxValue, int.MaxValue);" to go out of screen bounds for zooming
 			this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
 			this.InitializeComponent();
-			this.timer1.Stop();
-			this.timerUpdateTaskbarIcon.Stop();
-			this.FormBorderStyle = FormBorderStyle.None;
+            this.timer1.Stop();
+            this.timerUpdateTaskbarIcon.Stop();
+            this.pictureBox1.Image?.Dispose();
+            this.pictureBox1.Image = null;
+            this.FormBorderStyle = FormBorderStyle.None;
 			this.AllowDrop = true;
 			this.pictureBox1.MouseWheel += pictureBox1_MouseWheel;
 			this.pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
-			this.pictureBox1.Image = null;
 			Screen currentScreen = Screen.FromControl(this);
 			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
 			this.Location = Point.Subtract(center, this.Size.Divide(2));
@@ -58,16 +59,18 @@ namespace gifer {
 		}
 
 		private void Reinitialize() {
-			this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
-			this.pictureBox1.Image?.Dispose();
-			this.pictureBox1.Image = null;
+            this.timer1?.Stop();
+            this.timerUpdateTaskbarIcon?.Stop();
+            this.pictureBox1.Image?.Dispose();
+            this.pictureBox1.Image = null;
+            _currentImagePath = null;
+            _imagesInFolder.Clear();
+            this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
 			this.Controls.Clear();
 			this.Initialize();
 		}
 
-		private void GiferForm_Load(object sender, EventArgs e) {
-			this.MaximumSize = new Size(int.MaxValue, int.MaxValue);
-		}
+		private void GiferForm_Load(object sender, EventArgs e) => this.MaximumSize = new Size(int.MaxValue, int.MaxValue);
 
 		public void LoadImageAndFolder(string imagePath, bool loadFolder = true) {
 			if (string.IsNullOrEmpty(imagePath)) {
@@ -155,30 +158,26 @@ namespace gifer {
 				newSize = gifImage.Size.ResizeProportionaly(currentScreen.Bounds.Size);
 			} else {
 				newSize = gifImage.Size;
-			}
-			Point newLocation;
-			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
-			newLocation = Point.Subtract(center, newSize.Divide(2));
+            }
+            Point center = (Point)currentScreen.Bounds.Size.Divide(2);
+            Point newLocation = Point.Subtract(center, newSize.Divide(2));
 			if (_gifImage.IsGif) {
 				timer1.Interval = _gifImage.CurrentFrameDelayMilliseconds;
 				timer1.Start();
 				timerUpdateTaskbarIcon.Start();
 				// timer1 OnTick sets pictureBox1's Image
 			} else { // if plain image
-				pictureBox1.Image = _gifImage.Image;
+                this.Invalidate();
 				this.Icon = Icon.FromHandle(gifImage.Image.GetHicon());
 			}
 			this.Location = newLocation;
 			this.Size = newSize;
-			this.pictureBox1.Size = this.Size;
 			this.BringToFront();
 		}
 
 		#region DragDrop
 
-		private void Form1_DragEnter(object sender, DragEventArgs e) {
-			e.Effect = DragDropEffects.All;
-		}
+		private void Form1_DragEnter(object sender, DragEventArgs e) => e.Effect = DragDropEffects.All;
 
 		private void Form1_DragDrop(object sender, DragEventArgs e) {
 			this.groupBox1.Visible = false;
@@ -195,25 +194,24 @@ namespace gifer {
 
 		#region Resizing
 
-		private bool _resizing;
-
 		public void pictureBox1_MouseWheel(object sender, MouseEventArgs e) {
 			if (_helpWindow) {
 				return;
 			}
 
-			pictureBox1_Resize(sender, e);
-		}
+            var sw = Stopwatch.StartNew();
+            this.pictureBox1_Resize(sender, e);
+            sw.Stop();
+            Debug.WriteLine($"Zoomed done in {sw.Elapsed.ToString()} sec.");
+        }
 
 		private void pictureBox1_Resize(object sender, EventArgs e) {
-			this.Opacity = 0.05d;
-			var args = e as MouseEventArgs;
+            var args = e as MouseEventArgs;
 			if (args == null) { // if resize is caused not by mouse wheel, but by 'pictureBox1.Size = ' or '+='.
 				return;
 			}
 
-			if (_resizing) {
-				//_resizing = false;
+			if (_zooming) {
 				return;
 			}
 
@@ -228,23 +226,14 @@ namespace gifer {
 			} else if (ModifierKeys.HasFlag(Keys.Shift)) {
 				ratio = 2.0f;
 			}
+            
+            _bounds = Zoom(this, Math.Sign(delta) * ratio);
+            _zooming = true;
+            this.pictureBox1.Invalidate();
+            //ZoomSmooth(Math.Sign(delta) * ratio, this, this.pictureBox1);
+        }
 
-			_resizing = true;
-			Zoom(Math.Sign(delta) * ratio, Screen.FromControl(this), this, this.pictureBox1);
-			_resizing = false;
-		}
-
-		// Gaussiana [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05, 0.01] / 3 => Sum = ~1
-		//private static double[] Gaussiana = new[] { 0.003, 0.016, 0.03, 0.05, 0.06, 0.083, 0.1, 0.116,  0.13,  0.116, 0.1, 0.083, 0.06, 0.05, 0.03, 0.016, 0.003 };
-		//private static int[] Gaussiana = new[] { 64, 32, 16, 8, 4, 2, 4, 8, 16, 32, 64 };
-		//private float Gauss(float x) {            
-		//    return exp(-(x - mu) ^ 2 / (2 * sigma ^ 2)) / sqrt(2 * pi * sigma ^ 2)
-		//}
-
-		[DllImport("User32.dll", CharSet = CharSet.Ansi, SetLastError = true, ExactSpelling = true)]
-		private static extern bool MoveWindow(IntPtr hWnd, int x, int y, int w, int h, bool repaint);
-
-		private void Zoom(float ratio, Screen screen, Form form, PictureBox pictureBox) {
+        private Rectangle Zoom(Form form, float ratio) {
 			float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
 			var newSize = new SizeF {
 				Width = form.Size.Width * enlargementRatio,
@@ -261,110 +250,122 @@ namespace gifer {
 			float heightDifference = (newSize.Height - form.Size.Height) / 2;
 			float shiftX = (widthDifference - (newCursorPosition.X - cursorLocationOnImage.X));
 			float shiftY = (heightDifference - (newCursorPosition.Y - cursorLocationOnImage.Y));
-			this.pictureBox1.Size = new Size((int)newSize.Width, (int)newSize.Height);
-			MoveWindow(this.Handle,
-					   (int)Math.Round(newLocation.X + shiftX),
-					   (int)Math.Round(newLocation.Y + (int)shiftY),
-					   (int)Math.Round(newSize.Width),
-					   (int)Math.Round(newSize.Height),
-					   repaint: false);
-		}
+            var newBounds = new Rectangle((int)Math.Round(newLocation.X + shiftX),
+                                          (int)Math.Round(newLocation.Y + shiftY),
+                                          (int)Math.Round(newSize.Width),
+                                          (int)Math.Round(newSize.Height));
+            return newBounds;
+        }
 
-		[Obsolete]
 		private void ZoomSmooth(float ratio, Form form, PictureBox pictureBox) {
-			Size size;
-			if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
-				pictureBox.Height >= Screen.PrimaryScreen.Bounds.Height) {
-				size = pictureBox.Size;
-			} else {
-				size = form.Size;
-			}
-
-			Point location;
-			if (pictureBox.Width >= Screen.PrimaryScreen.Bounds.Width &&
-				pictureBox.Height >= Screen.PrimaryScreen.Bounds.Height) {
-				location = pictureBox.Location;
-			} else {
-				location = form.Location;
-			}
-
-			float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
-			var newSize = new Size {
-				Width = Convert.ToInt32(size.Width * enlargementRatio),
-				Height = Convert.ToInt32(size.Height * enlargementRatio)
-			};
-			Size widening = newSize - size;
-			var newLocation = Point.Add(location, widening.Divide(-2));
-			//   const
-			// ---------- -> steps : so that when 'widening' rizes, 'steps' reduses, to resize larger window faster
-			//  widening
-			//
-			// Ex: let widening 64 -> be steps 64, diff 128 -> steps 32
-			//    c
-			// -------- -> 64 steps of resizing => c = 64*64 = 4096
-			//    64
-			// so let it be 4096. pretty round, huh
-			int steps = 4096 / (Math.Abs(widening.Width + widening.Height) / 2);
-			Debug.WriteLine($"Steps: {steps}");
-			widening = widening.Divide(steps).RoundToPowerOf2();
-			Size shift = widening.Divide(2);
-			//parent.Size = newSize;
-			//parent.Location = newLocation;
-			while (_resizing && !ModifierKeys.HasFlag(Keys.Alt) && (pictureBox.Size - newSize).AbsMore(widening)) {
-				pictureBox.Size += widening;
-				//Application.DoEvents();
-				//Application.DoEvents();
-				//Application.DoEvents();
-				if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
-					this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
-					form.Size += widening;
-					form.Location -= shift;
-				} else {
-					pictureBox.Location -= shift;
-				}
-				//parent.Size += widening;
-				//Application.DoEvents();
-				//Application.DoEvents();
-				//parent.Location -= shift;
-				Application.DoEvents();
-			}
-			if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
-				this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
-				form.Size += widening;
-				form.Location -= shift;
-			} else {
-				pictureBox.Size = newSize;
-				pictureBox.Location = newLocation;
-			}
+            var size = form.Size;
+            float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
+            var newSize = new SizeF {
+                Width = form.Size.Width * enlargementRatio,
+                Height = form.Size.Height * enlargementRatio
+            };
+            SizeF widening = newSize - size;
+            var newLocation = PointF.Add(form.Location, widening.Divide(-2));
+            form.MaximumSize = new Size(int.MaxValue, int.MaxValue);
+            Point cursorLocationOnImage = this.pictureBox1.PointToClient(Cursor.Position);
+            float xRatio = cursorLocationOnImage.X / (float)form.Size.Width;
+            float yRatio = cursorLocationOnImage.Y / (float)form.Size.Height;
+            var newCursorPosition = new PointF(newSize.Width * xRatio, newSize.Height * yRatio);
+            float widthDifference = (newSize.Width - form.Size.Width) / 2;
+            float heightDifference = (newSize.Height - form.Size.Height) / 2;
+            float shiftX = (widthDifference - (newCursorPosition.X - cursorLocationOnImage.X));
+            float shiftY = (heightDifference - (newCursorPosition.Y - cursorLocationOnImage.Y));
+            GDIHelper.MoveWindow(this.Handle,
+                       (int)Math.Round(newLocation.X + shiftX),
+                       (int)Math.Round(newLocation.Y + shiftY),
+                       (int)Math.Round(newSize.Width),
+                       (int)Math.Round(newSize.Height),
+                       repaint: false);
+            return;
+			//Size size = screen.Bounds.Size;
+			//Point location = form.Location;
+			//float enlargementRatio = AnimationHelper.GetEnlargementValue(ratio);
+			//var newSize = new Size {
+			//	Width = Convert.ToInt32(size.Width * enlargementRatio),
+			//	Height = Convert.ToInt32(size.Height * enlargementRatio)
+			//};
+			//Size widening = newSize - size;
+			//var newLocation = Point.Add(location, widening.Divide(-2));
+			////   const
+			//// ---------- -> steps : so that when 'widening' rizes, 'steps' reduses, to resize larger window faster
+			////  widening
+			////
+			//// Ex: let widening 64 -> be steps 64, diff 128 -> steps 32
+			////    c
+			//// -------- -> 64 steps of resizing => c = 64*64 = 4096
+			////    64
+			//// so let it be 4096. pretty round, huh
+			//int steps = 4096 / (Math.Abs(widening.Width + widening.Height) / 2);
+			//Debug.WriteLine($"Steps: {steps}");
+			//widening = widening.Divide(steps).RoundToPowerOf2();
+			//Size shift = widening.Divide(2);
+			////parent.Size = newSize;
+			////parent.Location = newLocation;
+			//while (_resizing && !ModifierKeys.HasFlag(Keys.Alt) && (pictureBox.Size - newSize).AbsMore(widening)) {
+			//	pictureBox.Size += widening;
+			//	//Application.DoEvents();
+			//	//Application.DoEvents();
+			//	//Application.DoEvents();
+			//	if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
+			//		this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
+			//		form.Size += widening;
+			//		form.Location -= shift;
+			//	} else {
+			//		pictureBox.Location -= shift;
+			//	}
+			//	//parent.Size += widening;
+			//	//Application.DoEvents();
+			//	//Application.DoEvents();
+			//	//parent.Location -= shift;
+			//	Application.DoEvents();
+			//}
+			//if (this.Size.Width < Screen.PrimaryScreen.Bounds.Width &&
+			//	this.Size.Height < Screen.PrimaryScreen.Bounds.Height) {
+			//	form.Size += widening;
+			//	form.Location -= shift;
+			//} else {
+			//	pictureBox.Size = newSize;
+			//	pictureBox.Location = newLocation;
+			//}
 		}
 
-		#endregion
+        // Gaussiana [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05, 0.01] / 3 => Sum = ~1
+        //private static double[] Gaussiana = new[] { 0.003, 0.016, 0.03, 0.05, 0.06, 0.083, 0.1, 0.116,  0.13,  0.116, 0.1, 0.083, 0.06, 0.05, 0.03, 0.016, 0.003 };
+        //private static int[] Gaussiana = new[] { 64, 32, 16, 8, 4, 2, 4, 8, 16, 32, 64 };
+        //private float Gauss(float x) {            
+        //    return exp(-(x - mu) ^ 2 / (2 * sigma ^ 2)) / sqrt(2 * pi * sigma ^ 2)
+        //}
 
-		private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
-			if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
-				if (e.KeyCode == Keys.Right) {
-					_currentImagePath = _imagesInFolder.Next(_currentImagePath);
-				} else if (e.KeyCode == Keys.Left) {
-					_currentImagePath = _imagesInFolder.Previous(_currentImagePath);
-				}
-				LoadImageAndFolder(_currentImagePath, loadFolder: false);
-			} else if (e.KeyCode == Keys.H) {
-				_helpWindow = true;
-				this.Reinitialize();
-			} else if (e.KeyCode == Keys.Delete) {
-				if (_currentImagePath == null) {
-					return;
-				}
-				this.timer1.Stop();
-				this.timerUpdateTaskbarIcon.Stop();
-				string imageToDeletePath = _currentImagePath;
-				if (!_imagesInFolder.Any()) {
-					_currentImagePath = null;
-					_gifImage?.Dispose();
+        #endregion
+
+        private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
+            if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
+                if (e.KeyCode == Keys.Right) {
+                    _currentImagePath = _imagesInFolder.Next(_currentImagePath);
+                } else if (e.KeyCode == Keys.Left) {
+                    _currentImagePath = _imagesInFolder.Previous(_currentImagePath);
+                }
+                LoadImageAndFolder(_currentImagePath, loadFolder: false);
+            } else if (e.KeyCode == Keys.H) {
+                _helpWindow = true;
+                this.Reinitialize();
+            } else if (e.KeyCode == Keys.Delete) {
+                if (_currentImagePath == null) {
+                    return;
+                }
+                this.timer1.Stop();
+                this.timerUpdateTaskbarIcon.Stop();
+                string imageToDeletePath = _currentImagePath;
+                _currentImagePath = _imagesInFolder.Next(_currentImagePath);
+                _imagesInFolder.Remove(imageToDeletePath);
+                if (_currentImagePath == null || !_imagesInFolder.Any()) {
 					this.Reinitialize();
 				} else {
-					_currentImagePath = _imagesInFolder.Next(_currentImagePath);
-                    _imagesInFolder.Remove(imageToDeletePath);
                     LoadImageAndFolder(_currentImagePath, loadFolder: false);
                 }
                 FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
@@ -386,19 +387,17 @@ namespace gifer {
 				PaintWith(InterpolationMode.HighQualityBilinear);
 			} else if (e.KeyCode == Keys.D4) {
 				PaintWith(InterpolationMode.HighQualityBicubic);
-			} else if (e.KeyCode == Keys.Space) {
-				_debugMode = !_debugMode;
 			}
 		}
 
 		private void timer1_Tick(object sender, EventArgs e) {
-			pictureBox1.Image = _gifImage.Next();
+			this.pictureBox1.Image = _gifImage.Next();
 			this.timer1.Interval = _gifImage.CurrentFrameDelayMilliseconds;
 		}
 
 		private void timerUpdateTaskbarIcon_Tick(object sender, EventArgs e) {
-			if (pictureBox1.Image != null) {
-				this.Icon = Icon.FromHandle(pictureBox1.Image.Pad().GetHicon());
+			if (this.pictureBox1.Image != null) {
+				this.Icon = Icon.FromHandle(this.pictureBox1.Image.Pad().GetHicon());
 			}
 		}
 
@@ -408,108 +407,56 @@ namespace gifer {
 			}
 		}
 
-		private void GiferForm_Activated(object sender, EventArgs e) {
-			this.TopMost = true;
-			Debug.WriteLine("this.TopMost: " + this.TopMost);
-		}
+		private void GiferForm_Activated(object sender, EventArgs e) => this.TopMost = true;
 
-		private void GiferForm_Deactivate(object sender, EventArgs e) {
-			this.TopMost = false;
-			Debug.WriteLine("this.TopMost: " + this.TopMost);
-		}
+		private void GiferForm_Deactivate(object sender, EventArgs e) => this.TopMost = false;
 
 		private void PaintWith(InterpolationMode interpolationMode) {
 			_interpolationMode = interpolationMode;
 			this.pictureBox1.Invalidate();
 		}
-
-		private Rectangle _visibleArea;
-		private Rectangle _srcArea;
-		private Rectangle _dstArea;
-
-		private bool _debugMode = false;
-
-		private void pictureBox1_Paint(object sender, PaintEventArgs e) {
-			if (_gifImage?.Image != null && !_debugMode) {
-				this.pictureBox1.Image = null;
-				e.Graphics.InterpolationMode = _interpolationMode;
-				var screen = Screen.FromControl(this);
-				Point upperLeftCornerOfSourceRectangle = new Point(0, 0);
-				var srcArea = new RectangleF(0, 0, _gifImage.Width, _gifImage.Height);
-				var dstArea = new RectangleF(0, 0, this.Width, this.Height);
-				bool outOfAllBounds = false;
-				if (this.Location.X < 0 &&
-					this.Location.Y < 0 &&
-					this.Location.X + this.Width > 1920 &&
-					this.Location.Y + this.Height > 1080) {
-					outOfAllBounds = true;
-				}				
-				if (outOfAllBounds) {
-					float ratio = (float)this.Width / _gifImage.Width;
-					srcArea = new RectangleF(-this.Location.X / ratio, -this.Location.Y / ratio, 1920 / ratio, 1080 / ratio);
-					dstArea = new RectangleF(-this.Location.X, -this.Location.Y, 1920, 1080);
-				}
-                //e.Graphics.CompositingMode = CompositingMode.SourceCopy;
+        
+		private void pictureBox1_Paint(object s, PaintEventArgs e) {
+            var sw = Stopwatch.StartNew();
+            if (_gifImage?.Image != null) {
+                if (_zooming) {
+                    GDIHelper.MoveWindow(this.Handle, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height, repaint: false);
+                    _zooming = false;
+                }
+                var srcdst = GetSrcDsrAreas(this, _gifImage);
+                e.Graphics.InterpolationMode = _interpolationMode;
+                e.Graphics.CompositingMode = CompositingMode.SourceCopy;
                 e.Graphics.CompositingQuality = CompositingQuality.HighSpeed;
                 e.Graphics.SmoothingMode = SmoothingMode.HighSpeed;
-                
                 e.Graphics.DrawImage(
-					_gifImage.Image,
-					dstArea,//new Rectangle(0, 0, this.Width, this.Height),// destination rectangle
-					srcArea, //srcRectangle,
-					GraphicsUnit.Pixel);
-			} else {
-				base.OnPaint(e);
-			}
-			this.Opacity = 1d;
-			//base.OnPaint(e);
-		}
+                    _gifImage.Image,
+                    srcdst.Item2, // destination rectangle
+                    srcdst.Item1, // source rectangle
+                    GraphicsUnit.Pixel);
+            }
+            base.OnPaint(e);
+            sw.Stop();
+            Debug.WriteLine($"OnPaint done in {sw.Elapsed.ToString()} sec.");
+        }
 
-		private void GiferForm_Move(object sender, EventArgs e) {
-			if (this._gifImage == null) {
-				return;
-			}
-			_visibleArea = new Rectangle(this.Location.X, this.Location.Y, this.Width, this.Height);
-			_srcArea = new Rectangle(0, 0, this.Width, this.Height);
-
-			if (this.Location.X < 0) {
-				_srcArea.X = -this.Location.X;
-				_visibleArea.X = 0;
-			}
-			if (this.Location.Y < 0) {
-				_srcArea.Y = -this.Location.Y;
-				_visibleArea.Y = 0;
-			}
-			if (this.Location.X + this.Width > 1920) {
-				_visibleArea.Width = 1920 - this.Location.X;
-				_srcArea.Width = 1920 - this.Location.X;
-			}
-			if (this.Location.X < 0) {
-				_visibleArea.Width = this.Width - (-this.Location.X); // 'tis negative
-				_srcArea.Width = this.Width - (-this.Location.X);
-			}
-			if (this.Location.Y + this.Height > 1080) {
-				_visibleArea.Height = 1080 - this.Location.Y;
-				_srcArea.Height = 1080 - this.Location.Y;
-			}
-			if (this.Location.Y < 0) {
-				_visibleArea.Height = this.Height - (-this.Location.Y);
-				_srcArea.Height = this.Height - (-this.Location.Y);
-			}
-			if (this.Location.Y < 0 && this.Location.Y + this.Height > 1080) {
-				_visibleArea.Height = 1080;
-				_srcArea.Y = -this.Location.Y;
-				_srcArea.Height = _srcArea.Y + _visibleArea.Height;
-			}
-			if (this.Location.X < 0 && this.Location.X + this.Width > 1920) {
-				_visibleArea.Width = 1920;
-				_srcArea.X = -this.Location.X;
-				_srcArea.Width = _srcArea.X + _visibleArea.Width;
-			}
-			//float ratio = (float)this.Width / this._gifImage.Width;
-			//_visibleArea.X = (int)Math.Round(_visibleArea.X / ratio);
-			//_visibleArea.Y = (int)Math.Round(_visibleArea.Y / ratio);
-			Debug.WriteLine($"visible: {_visibleArea} src: {_srcArea}");
-		}
+        private Tuple<RectangleF, RectangleF> GetSrcDsrAreas(Form form, GifImage gifImage) {
+            var screenBounds = Screen.FromControl(form).Bounds;
+            var srcArea = new RectangleF(0, 0, gifImage.Width, gifImage.Height);
+            var dstArea = new RectangleF(0, 0, form.Width, form.Height);
+            // only visible parts, for ultra fast drawing
+            //bool outOfAllBounds = false;
+            //if (form.Location.X < 0 &&
+            //    form.Location.Y < 0 &&
+            //    form.Location.X + form.Width > screenBounds.Width &&
+            //    form.Location.Y + form.Height > screenBounds.Height) {
+            //    outOfAllBounds = true;
+            //}
+            //if (outOfAllBounds) {
+            //    float ratio = (float)form.Width / gifImage.Width;
+            //    srcArea = new RectangleF(-form.Location.X / ratio, -form.Location.Y / ratio, screenBounds.Width / ratio, screenBounds.Height / ratio);
+            //    dstArea = new RectangleF(-form.Location.X, -form.Location.Y, screenBounds.Width, screenBounds.Height);
+            //}
+            return Tuple.Create(srcArea, dstArea);
+        }
 	}
 }
