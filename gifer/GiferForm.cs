@@ -333,7 +333,7 @@ namespace gifer {
 			//	pictureBox.Location = newLocation;
 			//}
 		}
-        
+
         // Gaussiana [0.01, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.35, 0.3, 0.25, 0.2, 0.15, 0.1, 0.05, 0.01] / 3 => Sum = ~1
         //private static double[] Gaussiana = new[] { 0.003, 0.016, 0.03, 0.05, 0.06, 0.083, 0.1, 0.116,  0.13,  0.116, 0.1, 0.083, 0.06, 0.05, 0.03, 0.016, 0.003 };
         //private static int[] Gaussiana = new[] { 64, 32, 16, 8, 4, 2, 4, 8, 16, 32, 64 };
@@ -344,26 +344,26 @@ namespace gifer {
         #endregion
 
         private void GiferForm_KeyDown(object sender, KeyEventArgs e) {
-			if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
-				if (e.KeyCode == Keys.Right) {
-					_currentImagePath = _imagesInFolder.Next(_currentImagePath);
-				} else if (e.KeyCode == Keys.Left) {
-					_currentImagePath = _imagesInFolder.Previous(_currentImagePath);
-				}
-				LoadImageAndFolder(_currentImagePath, loadFolder: false);
-			} else if (e.KeyCode == Keys.H) {
-				_helpWindow = true;
-				this.Reinitialize();
-			} else if (e.KeyCode == Keys.Delete) {
-				if (_currentImagePath == null) {
-					return;
-				}
-				this.timer1.Stop();
-				this.timerUpdateTaskbarIcon.Stop();
-				string imageToDeletePath = _currentImagePath;
-                _imagesInFolder.Remove(_currentImagePath);
-                _currentImagePath = _imagesInFolder.Next(_currentImagePath);
+            if (_currentImagePath != null && (e.KeyCode == Keys.Right || e.KeyCode == Keys.Left)) {
+                if (e.KeyCode == Keys.Right) {
+                    _currentImagePath = _imagesInFolder.Next(_currentImagePath);
+                } else if (e.KeyCode == Keys.Left) {
+                    _currentImagePath = _imagesInFolder.Previous(_currentImagePath);
+                }
+                LoadImageAndFolder(_currentImagePath, loadFolder: false);
+            } else if (e.KeyCode == Keys.H) {
+                _helpWindow = true;
+                this.Reinitialize();
+            } else if (e.KeyCode == Keys.Delete) {
                 if (_currentImagePath == null) {
+                    return;
+                }
+                this.timer1.Stop();
+                this.timerUpdateTaskbarIcon.Stop();
+                string imageToDeletePath = _currentImagePath;
+                _currentImagePath = _imagesInFolder.Next(_currentImagePath);
+                _imagesInFolder.Remove(imageToDeletePath);
+                if (_currentImagePath == null || !_imagesInFolder.Any()) {
 					this.Reinitialize();
 				} else {
                     LoadImageAndFolder(_currentImagePath, loadFolder: false);
