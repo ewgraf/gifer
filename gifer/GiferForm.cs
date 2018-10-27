@@ -465,6 +465,12 @@ namespace gifer {
 		}	 
 
 		private void GiferForm_KeyPress(object sender, KeyPressEventArgs e) {
+			if (this.timer1 == null) {
+				return;
+			}
+			if (_gifImage == null) {
+				return;
+			}
 			if (e.KeyChar == ' ') {
 				if (this.timer1.Enabled) {
 					this.timer1.Stop();
