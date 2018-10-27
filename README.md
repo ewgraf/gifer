@@ -21,6 +21,8 @@ horo.gif (lena.bmp)
 <img src="https://github.com/ewgraf/gifer/blob/master/horo2.gif?raw=true" width="450px">
 
 # Debug
-Если при дебаге в Visual Studio картинка не перетаскивается Drag&Drop'ом на форму, то нужно запустить студию НЕ от админа а от локального пользователя, т.к. файловая система, из которой перетаскивается файл должна иметь те же права доступа что и программа, либо билдить проект и запускать программу из релиза пользователем, такие дела.
+EN
+If while Debug the Drag&Drom feature is not working - the cursor is turned into crossed-circle - try to restart Visual Studio as USER, NOT AS ADMIN, as explorer.exe should have same "access level" as gifer.exe, to succeed drug&drop.
 
-If while Debug the Drag&Drom feature is not working - the cursor is turned into crossed-circle - try to re-run Visual Studio as USER, NOT AS ADMIN, as explorer.exe should have same "access level" as gifer.exe, to succeed drug&drop.
+RU
+Если при дебаге в Visual Studio картинка не перетаскивается Drag&Drop'ом на форму, то нужно запустить студию НЕ от админа а от локального пользователя, т.к. процесс explorer.exe должн иметь те же права доступа что и программа, либо билдить проект и запускать программу из релиза пользователем, такие дела.
