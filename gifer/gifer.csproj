@@ -101,6 +101,7 @@
     <Compile Include="GifType.cs" />
     <Compile Include="ListExtensions.cs" />
     <Compile Include="MoveFormWithControlsHandler.cs" />
+    <Compile Include="NaturalSortingComparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SizeExtensions.cs" />

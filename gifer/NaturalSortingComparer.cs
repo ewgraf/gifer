@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace gifer.Utils {
-    public class NaturalSortingComparer : IComparer<string> {
+namespace gifer {
+    // https://stackoverflow.com/questions/39342479/sorting-numbers-in-stringsarray
+    public class NaturalSortingComparer : IComparer<string> {        
         [DllImport("shlwapi.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         static extern int StrCmpLogicalW(string x, string y);
 

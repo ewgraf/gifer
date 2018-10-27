@@ -15,7 +15,8 @@ namespace gifer {
 		private GifImage _gifImage;
 		private string _currentImagePath;
 		private List<string> _imagesInFolder;
-		private MoveFormWithControlsHandler _handler;
+        private static readonly NaturalSortingComparer NaturalSortingComparer = new NaturalSortingComparer();
+        private MoveFormWithControlsHandler _handler;
 		private bool _helpWindow = true;
 		private InterpolationMode _interpolationMode;
         private Rectangle _bounds;
@@ -99,7 +100,8 @@ namespace gifer {
 				if (loadFolder) {
 					_imagesInFolder = Directory.GetFiles(Path.GetDirectoryName(_currentImagePath))
 											   .Where(path => Gifer.KnownImageFormats.Any(path.ToUpper().EndsWith))
-											   .ToList();
+                                               .OrderBy(p => p, NaturalSortingComparer)
+                                               .ToList();
 				}
 			} else {
 				MessageBox.Show($"Unknown image extension at: '{imagePath}' '{Path.GetExtension(imagePath)}'");
