@@ -471,7 +471,7 @@ namespace gifer {
 			if (_gifImage == null) {
 				return;
 			}
-			if (e.KeyChar == ' ') {
+			if (e.KeyChar == ' ' && _gifImage.IsGif) {
 				if (this.timer1.Enabled) {
 					this.timer1.Stop();
 					this.timerUpdateTaskbarIcon.Stop();

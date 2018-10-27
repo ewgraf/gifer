@@ -19,7 +19,7 @@ namespace gifer {
 		private int _currentFrame = -1;
 		private Rectangle _rectangle;
 
-		public int CurrentFrameDelayMilliseconds { get; set; }
+		public int CurrentFrameDelayMilliseconds { get; set; } = 100;
 		public int Frames { get; set; }
 		public bool IsGif { get; private set; }
 		public GifType Type { get; private set; }
@@ -125,6 +125,9 @@ namespace gifer {
 		public Bitmap Copy() => (Bitmap)_image.Clone();
 
 		public Bitmap Curr() {
+			if (!IsGif) {
+				return Image;
+			}
 			_image.SelectActiveFrame(FrameDimension.Time, _currentFrame);
 			// int32 is 4bytes -> shift is 4
 			CurrentFrameDelayMilliseconds = BitConverter.ToInt32(_image.GetPropertyItem(20736).Value, 4 * _currentFrame) * 10;
