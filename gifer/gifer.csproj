@@ -134,7 +134,6 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="Resources\gifer logo 42x42 exe icon.ico" />
-    <Content Include="Resources\gifer-logo-44x44.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
