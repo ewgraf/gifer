@@ -468,8 +468,10 @@ namespace gifer {
 			if (e.KeyChar == ' ') {
 				if (this.timer1.Enabled) {
 					this.timer1.Stop();
+					this.timerUpdateTaskbarIcon.Stop();
 				} else {
 					this.timer1.Start();
+					this.timerUpdateTaskbarIcon.Start();
 				}
 			} else if (e.KeyChar == ',' || e.KeyChar == 'б' || e.KeyChar == 'Б' || e.KeyChar == '<') {
 				this.timer1.Stop();
