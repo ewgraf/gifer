@@ -86,25 +86,25 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnimationHelper.cs" />
-    <Compile Include="GDIHelper.cs" />
-    <Compile Include="ImageExtensions.cs" />
-    <Compile Include="ControlExtensions.cs" />
-    <Compile Include="Gifer.cs" />
+    <Compile Include="Utils\AnimationHelper.cs" />
+    <Compile Include="Utils\GDIHelper.cs" />
+    <Compile Include="Utils\ImageExtensions.cs" />
+    <Compile Include="Utils\ControlExtensions.cs" />
+    <Compile Include="Entities\Gifer.cs" />
     <Compile Include="GiferForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="GiferForm.Designer.cs">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="GifImage.cs" />
-    <Compile Include="GifType.cs" />
-    <Compile Include="ListExtensions.cs" />
-    <Compile Include="MoveFormWithControlsHandler.cs" />
-    <Compile Include="NaturalSortingComparer.cs" />
+    <Compile Include="Entities\GifImage.cs" />
+    <Compile Include="Entities\GifType.cs" />
+    <Compile Include="Utils\ListExtensions.cs" />
+    <Compile Include="Utils\MoveFormWithControlsHandler.cs" />
+    <Compile Include="Utils\NaturalSortingComparer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SizeExtensions.cs" />
+    <Compile Include="Utils\SizeExtensions.cs" />
     <EmbeddedResource Include="GiferForm.resx">
       <DependentUpon>GiferForm.cs</DependentUpon>
     </EmbeddedResource>
