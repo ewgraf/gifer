@@ -14,8 +14,6 @@ Requirements: Windows Vista?/7/8/10 x64, [.Net Framework 4.5+](https://www.micro
 
 If you've met any trouble with gifer.exe, please feel free to contact me ewgraf@mail.ru. I would be glad to help you, an investigation of user experience is the point.
 
-![](horo.gif)
-
 horo.gif (lena.bmp)
 
 # Debug
