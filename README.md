@@ -1,14 +1,12 @@
 # Gifer
+Gifer is a .gif & image viewer (.gif, .bmp, .jp[e]g, .png) for Windows
 
-Gifer is a gif & image viewer (.gif, .bmp, .jp[e]g, .png) for Windows
+Features: borderless, draggable, drag&drop, frame-by-frame view, standalone (single gifer.exe, no installation required)
+Download: https://github.com/ewgraf/gifer/releases/download/3/gifer.exe
 
-Features: borderless, draggable, drag&drop, standalone (single gifer.exe, no installation required)
+<img src="https://github.com/ewgraf/gifer/blob/master/help.png?raw=true">
 
-Download: https://github.com/ewgraf/gifer/releases/download/2/gifer.exe
-
-![](help.png)
-
-Release: https://github.com/ewgraf/gifer/releases/tag/v2
+Release: https://github.com/ewgraf/gifer/releases/tag/v3
 
 Demonstration: https://youtu.be/zL0Q6VszwBA (please turn on subtitles {hotkey [C]} to see description)
 
@@ -18,7 +16,7 @@ If you've met any trouble with gifer.exe, please feel free to contact me ewgraf@
 
 horo.gif (lena.bmp)
 
-<img src="https://github.com/ewgraf/gifer/blob/master/horo2.gif?raw=true" width="450px">
+<img src="https://github.com/ewgraf/gifer/blob/master/horo.gif?raw=true" width="450px">
 
 # Debug
 EN
