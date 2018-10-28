@@ -31,7 +31,7 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GiferForm));
 			this.pictureBox1 = new System.Windows.Forms.PictureBox();
-			this.timer1 = new System.Windows.Forms.Timer(this.components);
+			this.timerFrames = new System.Windows.Forms.Timer(this.components);
 			this.timerUpdateTaskbarIcon = new System.Windows.Forms.Timer(this.components);
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this.labelCloseText = new System.Windows.Forms.Label();
@@ -79,9 +79,9 @@
 			this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
 			this.pictureBox1.Resize += new System.EventHandler(this.pictureBox1_Resize);
 			// 
-			// timer1
+			// timerFrames
 			// 
-			this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+			this.timerFrames.Tick += new System.EventHandler(this.timerFrames_Tick);
 			// 
 			// timerUpdateTaskbarIcon
 			// 
@@ -425,7 +425,7 @@
         #endregion
 
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.Timer timer1;
+        private System.Windows.Forms.Timer timerFrames;
         private System.Windows.Forms.Timer timerUpdateTaskbarIcon;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label labelDragAndDrop;

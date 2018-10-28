@@ -41,7 +41,7 @@ namespace gifer {
 			// as we do "form.MaximumSize = new Size(int.MaxValue, int.MaxValue);" to go out of screen bounds for zooming
 			this.MaximumSize = Screen.PrimaryScreen.Bounds.Size;
 			this.InitializeComponent();
-			this.timer1.Stop();
+			this.timerFrames.Stop();
 			this.timerUpdateTaskbarIcon.Stop();
 			this.pictureBox1.Image?.Dispose();
 			this.pictureBox1.Image = null;
@@ -60,7 +60,7 @@ namespace gifer {
 		}
 
 		private void Reinitialize() {
-			this.timer1?.Stop();
+			this.timerFrames?.Stop();
 			this.timerUpdateTaskbarIcon?.Stop();
 			this.pictureBox1.Image?.Dispose();
 			this.pictureBox1.Image = null;
@@ -150,7 +150,7 @@ namespace gifer {
 		}
 
 		private void SetGifImage(GifImage gifImage) {
-			timer1.Stop();
+			timerFrames.Stop();
 			timerUpdateTaskbarIcon.Stop();
 			_gifImage?.Dispose();
 			_gifImage = gifImage;
@@ -164,8 +164,8 @@ namespace gifer {
 			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
 			Point newLocation = Point.Subtract(center, newSize.Divide(2));
 			if (_gifImage.IsGif) {
-				timer1.Interval = _gifImage.CurrentFrameDelayMilliseconds;
-				timer1.Start();
+				timerFrames.Interval = _gifImage.CurrentFrameDelayMilliseconds;
+				timerFrames.Start();
 				timerUpdateTaskbarIcon.Start();
 				// timer1 OnTick sets pictureBox1's Image
 			} else { // if plain image
@@ -360,7 +360,7 @@ namespace gifer {
 				if (_currentImagePath == null) {
 					return;
 				}
-				this.timer1.Stop();
+				this.timerFrames.Stop();
 				this.timerUpdateTaskbarIcon.Stop();
 				string imageToDeletePath = _currentImagePath;
 				_currentImagePath = _imagesInFolder.Next(_currentImagePath);
@@ -392,10 +392,10 @@ namespace gifer {
 			}
 		}
 
-		private void timer1_Tick(object sender, EventArgs e) {
+		private void timerFrames_Tick(object sender, EventArgs e) {
 			_gifImage.Next();
 			this.pictureBox1.Image = _gifImage.Curr();
-			this.timer1.Interval = _gifImage.CurrentFrameDelayMilliseconds;
+			this.timerFrames.Interval = _gifImage.CurrentFrameDelayMilliseconds;
 		}
 
 		private void timerUpdateTaskbarIcon_Tick(object sender, EventArgs e) {
@@ -465,28 +465,28 @@ namespace gifer {
 		}	 
 
 		private void GiferForm_KeyPress(object sender, KeyPressEventArgs e) {
-			if (this.timer1 == null) {
+			if (this.timerFrames == null) {
 				return;
 			}
 			if (_gifImage == null) {
 				return;
 			}
 			if (e.KeyChar == ' ' && _gifImage.IsGif) {
-				if (this.timer1.Enabled) {
-					this.timer1.Stop();
+				if (this.timerFrames.Enabled) {
+					this.timerFrames.Stop();
 					this.timerUpdateTaskbarIcon.Stop();
 				} else {
-					this.timer1.Start();
+					this.timerFrames.Start();
 					this.timerUpdateTaskbarIcon.Start();
 				}
 			} else if (e.KeyChar == ',' || e.KeyChar == 'б' || e.KeyChar == 'Б' || e.KeyChar == '<') {
-				this.timer1.Stop();
+				this.timerFrames.Stop();
 				this.timerUpdateTaskbarIcon.Stop();
 				_gifImage.Prev();
 				this.pictureBox1.Image = _gifImage.Curr();
 				UpdateThumbnail(this.pictureBox1.Image);
 			} else if (e.KeyChar == '.' || e.KeyChar == 'ю' || e.KeyChar == 'Ю' || e.KeyChar == '>') {
-				this.timer1.Stop();
+				this.timerFrames.Stop();
 				this.timerUpdateTaskbarIcon.Stop();
 				_gifImage.Next();
 				this.pictureBox1.Image = _gifImage.Curr();
