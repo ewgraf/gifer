@@ -127,7 +127,7 @@
 			this.labelSpaceText.AutoSize = true;
 			this.labelSpaceText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelSpaceText.ForeColor = System.Drawing.Color.DarkGray;
-			this.labelSpaceText.Location = new System.Drawing.Point(172, 243);
+			this.labelSpaceText.Location = new System.Drawing.Point(172, 244);
 			this.labelSpaceText.Name = "labelSpaceText";
 			this.labelSpaceText.Size = new System.Drawing.Size(197, 22);
 			this.labelSpaceText.TabIndex = 44;
@@ -138,7 +138,7 @@
 			this.labelSpaceKey.AutoSize = true;
 			this.labelSpaceKey.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelSpaceKey.ForeColor = System.Drawing.Color.Gray;
-			this.labelSpaceKey.Location = new System.Drawing.Point(84, 242);
+			this.labelSpaceKey.Location = new System.Drawing.Point(84, 243);
 			this.labelSpaceKey.Name = "labelSpaceKey";
 			this.labelSpaceKey.Size = new System.Drawing.Size(80, 22);
 			this.labelSpaceKey.TabIndex = 43;
@@ -193,7 +193,7 @@
 			this.labelQualityText.AutoSize = true;
 			this.labelQualityText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelQualityText.ForeColor = System.Drawing.Color.DarkGray;
-			this.labelQualityText.Location = new System.Drawing.Point(172, 273);
+			this.labelQualityText.Location = new System.Drawing.Point(172, 274);
 			this.labelQualityText.Name = "labelQualityText";
 			this.labelQualityText.Size = new System.Drawing.Size(80, 22);
 			this.labelQualityText.TabIndex = 38;
@@ -204,7 +204,7 @@
 			this.labelQualityKey.AutoSize = true;
 			this.labelQualityKey.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelQualityKey.ForeColor = System.Drawing.Color.Gray;
-			this.labelQualityKey.Location = new System.Drawing.Point(64, 274);
+			this.labelQualityKey.Location = new System.Drawing.Point(64, 275);
 			this.labelQualityKey.Name = "labelQualityKey";
 			this.labelQualityKey.Size = new System.Drawing.Size(100, 22);
 			this.labelQualityKey.TabIndex = 37;
@@ -270,7 +270,7 @@
 			this.labelDeleteIcon.AutoSize = true;
 			this.labelDeleteIcon.Font = new System.Drawing.Font("Consolas", 26.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelDeleteIcon.ForeColor = System.Drawing.Color.DarkGray;
-			this.labelDeleteIcon.Location = new System.Drawing.Point(326, 324);
+			this.labelDeleteIcon.Location = new System.Drawing.Point(326, 325);
 			this.labelDeleteIcon.Name = "labelDeleteIcon";
 			this.labelDeleteIcon.Size = new System.Drawing.Size(39, 41);
 			this.labelDeleteIcon.TabIndex = 23;
@@ -303,7 +303,7 @@
 			this.labelHelpText.AutoSize = true;
 			this.labelHelpText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelHelpText.ForeColor = System.Drawing.Color.DarkGray;
-			this.labelHelpText.Location = new System.Drawing.Point(172, 305);
+			this.labelHelpText.Location = new System.Drawing.Point(172, 306);
 			this.labelHelpText.Name = "labelHelpText";
 			this.labelHelpText.Size = new System.Drawing.Size(120, 22);
 			this.labelHelpText.TabIndex = 26;
@@ -314,7 +314,7 @@
 			this.labelHelpKey.AutoSize = true;
 			this.labelHelpKey.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelHelpKey.ForeColor = System.Drawing.Color.Gray;
-			this.labelHelpKey.Location = new System.Drawing.Point(124, 305);
+			this.labelHelpKey.Location = new System.Drawing.Point(124, 306);
 			this.labelHelpKey.Name = "labelHelpKey";
 			this.labelHelpKey.Size = new System.Drawing.Size(40, 22);
 			this.labelHelpKey.TabIndex = 25;
@@ -336,7 +336,7 @@
 			this.labelDeleteText.AutoSize = true;
 			this.labelDeleteText.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelDeleteText.ForeColor = System.Drawing.Color.DarkGray;
-			this.labelDeleteText.Location = new System.Drawing.Point(173, 336);
+			this.labelDeleteText.Location = new System.Drawing.Point(173, 337);
 			this.labelDeleteText.Name = "labelDeleteText";
 			this.labelDeleteText.Size = new System.Drawing.Size(160, 22);
 			this.labelDeleteText.TabIndex = 24;
@@ -358,7 +358,7 @@
 			this.labelDeleteKey.AutoSize = true;
 			this.labelDeleteKey.Font = new System.Drawing.Font("Consolas", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
 			this.labelDeleteKey.ForeColor = System.Drawing.Color.Gray;
-			this.labelDeleteKey.Location = new System.Drawing.Point(74, 336);
+			this.labelDeleteKey.Location = new System.Drawing.Point(74, 337);
 			this.labelDeleteKey.Name = "labelDeleteKey";
 			this.labelDeleteKey.Size = new System.Drawing.Size(90, 22);
 			this.labelDeleteKey.TabIndex = 7;
