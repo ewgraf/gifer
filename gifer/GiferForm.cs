@@ -169,7 +169,6 @@ namespace gifer {
 				timerUpdateTaskbarIcon.Start();
 				// timer1 OnTick sets pictureBox1's Image
 			} else { // if plain image
-				this.Invalidate();
 				this.Icon = Icon.FromHandle(gifImage.Image.GetHicon());
 			}
 			this.Location = newLocation;
@@ -353,6 +352,7 @@ namespace gifer {
 					_currentImagePath = _imagesInFolder.Previous(_currentImagePath);
 				}
 				LoadImageAndFolder(_currentImagePath, loadFolder: false);
+				this.pictureBox1.Invalidate();
 			} else if (e.KeyCode == Keys.H) {
 				_helpWindow = true;
 				this.Reinitialize();
@@ -369,6 +369,7 @@ namespace gifer {
 					this.Reinitialize();
 				} else {
 					LoadImageAndFolder(_currentImagePath, loadFolder: false);
+					this.pictureBox1.Invalidate();
 				}
 				FileSystem.DeleteFile(imageToDeletePath, UIOption.OnlyErrorDialogs, RecycleOption.SendToRecycleBin);
 			} else if (e.Modifiers == Keys.Control && e.KeyCode == Keys.P) {
