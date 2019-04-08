@@ -2,7 +2,7 @@
 Gifer is a .gif & image viewer (.gif, .bmp, .jp[e]g, .png) for Windows
 
 Features: borderless, draggable, drag&drop, frame-by-frame view, standalone (single gifer.exe, no installation required)
-Download: https://github.com/ewgraf/gifer/releases/download/3/gifer.exe
+Download⬇️: https://github.com/ewgraf/gifer/releases/download/3/gifer.exe
 
 <img src="https://github.com/ewgraf/gifer/blob/master/help.png?raw=true">
 
