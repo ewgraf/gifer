@@ -6,60 +6,18 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="56628ce2-91ad-464c-a005-a19e39b5c9a3" Name="Gifer" Language="1033" Codepage="Windows-1252" Version="3.0" UpgradeCode="56628ce2-91ad-464c-a005-a19e09a5c9a3" Manufacturer="https://github.com/ewgraf">
+  <Product Id="56628ce2-91ad-464c-a005-a19e19b5c9a3" Name="gifer" Language="1033" Codepage="Windows-1252" Version="1.0" UpgradeCode="56628ce2-91ad-464c-a005-a19e09a5c9a3" Manufacturer="https://github.com/ewgraf">
     <Package InstallerVersion="200" Compressed="yes" SummaryCodepage="Windows-1252" Languages="1033" />
-    <Media Id="1" Cabinet="Gifer.cab" EmbedCab="yes" />
+    <Media Id="1" Cabinet="gifer.cab" EmbedCab="yes" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="AppDataFolder" Name="AppDataFolder">
-        <Directory Id="INSTALLDIR" Name="Gifer">
+        <Directory Id="INSTALLDIR" Name="gifer">
 
-          <Component Id="Component.gifer.exe_1157492626" Guid="56628ce2-91ad-464c-a005-a19eae118813">
-            <File Id="gifer.exe_1157492626" Source="..\gifer\bin\Debug\gifer.exe">
-              <Shortcut Id="Shortcut.gifer.exe_1157492626.Sharer" WorkingDirectory="INSTALLDIR" Directory="AppDataFolder.Microsoft.Windows.Start_Menu.Programs" Name="Sharer.lnk" />
+          <Component Id="Component.gifer.exe_430795334" Guid="56628ce2-91ad-464c-a005-a19e9a75ffce">
+            <File Id="gifer.exe_430795334" Source="..\gifer\bin\Debug\gifer.exe">
+              <Shortcut Id="Shortcut.gifer.exe_430795334.gifer__" WorkingDirectory="INSTALLDIR" Directory="AppDataFolder.Microsoft.Windows.Start_Menu.Programs" Name="gifer.lnk" />
             </File>
-
-            <ProgId Id=".gif.file" Advertise="no" Description=".gif file" Icon="gifer.exe_1157492626" IconIndex="0">
-              <Extension Id=".gif" ContentType="image/gif">
-                <Verb TargetFile="gifer.exe_1157492626" Id="open" Command="open" Argument="%1" />
-              </Extension>
-            </ProgId>
-
-            <ProgId Id=".jpg.file" Advertise="no" Description=".jpg file" Icon="gifer.exe_1157492626" IconIndex="0">
-              <Extension Id=".jpg" ContentType="image/jpeg">
-                <Verb TargetFile="gifer.exe_1157492626" Id="open" Command="open" Argument="%1" />
-              </Extension>
-            </ProgId>
-
-            <ProgId Id=".jpeg.file" Advertise="no" Description=".jpeg file" Icon="gifer.exe_1157492626" IconIndex="0">
-              <Extension Id=".jpeg" ContentType="image/jpeg">
-                <Verb TargetFile="gifer.exe_1157492626" Id="open" Command="open" Argument="%1" />
-              </Extension>
-            </ProgId>
-
-            <ProgId Id=".jpe.file" Advertise="no" Description=".jpe file" Icon="gifer.exe_1157492626" IconIndex="0">
-              <Extension Id=".jpe" ContentType="image/jpeg">
-                <Verb TargetFile="gifer.exe_1157492626" Id="open" Command="open" Argument="%1" />
-              </Extension>
-            </ProgId>
-
-            <ProgId Id=".jfif.file" Advertise="no" Description=".jfif file" Icon="gifer.exe_1157492626" IconIndex="0">
-              <Extension Id=".jfif" ContentType="image/jpeg">
-                <Verb TargetFile="gifer.exe_1157492626" Id="open" Command="open" Argument="%1" />
-              </Extension>
-            </ProgId>
-
-            <ProgId Id=".bmp.file" Advertise="no" Description=".bmp file" Icon="gifer.exe_1157492626" IconIndex="0">
-              <Extension Id=".bmp" ContentType="image/bmp">
-                <Verb TargetFile="gifer.exe_1157492626" Id="open" Command="open" Argument="%1" />
-              </Extension>
-            </ProgId>
-
-            <ProgId Id=".png.file" Advertise="no" Description=".png file" Icon="gifer.exe_1157492626" IconIndex="0">
-              <Extension Id=".png" ContentType="image/png">
-                <Verb TargetFile="gifer.exe_1157492626" Id="open" Command="open" Argument="%1" />
-              </Extension>
-            </ProgId>
             <RemoveFolder Id="INSTALLDIR" On="uninstall" />
 
             <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
@@ -122,8 +80,8 @@
 
     <Icon Id="app_icon.ico" SourceFile="..\gifer\Resources\gifer logo 42x42 exe icon.ico" />
 
-    <WixVariable Id="WixUIDialogBmp" Value="gifer-background.jpg" />
-    <WixVariable Id="WixUILicenseRtf" Value="Licence.rtf" />
+    <WixVariable Id="WixUIDialogBmp" Value="gifer-background.png" />
+    <WixVariable Id="WixUILicenseRtf" Value="licence.rtf" />
 
     <UIRef Id="WixUI_Minimal" />
     <UIRef Id="WixUI_ErrorProgressText" />
@@ -133,7 +91,7 @@
     <Property Id="ARPPRODUCTICON" Value="app_icon.ico" />
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
-      <ComponentRef Id="Component.gifer.exe_1157492626" />
+      <ComponentRef Id="Component.gifer.exe_430795334" />
       <ComponentRef Id="Component.AppDataFolder.Microsoft.Windows.Start_Menu.Programs.EmptyDirectory" />
       <ComponentRef Id="AppDataFolder.Microsoft.Windows.Start_Menu" />
       <ComponentRef Id="AppDataFolder.Microsoft.Windows" />
