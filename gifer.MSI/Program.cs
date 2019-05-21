@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using WixSharp;
 
 namespace Gifer.MSI {
@@ -9,10 +12,10 @@ namespace Gifer.MSI {
 			Compiler.WixLocation = @"..\packages\WixSharp.wix.bin.<version>\tools\bin";
 
 			string prefix = @"..\gifer\bin\Debug";
-			var project = new Project("gifer",
+			var project = new Project("Gifer",
 				new Dir(@"%AppData%\gifer",
 					new File($@"{prefix}\gifer.exe",
-						new FileShortcut("gifer", @"%AppData%\Microsoft\Windows\Start Menu\Programs")
+						new FileShortcut("Gifer", @"%AppData%\Microsoft\Windows\Start Menu\Programs")
 					)
 				)
 			);
@@ -27,6 +30,7 @@ namespace Gifer.MSI {
 			project.Version = new Version(1, 0);
 
 			Compiler.BuildMsi(project);
+
 		}
 	}
 }

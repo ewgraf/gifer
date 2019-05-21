@@ -6,9 +6,9 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="56628ce2-91ad-464c-a005-a19e19b5c9a3" Name="gifer" Language="1033" Codepage="Windows-1252" Version="1.0" UpgradeCode="56628ce2-91ad-464c-a005-a19e09a5c9a3" Manufacturer="https://github.com/ewgraf">
+  <Product Id="56628ce2-91ad-464c-a005-a19e19b5c9a3" Name="Gifer" Language="1033" Codepage="Windows-1252" Version="1.0" UpgradeCode="56628ce2-91ad-464c-a005-a19e09a5c9a3" Manufacturer="https://github.com/ewgraf">
     <Package InstallerVersion="200" Compressed="yes" SummaryCodepage="Windows-1252" Languages="1033" />
-    <Media Id="1" Cabinet="gifer.cab" EmbedCab="yes" />
+    <Media Id="1" Cabinet="Gifer.cab" EmbedCab="yes" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="AppDataFolder" Name="AppDataFolder">
@@ -16,7 +16,7 @@
 
           <Component Id="Component.gifer.exe_430795334" Guid="56628ce2-91ad-464c-a005-a19e9a75ffce">
             <File Id="gifer.exe_430795334" Source="..\gifer\bin\Debug\gifer.exe">
-              <Shortcut Id="Shortcut.gifer.exe_430795334.gifer__" WorkingDirectory="INSTALLDIR" Directory="AppDataFolder.Microsoft.Windows.Start_Menu.Programs" Name="gifer.lnk" />
+              <Shortcut Id="Shortcut.gifer.exe_430795334.Gifer_" WorkingDirectory="INSTALLDIR" Directory="AppDataFolder.Microsoft.Windows.Start_Menu.Programs" Name="Gifer.lnk" />
             </File>
             <RemoveFolder Id="INSTALLDIR" On="uninstall" />
 
