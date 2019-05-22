@@ -71,9 +71,11 @@ namespace gifer {
 			this.Initialize();
 		}
 
-		private void GiferForm_Load(object sender, EventArgs e) => this.MaximumSize = new Size(int.MaxValue, int.MaxValue);
+        private void GiferForm_Load(object sender, EventArgs e) {
+            this.MaximumSize = new Size(int.MaxValue, int.MaxValue);
+        }
 
-		public void LoadImageAndFolder(string imagePath, bool loadFolder = true) {
+        public void LoadImageAndFolder(string imagePath, bool loadFolder = true) {
 			if (string.IsNullOrEmpty(imagePath)) {
 				return;
 			}
@@ -109,9 +111,6 @@ namespace gifer {
 		}
 
 		private void HandleFileStreamException(Exception exception, string filePath) {
-#if DEBUG
-			throw exception;
-#endif
 			string title = $"Failed opening file";
 			string parameters = $@"{Environment.NewLine}{Environment.NewLine}path: [{_currentImagePath}],{Environment.NewLine}{Environment.NewLine}exception: [{exception}]";
 
@@ -413,11 +412,15 @@ namespace gifer {
 			}
 		}
 
-		private void GiferForm_Activated(object sender, EventArgs e) => this.TopMost = true;
+        private void GiferForm_Activated(object sender, EventArgs e) {
+            this.TopMost = true;
+        }
 
-		private void GiferForm_Deactivate(object sender, EventArgs e) => this.TopMost = false;
+        private void GiferForm_Deactivate(object sender, EventArgs e) {
+            this.TopMost = false;
+        }
 
-		private void PaintWith(InterpolationMode interpolationMode) {
+        private void PaintWith(InterpolationMode interpolationMode) {
 			_interpolationMode = interpolationMode;
 			this.pictureBox1.Invalidate();
 		}
