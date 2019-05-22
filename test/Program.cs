@@ -1,42 +1,31 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Win32;
 
 namespace test {
 	class Program {
-		static void Main(string[] args) {
-
-			FileAssociations.SetAssociation(".png", "gifer", $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\gifer\gifer.exe", ".gif image");
+        public static void Main(string[] args) {
+			FileAssociations.SetAssociation(".jpg", "gifer", $@"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\gifer\gifer.exe", "gifer - .gif & images viewer");
 		}
 
-
-
 		public class FileAssociations {
-			public static void SetAssociation(string Extension, string KeyName, string OpenWith, string FileDescription) {
-				RegistryKey baseKey = Registry.ClassesRoot.CreateSubKey(Extension);
-				baseKey.SetValue("", KeyName);
+			public static void SetAssociation(string extension, string appName, string appPath, string appDescription) {
+				RegistryKey baseKey = Registry.ClassesRoot.CreateSubKey(extension);
+				baseKey.SetValue("", appName);
+                baseKey.Close();
 
-				RegistryKey openMethod = Registry.ClassesRoot.CreateSubKey(KeyName);
-				openMethod.SetValue("", FileDescription);
-				//OpenMethod.CreateSubKey("DefaultIcon").SetValue("", "\"" + OpenWith + "\",0");
-				RegistryKey shell = openMethod.CreateSubKey("Shell");
+                RegistryKey openMethod = Registry.ClassesRoot.CreateSubKey(appName);
+				openMethod.SetValue("", appDescription);
+
+                //OpenMethod.CreateSubKey("DefaultIcon").SetValue("", "\"" + OpenWith + "\",0");
+                RegistryKey shell = openMethod.CreateSubKey("Shell");
 				//Shell.CreateSubKey("edit").CreateSubKey("command").SetValue("", "\"" + OpenWith + "\"" + " \"%1\"");
-				shell.CreateSubKey("open").CreateSubKey("command").SetValue("", "\"" + OpenWith + "\"" + " \"%1\"");
-				baseKey.Close();
-				openMethod.Close();
+				shell.CreateSubKey("open").CreateSubKey("command").SetValue("", "\"" + appPath + "\"" + " \"%1\"");
 				shell.Close();
+                openMethod.Close();
 
-				//RegistryKey currentUser = Registry.CurrentUser.CreateSubKey(@"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\" + Extension);
-				//currentUser = currentUser.OpenSubKey("UserChoice", RegistryKeyPermissionCheck.ReadWriteSubTree, System.Security.AccessControl.RegistryRights.FullControl);
-				//currentUser.SetValue("Progid", KeyName, RegistryValueKind.String);
-				//currentUser.Close();
-
-				// Delete the key instead of trying to change it
-				RegistryKey currentUser = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\" + Extension, true);
+                // Delete the key instead of trying to change it
+                RegistryKey currentUser = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\FileExts\\" + extension, true);
 				currentUser.DeleteSubKey("UserChoice", false);
 				currentUser.Close();
 
