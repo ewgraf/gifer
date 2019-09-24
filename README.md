@@ -9,14 +9,11 @@ If you've met any trouble with gifer - please contact me at stas@gridnev.io with
 <details><summary>How it looks:</summary>
 <p>
 
-<img src="https://github.com/ewgraf/gifer/blob/master/horo.gif?raw=true" width="450px">
-<img src="https://github.com/ewgraf/gifer/blob/master/help.png?raw=true">
-<img src="https://github.com/ewgraf/gifer/blob/master/horo.gif?raw=true" width="450px">
-horo.gif (lena.bmp).
-
-No borders, just you image.
-
 <img src="https://github.com/ewgraf/gifer/blob/master/help.png?raw=true" class="box-shadow-extra-large">
+
+<img src="https://github.com/ewgraf/gifer/blob/master/horo.gif?raw=true" width="450px">
+
+horo.gif (lena.bmp).
 
 </p>
 </details>
