@@ -2,10 +2,6 @@
 Gifer is a minimalistic **.gif & image viewer** (.gif, .bmp, .jp[e]g, .png) for Windows.
 Borderless, draggable, drag&drop-able, frame-by-frame view, standalone (no installation required).
 
-Download⬇️: https://github.com/ewgraf/gifer/releases/download/3/gifer.exe .
-
-If you've met any trouble with gifer - please contact me at stas@gridnev.io with a trouble in a subject. I would be glad to help you.
-
 <details><summary>How it looks:</summary>
 <p>
 
@@ -18,6 +14,10 @@ horo.gif (lena.bmp).
 </p>
 </details>
 How it works: https://youtu.be/zL0Q6VszwBA (please turn on subtitles {hotkey [C]} to see description).
+
+Download⬇️: https://github.com/ewgraf/gifer/releases/download/3/gifer.exe .
+
+If you've met any trouble with gifer - please contact me at stas@gridnev.io with a trouble in a subject. I would be glad to help you.
 
 # Debug
 The Drag&Drop feature may not work while Debugging in Visual Studio when last is started NOT AS ADMIN. Explorer.exe must have same "access level" or smth as gifer.exe to allow Drag&Drop happen.
