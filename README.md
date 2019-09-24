@@ -3,8 +3,6 @@ Gifer is a minimalistic **.gif & image viewer** (.gif, .bmp, .jp[e]g, .png) for 
 
 Borderless, draggable, drag&drop-able, frame-by-frame view, standalone (no installation required).
 
-How it looks:
-
 <img src="https://github.com/ewgraf/gifer/blob/master/help.png?raw=true" class="box-shadow-extra-large">
 
 How it works: https://youtu.be/zL0Q6VszwBA (subtitles).
