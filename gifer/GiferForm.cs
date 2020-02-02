@@ -151,8 +151,6 @@ namespace gifer {
 		private void SetGifImage(GifImage gifImage) {
 			timerFrames.Stop();
 			timerUpdateTaskbarIcon.Stop();
-			_gifImage?.Dispose();
-			_gifImage = gifImage;
 			Size newSize;
 			Screen currentScreen = Screen.FromControl(this);
 			if (gifImage.Width > currentScreen.Bounds.Width || gifImage.Height > currentScreen.Bounds.Height) {
@@ -160,19 +158,29 @@ namespace gifer {
 			} else {
 				newSize = gifImage.Size;
 			}
-			Point center = (Point)currentScreen.Bounds.Size.Divide(2);
-			Point newLocation = Point.Subtract(center, newSize.Divide(2));
-			if (_gifImage.IsGif) {
-				timerFrames.Interval = _gifImage.CurrentFrameDelayMilliseconds;
+			Point center;
+			if (_gifImage == null) {
+				// show image in the center of the screen
+				center = (Point)currentScreen.Bounds.Size.Divide(2);
+			} else {
+				// show image in the previous center of the image
+				center = new Point(this.Location.X + this.Width / 2, this.Location.Y + this.Height / 2);
+			}
+			Point location = Point.Subtract(center, newSize.Divide(2));
+			if (gifImage.IsGif) {
+				timerFrames.Interval = gifImage.CurrentFrameDelayMilliseconds;
 				timerFrames.Start();
 				timerUpdateTaskbarIcon.Start();
 				// timer1 OnTick sets pictureBox1's Image
 			} else { // if plain image
 				this.Icon = Icon.FromHandle(gifImage.Image.GetHicon());
 			}
-			this.Location = newLocation;
+			_gifImage?.Dispose();
+			_gifImage = gifImage;
+			this.Location = location;
 			this.Size = newSize;
 			this.BringToFront();
+			this.pictureBox1.Invalidate();
 		}
 
 		#region DragDrop
@@ -199,10 +207,10 @@ namespace gifer {
 				return;
 			}
 
-			var sw = Stopwatch.StartNew();
+			//var sw = Stopwatch.StartNew();
 			this.pictureBox1_Resize(sender, e);
-			sw.Stop();
-			Debug.WriteLine($"Zoomed done in {sw.Elapsed.ToString()} sec.");
+			//sw.Stop();
+			//Debug.WriteLine($"Zoomed done in {sw.Elapsed.ToString()} sec.");
 		}
 
 		private void pictureBox1_Resize(object sender, EventArgs e) {
@@ -412,21 +420,21 @@ namespace gifer {
 			}
 		}
 
-        private void GiferForm_Activated(object sender, EventArgs e) {
-            this.TopMost = true;
-        }
+		private void GiferForm_Activated(object sender, EventArgs e) {
+			this.TopMost = true;
+		}
 
-        private void GiferForm_Deactivate(object sender, EventArgs e) {
-            this.TopMost = false;
-        }
+		private void GiferForm_Deactivate(object sender, EventArgs e) {
+			this.TopMost = false;
+		}
 
-        private void PaintWith(InterpolationMode interpolationMode) {
+		private void PaintWith(InterpolationMode interpolationMode) {
 			_interpolationMode = interpolationMode;
 			this.pictureBox1.Invalidate();
 		}
 
 		private void pictureBox1_Paint(object s, PaintEventArgs e) {
-			var sw = Stopwatch.StartNew();
+			//var sw = Stopwatch.StartNew();
 			if (_gifImage?.Image != null) {
 				if (_zooming) {
 					GDIHelper.MoveWindow(this.Handle, _bounds.X, _bounds.Y, _bounds.Width, _bounds.Height, repaint: false);
@@ -444,8 +452,8 @@ namespace gifer {
 					GraphicsUnit.Pixel);
 			}
 			base.OnPaint(e);
-			sw.Stop();
-			Debug.WriteLine($"OnPaint done in {sw.Elapsed.ToString()} sec.");
+			//sw.Stop();
+			//Debug.WriteLine($"OnPaint done in {sw.Elapsed.ToString()} sec.");
 		}
 
 		private Tuple<RectangleF, RectangleF> GetSrcDsrAreas(Form form, GifImage gifImage) {
@@ -466,7 +474,7 @@ namespace gifer {
 			//  dstArea = new RectangleF(-form.Location.X, -form.Location.Y, screenBounds.Width, screenBounds.Height);
 			//}
 			return Tuple.Create(srcArea, dstArea);
-		}	 
+		}
 
 		private void GiferForm_KeyPress(object sender, KeyPressEventArgs e) {
 			if (this.timerFrames == null) {
