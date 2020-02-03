@@ -1,5 +1,7 @@
 # Install
-https://github.com/ewgraf/gifer/blob/master/gifer.MSI/Gifer.msi?raw=true
+Download & run: https://github.com/ewgraf/gifer/blob/master/gifer.MSI/Gifer.msi?raw=true
+
+It will install the app into "%appdata%\gifer".
 
 # Gifer
 Gifer is a minimalistic **.gif & image viewer** (.gif, .bmp, .jp[e]g, .png) for Windows.
